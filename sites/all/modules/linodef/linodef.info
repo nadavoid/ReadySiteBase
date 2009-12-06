@@ -1,0 +1,14 @@
+; $Id: linodef.info,v 1.1.2.1 2008/11/14 14:02:23 roidanton Exp $
+name = Linodef
+description = Provides tags for internal node and term links based on their ID and dynamically embeds node titles, field values and term names
+dependencies[] = content
+dependencies[] = text
+dependencies[] = taxonomy
+package = Linodef
+core = 6.x
+; Information added by drupal.org packaging script on 2008-12-03
+version = "6.x-1.0-rc2"
+core = "6.x"
+project = "linodef"
+datestamp = "1228336822"
+

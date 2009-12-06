@@ -1,0 +1,12 @@
+; $Id: linodef_buttonsapi.info,v 1.1.2.2 2008/11/30 13:00:31 roidanton Exp $
+name = Linodef Buttons API
+description = Retrieve the data to create buttons for Linodef tags and provides popup windows and autocomplete buttons for Linodef editor support modules.
+dependencies[] = linodef
+package = Linodef
+core = 6.x
+; Information added by drupal.org packaging script on 2008-12-03
+version = "6.x-1.0-rc2"
+core = "6.x"
+project = "linodef"
+datestamp = "1228336822"
+

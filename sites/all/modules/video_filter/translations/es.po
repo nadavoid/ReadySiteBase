@@ -1,0 +1,126 @@
+# $Id: es.po,v 1.1.2.1 2009/09/19 14:55:56 blackdog Exp $
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  video_filter.codecs.inc,v 1.2.2.5 2008/05/05 08:54:43 fokke
+#  video_filter.module,v 1.7.2.3 2008/03/19 14:56:25 fokke
+#  video_filter.info,v 1.1.2.1 2008/03/13 16:08:41 fokke
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Drupal 6.x\n"
+"POT-Creation-Date: 2008-06-03 22:22+0200\n"
+"PO-Revision-Date: 2008-06-03 22:52+0100\n"
+"Last-Translator: Gusgsm <gusgsm@gmail.com>\n"
+"Language-Team: gusgsm <gusgsm@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: Spanish\n"
+"X-Poedit-Country: SPAIN\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: video_filter.codecs.inc:9
+msgid "YouTube"
+msgstr "YouTube"
+
+#: video_filter.codecs.inc:15
+msgid "Google Video"
+msgstr "Google Video"
+
+#: video_filter.codecs.inc:21
+msgid "GodTube"
+msgstr "GodTube"
+
+#: video_filter.codecs.inc:27
+msgid "DailyMotion"
+msgstr "DailyMotion"
+
+#: video_filter.codecs.inc:33
+msgid "Eyespot"
+msgstr "Eyespot"
+
+#: video_filter.codecs.inc:40
+msgid "Jumpcut"
+msgstr "Jumpcut"
+
+#: video_filter.codecs.inc:47
+msgid "Revver"
+msgstr "Revver"
+
+#: video_filter.codecs.inc:54
+msgid "Vimeo"
+msgstr "Vimeo"
+
+#: video_filter.module:10
+#: video_filter.info:0
+msgid "Video Filter"
+msgstr "Filtro de vídeo"
+
+#: video_filter.module:24
+msgid "Substitutes [video:URL] with embedded HTML."
+msgstr "Sustituir [video:URL] con código HTML incrustado."
+
+#: video_filter.module:57
+msgid ""
+"\n"
+"\t\t\t\t\t<p><strong>Note:</strong> Since the x.2 version, the full video path needs to be given.</p>\n"
+"\t\t\t\t\t<p>Examples:</p>\n"
+"\t\t\t\t\t<ul>\n"
+"\t\t\t\t\t  <li>Single video:<br /><code>[video:http://www.youtube.com/watch?v=uN1qUeId]</code></li>\n"
+"\t\t\t\t\t  <li>Random video out of multiple:<br /><code>[video:http://www.youtube.com/watch?v=uN1qUeId1,http://www.youtube.com/watch?v=uN1qUeId2]</code></li>\n"
+"\t\t\t\t\t  <li>Override default autoplay setting: <code>[video:http://www.youtube.com/watch?v=uN1qUeId autoplay:1]</code></li>\n"
+"\t\t\t\t\t  <li>Override default width and height:<br /><code>[video:http://www.youtube.com/watch?v=uN1qUeId width:X height:Y]</code></li>\n"
+"\t\t\t\t\t  <li>Align the video:<br /><code>[video:http://www.youtube.com/watch?v=uN1qUeId align:right]</code></li>\n"
+"\t\t\t\t\t</ul>"
+msgstr ""
+"\n"
+"<p><strong>A partir de la versión 2.x</strong> es necesario proporcionar la URL completa del vídeo; por ejemplo:</p>\n"
+"<ul><li><p>Un solo vídeo: [video:http://www.youtube.com/watch?v=uN1qUeId] </p></li>\n"
+"<li><p>Un vídeo al azar de entre varios: [video:http://www.youtube.com/watch?v=uN1qUeId1,http://www.youtube.com/watch?v=uN1qUeId2] </p></li>\n"
+"<li><p>Anular autoejecución predefinida: [video:http://www.youtube.com/watch?v=uN1qUeId autoplay:1] </p></li>\n"
+"<li><p>Anular anchura y altura predefinidas: [video:http://www.youtube.com/watch?v=uN1qUeId width:X height:Y] </p></li>\n"
+"<li><p>Alinear el vídeo: [video:http://www.youtube.com/watch?v=uN1qUeId align:right]</p></li></ul>"
+
+#: video_filter.module:69
+msgid "You may insert videos with [video:URL]"
+msgstr "Puede insertar vídeos usando la marca [video:URL]"
+
+#: video_filter.module:162
+msgid "Video filter"
+msgstr "Filtro de vídeo"
+
+#: video_filter.module:167
+msgid "Default width setting"
+msgstr "Opción de anchura predefinida"
+
+#: video_filter.module:173
+msgid "Default height setting"
+msgstr "Opción de altura predefinida"
+
+#: video_filter.module:179
+msgid "Default autoplay setting"
+msgstr "Opción de autoejecución predefinida"
+
+#: video_filter.module:180
+msgid "Not all video formats support this setting."
+msgstr "No todos los formatos de vídeo admiten esta opción."
+
+#: video_filter.module:183
+msgid "No"
+msgstr "No"
+
+#: video_filter.module:184
+msgid "Yes"
+msgstr "Sí"
+
+#: video_filter.module:0
+msgid "video_filter"
+msgstr "video_filter"
+
+#: video_filter.info:0
+msgid "Filter to include videos from Youtube, Godtube etc"
+msgstr "Filtro para incluir vídeos de Youtube, Gidtube, etc..."
+

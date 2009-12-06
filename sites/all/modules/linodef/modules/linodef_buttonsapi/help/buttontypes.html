@@ -1,0 +1,40 @@
+﻿<!-- $Id: buttontypes.html,v 1.1.2.1 2008/11/30 13:00:31 roidanton Exp $ -->
+The Linodef buttons API comes with several theme functions which buttons can use. Currently the following are included:
+<ul>
+<li>List popup</li>
+<li>Autocomplete popup</li>
+</ul>
+To use a custom button (e.g. a button the current editor delivers) utilize the <a href="&topic:linodef_buttonsapi/getformatteditems&">function for formatted items</a>.
+
+<h3>Usage</h3>
+The activation of the buttons within your editor support module happens with a JavaScript function:
+<pre>
+linodef_buttonsapi_popup($path, $window_width, $window_height)
+</pre>
+<dl>
+<dt>string $path</dt>
+<dd>The path determines wether it is a List popup or a Autocomplete popup.</dd>
+<dt>int $window_width</dt>
+<dd>Width of the popup window.</dd>
+<dt>int $window_height</dt>
+<dd>Height of the popup window.</dd>
+</dl>
+
+To call the <em>List popup</em> use the following path:
+<pre>
+$base_url .'/linodef/popup/'. $modulename .'/'. $drupal_element .'/'. $option_string_path
+</pre>
+To call the <em>Autocomplete popup</em> use this path:
+<pre>
+$base_url .'/linodef/popup-ac/'. $modulename .'/'. $drupal_element .'/'. $option_string_path
+</pre>
+<dl>
+<dt>$base_url</dt>
+<dd>Can be retrieved with global $base_url.</dd>
+<dt>$modulename</dt>
+<dd>The name of your editor support module.</dd>
+<dt>$drupal_element</dt>
+<dd>The element the button should create a list for, e.g. a certain field name or a content type (see <a href="&topic:linodef_buttonsapi/elementtypes&">supported element types</a>).</dd>
+<dt>$option_string_path</dt>
+<dd>Either 0 or a path compatible list of options. More information about <a href="&topic:linodef/options&">options</a> and <a href="&topic:linodef_buttonsapi/util&">how to make options path compatible</a>.</dd>
+</dl>

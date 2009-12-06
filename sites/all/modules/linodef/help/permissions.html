@@ -1,0 +1,16 @@
+﻿<!-- $Id: permissions.html,v 1.1.2.2 2008/12/03 17:24:38 roidanton Exp $ -->
+Following permissions are used by Linodef:
+<ul>
+<li>node access: view node</li>
+<li>content permission: view field (only used if module is activated)</li>
+</ul>
+These permissions are checked at the tag substitution process and are used in a very strict manner. To ease the life for administrators a customizable "access denied" message and the possibility to suppress access messages for Linodef tags are provided and can be set at the <a href="&base_url&admin/settings/linodef">Linodef settings page</a>.
+
+<h6>Strict access control</h6>
+Imagine someone reads your text where you have used Linodef tags and he has no access to those linked nodes. On the one hand showing the title or field value of nodes he has no access to would be a serious vulnerability. On the other hand nobody will read a text that contains many inline <em>access denied</em> messages.
+
+Therefore a third approach <em>seems to be</em> the best possibility: If a user has no view access to a node then simply the link shouldn't appear. Thus the user with limited rights doesn't even know when he reads an embedded node title or field value not to mention he could make a connection to a link.
+
+But this has a downside: If a user writes a comment and includes Linodef tags manually he would be able to see the title even if he have no proper access rights. This would be a major vulnerability.So currently you have to make sure to grant view access to the group of readers for the linked nodes in your text. If you don't then the readers would see an inline <em>access denied</em> for each node they have no access to.
+
+If you have a realizable idea for a fourth approach don't hesitate to open an issue at the Linodef issue queue at drupal.org.

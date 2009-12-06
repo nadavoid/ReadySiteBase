@@ -1,0 +1,283 @@
+<?php
+// $Id: linodef.module,v 1.1.2.3 2008/11/30 13:54:07 roidanton Exp $
+
+/**
+ * @file
+ * The main Linodef filter module with filter hooks and a unified message system for all Linodef modules.
+ *
+ * Linodef is a filter which filters ID tags, add links to nodes and embeds field values.
+ *
+ * @package Linodef
+ * @author Roi Danton
+ */
+
+/**
+ * Implementation of hook_filter.
+ */
+function linodef_filter($op, $delta = 0, $format = -1, $text = '') {
+  if ($op == 'list') {
+    return array(
+      0 => t('Linodef - Link nodes & taxonomy terms and embed field values & term names.')
+    );
+  }
+
+  // Provides extensibility.
+  switch ($delta) {
+
+    case 0:
+
+      switch ($op) {
+        case 'description':
+          return t('Substitutes the Node ID for the node title or field value & links to this node. Furthermore Linodef substitutes the term ID for the term name & links to the term.');
+
+        // Since lineodef will return a different result on each page load, we
+        // need to return TRUE for "no cache" to ensure that the filter is run
+        // every time the text is requested. Has a serious performance impact!
+        case 'no cache':
+          return TRUE;
+
+        // I tried to use the bytes 0xFE and 0xFF to replace < and > here. These bytes
+        // are not valid in UTF-8 data and thus unlikely to cause problems.
+        // This doesnt work with double quotes "", but we need this in order to execute
+        // the second preg_replace in filter.inc, so valid bytes U+10004C & U+1003CD
+        // have been used.
+        case 'prepare':
+          return preg_replace('@<#([0-9]+)>(.*?)</#>@s', "\xf4\x80\x81\x8c#$1\xf4\x80\x8f\x8d$2\xf4\x80\x81\x8c/#\xf4\x80\x8f\x8d", $text);
+
+        case 'process':
+          include_once(drupal_get_path('module', 'linodef') .'/includes/linodef-filter.inc');
+          return _linodef_filter_process($text, $format);
+        // case 'settings':
+          // Form to enter string/html for the case "access denied". -> http://drupal.org/node/335438
+      }
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_filter_tips.
+ */
+function linodef_filter_tips($delta, $format, $long = FALSE) {
+  switch ($delta) {
+    case 0:
+      if ($long) {
+        include_once(drupal_get_path('module', 'linodef') .'/includes/linodef-filter-tips.inc');
+        return _linodef_filter_tips();
+      }
+      else {
+        return t('Embeds node title or field values by node ID and terms by term ID (<a href="@format-tips-page">[#8], [#8:field_name], [#8:field_name:2], &lt;#8&gt;Your Text&lt;/#8&gt;, [#t8]</a>).', array('@format-tips-page' =>  url('filter/tips/'. $format, array('fragment' => 'linodef'))));
+      }
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function linodef_menu() {
+  // Admin settings.
+  $items['admin/settings/linodef'] = array(
+    'title' => 'Linodef',
+    'description' => 'Adjust settings for Linodef',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('linodef_theme_settings'),
+    'file' => 'linodef.admin.inc',
+    'file path' => drupal_get_path('module', 'linodef') .'/theme',
+    'access arguments' => array('administer site configuration'),
+  );
+  return $items;
+}
+
+/**
+ * Returns messages that are needed several times in the filter and Buttons API and thus should be identical and in modules root.
+ *
+ * Additionally the function supports custom messages and all messages can be set with Drupals message system, too.
+ * It heeds the admin setting for Linodef message levels and locations.
+ *
+ * @param array $message
+ *      - error:  An array with key = element type and value = element as well as a string defining the error type. Output is "t(Key) <em>value</em> t(type)". Allowed element types are:
+ *          - node
+ *          - field
+ *          - term
+ *          - content type
+ *          - vocabulary
+ *          - type: A string that creates a message depending on its value (error type). Allowed values are "access denied" and "not found".
+ *      - warning: A default message with inline text replaces. Value is the text replacer and in most cases a string. Output depends on key. Provided keys (default messages) are:
+ *          - option ignored (value must be an array with keys %id and %option)
+ *          - option unknown (value must be an array with keys %id and %option)
+ *          - activate module: Info that the module set in value should be installed and activated (e.g. to use certain features).
+ *          - check variable: Check variable with name set in value.
+ *          - supported field types: Info message about the fieldtypes that are supported.
+ *      - custom: A string with a custom message. In most cases a subordinate clause of an error or warning messages for additional explanations. Value is outputted directly.
+ * @param bool $drupal_set_message
+ *      If TRUE Drupal will set a message, see drupal_set_message().
+ * @param string $drupal_set_message_type
+ *      User can override the default message type. Allowed values are "status", "warning" or "error".
+ * @return string
+ *      Returns a message.
+ *
+ * @see drupal_set_message() linodef_theme_settings()
+ */
+function linodef_message($message = array(), $drupal_set_message = FALSE, $drupal_set_message_type = NULL) {
+    // Message appearance, see linodef_theme_settings().
+    $message_location = variable_get('linodef_message_location', array('inline' => 'inline','page' => 'page'));
+    $message_location_none = (empty($message_location['page']) && empty($message_location['inline'])) ? TRUE : FALSE;
+    $message_level = variable_get('linodef_message_level', 'all');
+    
+    if (is_array($message) && !$message_location_none) {
+        // Output sorted as input.
+        foreach ($message as $mainkey => $mainvalue) {
+            // Create an error message.
+            if (is_array($mainvalue) && $mainkey == 'error') {
+                // Get elements if valid.
+                foreach ($mainvalue as $key => $value) {
+                    if ($key != 'type') {
+                        switch ($key) {
+                        case 'node':
+                            $element[$key] = t('Node');
+                            break;
+                        case 'field':
+                            $element[$key] = t('Field');
+                            break;
+                        case 'term':
+                            $element[$key] = t('Term');
+                            break;
+                        case 'content type':
+                            $element[$key] = t('Content type');
+                            break;
+                        case 'vocabulary':
+                            $element[$key] = t('Vocabulary');
+                            break;
+                        }
+                        $element[$key] ? $element[$key] .= ' <em>'. $value .'</em>' : $element[$key] = t('Unknown key %key with value %value for %variable in %function', array('%key' => $key, '%value' => $value, '%variable' => '$message[\''. $mainkey .'\']', '%function' => __FUNCTION__));
+                    }
+                }
+                $element_string = implode(' & ', $element);
+                // Validate & set message with elements.
+                if (is_string($mainvalue['type'])) {
+                    switch ($mainvalue['type']) {
+                    case 'access denied':
+                        // drupal_access_denied() doesn't fit here because no page should be returned and the pagetitle should not show "Access denied"
+                        if ($message_level != 'critical') {
+                            // Support for custom message along with heeding potx pot extraction process. Can't avoid error message of potx during extraction though.
+                            if (variable_get('linodef_message_accessdenied', FALSE) != FALSE) {
+                                $output_array['error'] = t(variable_get('linodef_message_accessdenied', 'Access to !element denied'), array('!element' => $element_string));
+                            }
+                            else {
+                                $output_array['error'] = t('Access to !element denied', array('!element' => $element_string));
+                            }
+                        }
+                        else {
+                            // Immediately stop the message creation process if access messages aren't allowed.
+                            return '';
+                        }
+                        break;
+                    case 'not found':
+                        $output_array['error'] = t('!element not found', array('!element' => $element_string));
+                        break;
+                    case 'no content':
+                        $output_array['error'] = t('!element has no content', array('!element' => $element_string));
+                        break;
+                    }
+                    if (!$output_array['error']) {
+                        $output_array['error'] = t('Unknown error type %type for %variable of the first parameter of %function', array('%type' => $error['type'], '%variable' => '$message[\''. $mainkey .'\'][\'type\']', '%function' => __FUNCTION__));
+                    }
+                    // If $set_drupal_message this is used as type.
+                    $drupal_set_message_type = isset($drupal_set_message_type) ? $drupal_set_message_type : 'error';
+                }
+            }
+            // Create a warning message. Could be part of a critical message.
+            if (is_array($mainvalue) && $mainkey == 'warning' && ($message_level == 'all' || $drupal_set_message_type == 'error')) {
+                // Validate and set context.
+                foreach ($mainvalue as $key => $value) {
+                    switch ($key) {
+                    case 'option ignored':
+                        if ($value['%id'] && $value['%option']) {
+                            $context[$key] = t('Linodef tag with id %id ignores option %option', $value);
+                        }
+                        else {
+                            $context[$key] = t('Variable %variable of the first parameter of %function has to be an array with keys %keys', array('%variable' => '$message[\''. $mainkey .'\'][\''. $key .'\']', '%function' => __FUNCTION__, '%keys' => '%id and %option'));
+                        }
+                        break;
+                    case 'option unknown':
+                        if ($value['%id'] && $value['%option']) {
+                            $context[$key] = t('Linodef tag with id %id contains unknown option %option (all options must be written in lower case)', $value);
+                        }
+                        else {
+                            $context[$key] = t('Variable %variable of the first parameter of %function has to be an array with keys %keys', array('%variable' => '$message[\''. $mainkey .'\'][\''. $key .'\']', '%function' => __FUNCTION__, '%keys' => '%id and %option'));
+                        }
+                        break;
+                    case 'activate module':
+                        $context[$key] = t('Install & activate module %module', array('%module' => $value));
+                        break;
+                    case 'check variable':
+                        $context[$key] = t('Check value for %variable or ask your site administrator.', array('%variable' => $value));
+                        break;
+                    case 'supported field types':
+                        $context[$key] = t('Supported fields must store a (single or multiple) value such as textfields & datefield (from date).');
+                        break;
+                    }
+                    if (!$context[$key]) {
+                        $context[$key] = t('Unknown key %key with value %value for %variable in %function', array('%key' => $key, '%value' => $value, '%variable' => '$message[\''. $mainkey .'\']', '%function' => __FUNCTION__));
+                    }
+                }
+                $output_array['warning'] = implode(' ', $context);
+                // If $set_drupal_message this is used as type.
+                $drupal_set_message_type = isset($drupal_set_message_type) ? $drupal_set_message_type : 'warning';
+            }
+            // Create a custom message. In most cases a subordinate clause of an error or warning messages for additional explanations. Could be part of a critical message.
+            if (is_string($mainvalue) && $mainkey == 'custom' && ($message_level == 'all' || $drupal_set_message_type == 'error')) {
+                $output_array['custom'] = $mainvalue;
+                // Set punctuation mark if not set.
+                if (substr($output_array['custom'], -1) != '.') {
+                    $output_array['custom'] .= '.';
+                }
+            }
+        }
+        // Combine messages.
+        if (isset($output_array) && is_array($output_array)) {
+            $output = ' '. implode(' ', $output_array);
+            // Set punctuation mark if not set.
+            if (substr($output, -1) != '.') {
+                $output .= '.';
+            }
+        }
+    }
+    elseif (!$message_location_none) {
+        $output = t('Parameter %variable of %function has to be an array.', array('%variable' => '$message', '%function' => __FUNCTION__));
+    }
+
+    // Create Drupal message.
+    if ($drupal_set_message && !empty($message_location['page'])) {
+        if (!$drupal_set_message_type || ($drupal_set_message_type != 'status' && $drupal_set_message_type != 'warning' && $drupal_set_message_type != 'error')) {
+            $drupal_set_message_type = 'warning';
+        }
+        drupal_set_message($output, $drupal_set_message_type);
+    }
+    if (isset($output) && !empty($message_location['inline'])) {
+        return $output;
+    }
+    else {
+        return '';
+    }
+}
+
+/**
+ * Helper function to delete those Linodef tags that embeds content.
+ *
+ * Buttons API requires this function, too. So it is in modules main file.
+ *
+ * @param $body
+ *   The string from which the tags should be deleted.
+ * @return
+ *   Returns a string containing no Linodef tags.
+ *
+ * @see _linodef_buttonsapi_getfieldsbyfieldname() _linodef_find_nodesnfields()
+ */
+function linodef_removetags($body) {
+  $preg = array(
+    // Every Linodef tag with or without fields, options and comments
+    "@\[#([0-9]+)(.*?)\]@e" => '',
+  );
+  return preg_replace(array_keys($preg), array_values($preg), $body);
+}

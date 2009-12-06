@@ -1,0 +1,51 @@
+﻿<!-- $Id: usage.html,v 1.1.2.2 2008/11/30 13:00:31 roidanton Exp $ -->
+<em>Linodef Buttons - BUEditor</em> wird zur Erstellung von Schaltflächen benötigt, die den <em>Linodef Filter</em> innerhalb von BUEditor nutzen.
+
+Um eine solche Schaltfläche im BUEditor hinzuzufügen, sind folgende Schritte nötig:
+<ol>
+<li>Aufrufen der Seite <a href="&base_url&admin/settings/bueditor">Verwaltung &rarr; Einstellungen &rarr; BUEditor</a>.</li>
+<li>Den Editor bearbeiten, der die Schaltflächen enthalten soll.</li>
+<li>Nun gibt es zwei Möglichkeiten:
+    <ul>
+    <li>die unten befindliche Vorlage in ein neues Schalflächenfeld des BUEditors kopieren</li>
+    <li>oder die Schaltfläche zu importieren, indem die csv Datei im <em>Linodef Buttons - BUEditor Modulordner</em> für die Importfunktion des BUEditors genutzt wird.</li>
+    </ul>
+<li>Schlussendlich muss noch der Wert für die Variable in der Schaltfläche eingetragen werden. Dieser Wert ist der gewünschte Typ, dessen Elemente in der neuen Schaltfläche angezeigt werden sollen. Dabei die <a href="&topic:linodef_buttonsapi/elementtypes&">Liste für die unterstützten Elementtypen</a> sowie die Hilfestellung in der Schaltflächenvorlage beachten.</li>
+</ol>
+Die mögliche Anzahl der Schaltflächen wird nur durch den Editor selbst limitiert.
+
+Vorlage für eine Schaltfläche:
+<pre>
+php: // Schaltflaeche fuer Linodef Tags.
+// Einen Feldnamen, Inhaltstypen oder die ID eines Vokabulars angeben.
+// Z.B. 'field_beispiel', 'story' oder '10'.
+$drupal_element = 'Element_hier_eingeben';
+// Die Schaltflaechenart festlegen, entweder 'list', 'popup' oder 'autocomplete'.
+$button_type = 'list';
+// Tag Optionen hinzufügen, getrennt mit Komma.
+// Z.B. 'nolink' oder 'nolink,translation=de'.
+$options = '';
+
+// Nicht bearbeiten.
+if (module_hook(linodef_buttons_bueditor, buttons)) {
+    return linodef_buttons_bueditor_buttons($drupal_element, $button_type, $options);
+}
+else {
+    return t('Module !module not enabled!', array('!module' => 'Linodef Buttons - BUEditor'));
+}
+</pre>
+
+Alternativ zugunsten einer besseren Übersicht eine Variante ohne Kommentare:
+<pre>
+php:
+$drupal_element = 'enter_your_element_here';
+$button_type = 'list';
+$options = '';
+
+if (module_hook(linodef_buttons_bueditor, buttons)) {
+    return linodef_buttons_bueditor_buttons($drupal_element, $button_type, $options);
+}
+else {
+    return t('Module !module not enabled!', array('!module' => 'Linodef Buttons - BUEditor'));
+}
+</pre>

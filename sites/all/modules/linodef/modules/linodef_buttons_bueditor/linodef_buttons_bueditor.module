@@ -1,0 +1,65 @@
+<?php
+// $Id: linodef_buttons_bueditor.module,v 1.1.2.3 2008/11/30 13:00:30 roidanton Exp $
+
+/**
+ * @file
+ * Create appropriate Linodef values for BUEditor buttons
+ *
+ * @package Linodef
+ * @author Roi Danton
+ */
+
+/**
+ * Function to be called from the editor itself.
+ *
+ * By using drupal_add_js we can include custom javascript in BUEditor without using BUEditor settings.
+ *
+ * @param string $drupal_element
+ *      The element to retrieve the data from. This has to be an element of a supported element type. See Linodef advanced help.
+ * @param string $button_type
+ *      The button type that should be returned. Supported types are:
+ *          - list: A list that appears in the same window.
+ *          - autocomplete: An autocomplete form.
+ *          - popup: A themed window.
+ * @param $no_link
+ *      If true, a "no link" marker will be added to the tag, so the embedded node title or field value are not linked.
+ * @return string
+ *      Output formatted to be useable by the editor.
+ *
+ * @see linodef_editorbuttons_switch()
+ */
+function linodef_buttons_bueditor_buttons($drupal_element, $button_type = "list", $option_string = '') {
+    global $base_url;
+
+    // Enter the name of this module.
+    // Needed to initialize the local Javascript file and onclick function.
+    // For more information see js file included in linodef_buttons_bueditor.
+    $modulename = 'linodef_buttons_bueditor';
+
+    $drupal_element = check_plain($drupal_element);
+
+    $options = linodef_buttonsapi_validate_tagoptions($option_string);
+    // Necessary because we use the string as part of an path.
+    $option_string_path = $options ? linodef_buttonsapi_tagoptions_to_path($options) : 0;
+
+    // Local javascript.
+    drupal_add_js(drupal_get_path('module', $modulename) .'/'. $modulename .'_functions.js');
+    // Javascript of Linodef Buttons API needed.
+    drupal_add_js(drupal_get_path('module', 'linodef_buttonsapi') .'/linodef_buttonsapi_functions.js');
+    
+    switch ($button_type) {
+    case 'list':
+        $button_data_list = linodef_buttonsapi_itemlist($modulename, $drupal_element, $option_string_path);
+        return 'js: linodef_buttons_bueditor_quickpop('. $button_data_list['content'] .', "slideDown");';
+        break;
+    case 'autocomplete':
+        // Autocomplete doesn't work in another form (from BUEditor) therefore we need external button or popup.
+        // The path has to be linodef/popup-ac/modulename/drupal_element/no_link, e.g. linodef/popup-ac/linodef_buttons_bueditor/story/0.
+        // The function to open the popup window requires the width & height of the window.
+        return 'js: linodef_buttonsapi_popup("'. $base_url .'/linodef/popup-ac/'. $modulename .'/'. $drupal_element .'/'. $option_string_path .'", 600, 500);';
+        break;
+    case 'popup':
+        return 'js: linodef_buttonsapi_popup("'. $base_url .'/linodef/popup/'. $modulename .'/'. $drupal_element .'/'. $option_string_path .'", 600, 500);';
+        break;
+    }
+}

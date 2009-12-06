@@ -1,0 +1,31 @@
+// $Id: CHANGELOG.txt,v 1.1.2.3 2008/12/03 17:59:00 roidanton Exp $
+
+Linodef 6.x-1.0-rc2, 2008-12-03
+-------------------------------
+#329424 by Roi Danton: Added autocomplete and list popup window.
+- Added new submodule: Excluded the API from the default Linodef module due to its new requirements and created Linodef Buttons API.
+- Renamed folder for submodule BUEditor Buttons to from linodef_bueditor to linodef_buttons_bueditor.
+- Renamed submodule Linodef BUEditor Buttons to Linodef Buttons - BUEditor.
+#329424 by Roi Danton: Changed code for the BUEditor Buttons to include the button types. Upgrade the code of your BUEditor Buttons! (see help or cvs files included into the submodule)
+#335438 by Roi Danton: Added support for CCKs Content Permissions.
+#335433 by Roi Danton: Added "pass-through" of filtered layout of embedded fields.
+#329424 by Roi Danton: Added stylesheet for popup/autocomplete windows of Buttons API.
+#329424 by Roi Danton: Added explanation inside popup/autocomplete windows.
+#329424 by Roi Danton: Added close button to popup/autocomplete windows.
+#337302 by Roi Danton: Added titles to the button list. Titles contain tags.
+#337299 by Roi Danton, druppi: Changed syntax to provide more flexibility, enables the inclusion of options and comments. Check your tags that are already included!
+- Added admin settings page for Linodef and Linodef API to support the following feature additions.
+#329874 by Roi Danton: Added automatic inclusion of comments by buttons.
+#337302 by Roi Danton: Added different possibilities to sort button lists.
+#335438 by Roi Danton: Added customizable access denied message.
+#337299 by Roi Danton: Added new filter option to provide an easy connection between multilanguage nodes.
+#337299 by Roi Danton: Changed code for the BUEditor Buttons again to exchange $no_link with the new tag options. Upgrade the code of your BUEditor Buttons! (see help or cvs files included into the submodule)
+- Implemented message handling methods: levels and locations.
+- Revised message function to support drupal_set_message and message handling methods.
+- Updated Filter tips.
+- Updated documentation to reflect all those new features.
+- Updated pot and po files.
+
+Linodef 6.x-1.0-rc1, 2008-11-01
+-------------------------------
+Initial Release of Linodef for Drupal 6.x

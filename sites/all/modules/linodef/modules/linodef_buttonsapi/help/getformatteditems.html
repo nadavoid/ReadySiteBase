@@ -1,0 +1,52 @@
+﻿<!-- $Id: getformatteditems.html,v 1.1.2.2 2008/11/30 13:00:31 roidanton Exp $ -->
+For most buttons it is enough to use the function explained here. It returns an array which contains a string with a formatted itemlist that your buttons can use as is.
+
+<h4>Name</h4>
+<pre>linodef_buttonsapi_itemlist</pre>
+<h4>Parameter</h4>
+<dl>
+<dt>string $calling_module</dt>
+<dd>The name of the module that calls this function. Needed for javascript file and function to use when clicked on an item.</dd>
+<dt>string $drupal_element</dt>
+<dd>The element to retrieve the data from. This has to be a <a href="&topic:linodef_buttonsapi/elementtypes&">supported element type</a>.</dd>
+<dt>string $option_string_path</dt>
+<dd>(Optional) Containing <a href="&topic:linodef/options&">tag options</a>, separated by "_" instead of "," (<a href="&topic:linodef/util&">path compatible</a>).</dd>
+</dl>
+<h4>Return</h4>
+<ul>
+<li>An <strong>array</strong> with the elements required for the button:
+<pre>
+Array
+(
+    [data] => Array
+        (
+            [0] => Array
+                (
+                    [tag] => see description below
+                    [desc] => see description below
+                )
+            etc. (one array for each element with content)
+        )
+
+    [name] => 'The label(s) or name of the element you have entered.'
+    [element type][input] => 'The <a href="&topic:linodef_buttonsapi/elementtypes&">element type</a> of the element you have entered.'
+    [element type][output] => 'The element type of the elements that Buttons API returns.'
+    [element] => 'The element you have entered.'
+    [options] => see description below
+    [content] => see description below
+)
+</pre>
+<strong>'tag'</strong> contains the tag that the button will insert into the textfield. Its a <a href="&base_url&filter/tips#linodef">Linodef filter tag</a>.
+<strong>'desc'</strong> contains the corresponding text to the tag which should appear in the selection list of the button. If the user has no access rights for the current node this field may also contain an "access denied" message (then the associated tag key is empty).
+<strong>'options'</strong> is an array if <a href="&topic:linodef/options&">options</a> are set or an empty string.
+<strong>'content'</strong> is a string with an HTML formatted list of linked items created with 'tag' and 'desc' of the 'data' array. This string is ready to be used by your list and popup buttons.
+</li>
+<li>or - in case the data could not be obtained - an <strong>array</strong> with an info message containing the reasons
+<pre>
+Array
+(
+    [content] => 'A message'
+)
+</pre>
+</li>
+</ul>

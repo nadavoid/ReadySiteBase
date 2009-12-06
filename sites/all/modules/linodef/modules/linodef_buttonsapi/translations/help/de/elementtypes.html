@@ -1,0 +1,16 @@
+﻿<!-- $Id: elementtypes.html,v 1.1.2.2 2008/11/30 13:00:31 roidanton Exp $ -->
+Die <a href="&topic:linodef/editorbuttons-mainfunction&">Datenermittlungsfunktion</a> der <em>Linodef Schaltflächen API</em> filtert den Parameter nach dem Elementtypen, der beim Erstellen der Editorschaltfläche eingegeben wurde. Die folgende Liste zeigt unterstützte Elementtypen sowie die Elemente, die die Schalflächen API daraufhin ausgibt:
+<dl>
+<dt>Feldname</dt>
+<dd>Die Werte der Felder mit diesem Namen sowie die eingeklammerten Titel der zugehörigen Nodes, d.h. Feldname (Nodetitel).</dd>
+<dt>Inhaltstyp</dt>
+<dd>Die Titel der Nodes dieses Inhaltstypes.</dd>
+<dt>Vokabular ID</dt>
+<dd>Alle Taxonomiebegriffe, die Teil des Vokabulars sind.</dd>
+</dl>
+Dabei ist zu beachten, dass auch die Vokabular ID als <strong>String</strong> eingegeben werden muss.
+
+<h6>Sicherheitshinweise</h6>
+Falls der aktuelle Benutzer keine Zugriffsrechte zu einzelnen Nodes besitzt, so tauchen diese bei Anzeige der Schaltfläche für den Benutzer auch nicht auf.
+
+Bei Verwendung von Modulen Dritter, die in das Zugriffsmanagement von Drupal eingreifen und dabei ausversehen die Funktion node_access() umgehen, <em>kann</em> es <em>unter Umständen</em> zu unbeabsichtigten Ergebnissen kommen (Nodes, auf die der Nutzer keinen Zugriff hat, tauchen trotzdem in der Liste auf oder andersherum). In diesem Fall bitte einen Eintrag in den Linodef "issue queue" vornehmen und dabei das benutzte Modul benennen sowie ein kurze Beschreibung der Symptome verfassen.

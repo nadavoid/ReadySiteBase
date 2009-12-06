@@ -1,0 +1,16 @@
+﻿<!-- $Id: permissions.html,v 1.1.2.1 2008/11/30 13:00:31 roidanton Exp $ -->
+Linodef nutzt folgende Zugriffsberechtigungen:
+<ul>
+<li>node access: view node</li>
+<li>content permission: view field (nur, wenn das Modul aktiviert ist)</li>
+</ul>
+Diese Berechtigungen werden bei der Ersetzung der Tags geprüft und streng angewandt. Um dem Administrator das Leben zu erleichten, können in den <a href="&base_url&admin/settings/linodef">Linodef Einstellungen</a> die "Zugriff verweigert" Nachricht verändert oder die Berechtigungsnachrichten für Linodef Tags komplett unterdrückt werden.
+
+<h6>Strenge Zugriffskontrolle</h6>
+Folgendes Szenario: Jemand liest einen Text, der Linodef Tags enthält, aber der Leser besitzt keine Zugangsberechtigung zu diesen verlinkten Nodes. Einerseits wäre es eine große Sicherheitslücke, wenn er den Nodetitel oder die Feldwerte eines Nodes sehen könnte, zu dem er normalerweise keinen Zutritt hat. Andererseits wird niemand einen Text lesen wollen, der mehrmals die Wortgruppe <em>Zutritt verweigert</em>  enthält.
+
+Daher <em>scheint</em> eine dritte Herangehensweise geeignet: Falls der Benutzer keinen Zutritt zu einem Node hat, dann soll für diesen Node einfach kein Link im Text angezeigt werden. Damit weiß der Nutzer nicht, ob und wann er einen Node bzw. Feldwert liest und kann daher auch keinerlei Rückschlüsse auf den Node ziehen.
+
+Allerdings birgt diese Methode einen gewaltigen Nachteil: Falls dieser Nutzer einen Kommentar schreibt und Linodef Tags per Hand eintippt, so könnte er bei der Vorschau bzw. nach dem Absenden des Kommentars den Nodetitel bzw. Feldwert sehen, obwohl dies laut der Rechteverwaltung nicht möglich sein darf. Das wäre eine ernsthafte Sicherheitslücke. Aus diesem Grund sollte momentan sichergestellt sein, dass die Leser eines Textes Zugriff zu den dort verlinkten Nodes haben. Andernfalls wird für sie innerhalb des Textes die Wortgruppe <em>Zutritt verweigert</em> anstatt des Nodetitels oder Feldwertes erscheinen.
+
+Wenn es noch eine vierte, umsetzbare Heransgehensweise gibt, so bitte einen Beitrag im Linodef "issue queue" auf drupal.org verfassen.

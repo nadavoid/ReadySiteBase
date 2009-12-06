@@ -1,0 +1,16 @@
+﻿<!-- $Id: elementtypes.html,v 1.1.2.2 2008/11/30 13:00:31 roidanton Exp $ -->
+The <a href="&topic:linodef_buttonsapi/getrawdata&">data retrieve function</a> of <em>Linodef Buttons API</em> filters the parameter for the element type you entered as you created the editors button. The following list shows the supported element types as well as the elements that the buttons API returns:
+<dl>
+<dt>fieldname</dt>
+<dd>The values of all fields with that name as well as the title of the corresponding node in brackets, i.e. Fieldname (Node title). See <a href="&topic:linodef/fieldtypes&">supported field types</a>.</dd>
+<dt>content type</dt>
+<dd>The titles of all the nodes of this content type.</dd>
+<dt>vocabulary ID</dt>
+<dd>All taxonomy terms that are part of the vocabulary.</dd>
+</dl>
+Heed that even the vocabulary ID has to be entered as a <strong>string</strong> though it only consists of digits.
+
+<h6>Security advices</h6>
+If the current user has no access to some nodes those won't appear in the button list. This works at least with the default Drupal access management.
+
+If you are using contributed modules that alter the default access management and override node_access() by accident they could cause unintended results (e.g. not all nodes appear in the button list). When this happens please post this at the Linodef issue queue and include at least the name of the module and a short description of the symptoms.

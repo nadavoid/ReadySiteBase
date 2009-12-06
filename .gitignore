@@ -1,0 +1,13 @@
+.bzr*
+sites/default/*
+sites/default/tmp/*
+sites/default/files/*
+sites/all/themes/*
+backup
+backup/*
+_sites.txt
+_test.php
+.htaccess
+sites/default/files/backup_migrate/manual/DrupalBase.sql.gz
+sites/default/files/backup_migrate/manual/test.txt
+*.kpf

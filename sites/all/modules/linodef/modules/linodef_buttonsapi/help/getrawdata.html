@@ -1,0 +1,17 @@
+﻿<!-- $Id: getrawdata.html,v 1.1.2.2 2008/11/30 13:00:31 roidanton Exp $ -->
+This function retrieves the data for <a href="&topic:linodef_buttonsapi/getformatteditems&">linodef_buttonsapi_itemlist</a>. Its return array does not have the content key so if your button does not need a formatted list use this function.
+
+<h4>Name</h4>
+<pre>linodef_buttonsapi_rawdata</pre>
+<h4>Parameter</h4>
+<dl>
+<dt>string $drupal_element</dt>
+<dd>See <a href="&topic:linodef_buttonsapi/getformatteditems&">get formatted items</a>.</dd>
+<dt>string $option_string_path</dt>
+<dd>See <a href="&topic:linodef_buttonsapi/getformatteditems&">get formatted items</a>.</dd>
+</dl>
+<h4>Return</h4>
+<ul>
+<li>If the data retrieving is successful, than the [content] key is not part of the this array. Besides that it is similiar to the array <a href="&topic:linodef_buttonsapi/getformatteditems&">get formatted items</a> returns.</li>
+<li>If the data could not be obtained, a <strong>string</strong> is returned with an info message containing the reasons.</li>
+</ul>

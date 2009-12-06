@@ -1,0 +1,7 @@
+﻿<!-- $Id: filter.html,v 1.1.2.1 2008/11/30 13:00:30 roidanton Exp $ -->
+After you've installed Linodef go to <a href="&base_url&admin/settings/filters">Administer &rarr; Settings &rarr; Input types</a> and enable <em>Linodef</em> for the input type of your choice.
+
+For information how to use the <em>Linodef tags</em> refer to the <a href="&base_url&filter/tips#linodef">Input type tips page</a>.
+
+<h6>Layout of embedded fields</h6>
+Embedded fields will have the same layout as in their original node i.e. they use all the filters of the default input format to markup their text. With one exception: If that field contains Linodef tags they are removed to avoid an infinite recursion. This is the case if users refer fields to each other or to itself with Linodef tags.

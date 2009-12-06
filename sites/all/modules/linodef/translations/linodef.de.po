@@ -1,0 +1,403 @@
+# $Id: linodef.de.po,v 1.1.2.2 2008/11/30 13:54:07 roidanton Exp $
+#
+# German translation of Linodef
+# Copyright 2008 Roi Danton
+# Generated from files:
+#  linodef.module,v 1.1.2.1 2008/11/14 14:02:23 roidanton
+#  linodef-filter.inc,v 1.1.2.3 2008/11/18 14:46:04 roidanton
+#  linodef.info,v 1.1.2.1 2008/11/14 14:02:23 roidanton
+#  linodef-filter-tips.inc,v 1.1.2.1 2008/11/14 14:02:23 roidanton
+#  theme/linodef.admin.inc: n/a
+#  indrupal message
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2008-11-30 12:14+0100\n"
+"PO-Revision-Date: 2008-11-30 12:14+0100\n"
+"Last-Translator: Roi Danton\n"
+"Language-Team: takera.net\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: linodef.module:20
+msgid "Linodef - Link nodes & taxonomy terms and embed field values & term names."
+msgstr ""
+"Linodef - Verlinkt Nodes & Taxonomiebegriffe und bindet Feldwerte & "
+"Begriffsnamen ein."
+
+#: linodef.module:31
+msgid "Substitutes the Node ID for the node title or field value & links to this node. Furthermore Linodef substitutes the term ID for the term name & links to the term."
+msgstr ""
+"Ersetzt die Node ID mit dem Nodetitel oder einem Feldwert und erstellt "
+"einen Link zum Node. Darüberhinaus ersetzt Linodef die Begriffs ID "
+"mit dem Begriffsnamen und verlinkt den Begriff."
+
+#: linodef.module:68
+msgid "Embeds node title or field values by node ID and terms by term ID (<a href=\"@format-tips-page\">[#8], [#8:field_name], [#8:field_name:2], &lt;#8&gt;Your Text&lt;/#8&gt;, [#t8]</a>)."
+msgstr ""
+"Integriert Nodetitel oder Feldwerte mittels Node ID bzw. "
+"Taxonomiebegriffe mittels Begriffs ID (<a "
+"href=\"@format-tips-page\">[#8], [#8:field_name], [#8:field_name:2], "
+"&lt;#8&gt;eigener Text&lt;/#8&gt;, [#t8]</a>)."
+
+#: linodef.module:137 includes/linodef-filter.inc:222
+msgid "Node"
+msgstr "Node"
+
+#: linodef.module:140
+msgid "Field"
+msgstr "Feld"
+
+#: linodef.module:143
+msgid "Term"
+msgstr "Begriff"
+
+#: linodef.module:146
+msgid "Content type"
+msgstr "Inhaltstyp"
+
+#: linodef.module:149
+msgid "Vocabulary"
+msgstr "Vokabular"
+
+#: linodef.module:152;218
+msgid "Unknown key %key with value %value for %variable in %function"
+msgstr "Unbekannter Schlüssel %key mit dem Wert %value für %variable in %function"
+
+#: linodef.module:167
+msgid "Access to !element denied"
+msgstr "Zutritt zu !element verweigert"
+
+#: linodef.module:176
+msgid "!element not found"
+msgstr "!element nicht gefunden"
+
+#: linodef.module:179
+msgid "!element not found"
+msgstr "!element besitzt keinen Inhalt"
+
+#: linodef.module:183
+msgid "Unknown error type %type for %variable of the first parameter of %function"
+msgstr "Unbekannter Fehlertyp %type für %variable des ersten Parameters von %function"
+
+#: linodef.module:196
+msgid "Linodef tag with id %id ignores option %option"
+msgstr "Der Linodef Tag mit der ID %id ignoriert die Option %option"
+
+#: linodef.module:199;207
+msgid "Variable %variable of the first parameter of %function has to be an array with keys %keys"
+msgstr "Die Variable %variable des ersten Parameters von %function muss ein Array mit den Schlüsseln %keys sein"
+
+#: linodef.module:204
+msgid "Linodef tag with id %id contains unknown option %option (all options must be written in lower case)"
+msgstr "Der Linodef Tag mit der ID %id beinhaltet die unbekannte Option %option (alle Optionen müssen kleingeschrieben werden)"
+
+#: linodef.module:211
+msgid "Install & activate module %module"
+msgstr "Module %module sollte installiert & aktiviert werden"
+
+#: linodef.module:214
+msgid "Check value for %variable or ask your site administrator."
+msgstr "Wert für %variable überprüfen oder den Administrator der Seite konsultieren"
+
+#: linodef.module:217
+msgid "Supported fields must store a (single or multiple) value such as textfields & datefield (from date)."
+msgstr ""
+"Linodef unterstützt Felder (unbegrenzte Anzahl an Werten möglich) "
+"die einen Wert zurückgeben, wie Textfelder und Datumsfelder "
+"(Startdatum)."
+
+#: linodef.module:247
+msgid "Parameter %variable of %function has to be an array."
+msgstr "Der Parameter der %variable von %function muss ein Array sein"
+
+#: linodef.module:80 linodef.info:0;0 includes/linodef-filter-tips.inc:17 modules/linodef_buttons_bueditor/linodef_buttons_bueditor.info:0 modules/linodef_buttonsapi/linodef_buttonsapi.info:0
+msgid "Linodef"
+msgstr "Linodef"
+
+#: linodef.module:81
+msgid "Adjust settings for Linodef"
+msgstr "Einstellungen für Linodef anpassen"
+
+#: linodef.module:0
+msgid "linodef"
+msgstr "linodef"
+
+#: linodef.info:0
+msgid "Provides tags for internal node and term links based on their ID and dynamically embeds node titles, field values and term names"
+msgstr ""
+"Stellt Tags für interne Node und Begriffsverlinkung auf Basis ihrer "
+"ID zur Verfügung und integriert Nodetitel, Feldwerte und "
+"Begriffsnamen dynamisch."
+
+#: includes/linodef-filter-tips.inc:18
+msgid "%Linodef is a filter for internal links. It uses a simple but unique markup so %Linodef doesn't interfere with other filter modules."
+msgstr ""
+"%Linodef ist ein Filter für interne Links. Er nutzt eine einfache "
+"aber eindeutige Textauszeichnung, so dass %Linodef andere Filtermodule "
+"nicht störend beeinflusst."
+
+#: includes/linodef-filter-tips.inc:19
+msgid "The ID of a node or of a taxonomy term and optionally a fieldname are the solely elements stored in your text. One advantage of this method in comparison to similar filter modules is the fact that the links don't break if you change the node title or term name. Furthermore, if you change the title of the node or the value of a field or the name of a term then those are automatically updated in your text, too."
+msgstr ""
+"Die ID eines Nodes oder eines Taxonomiebegriffs und optional ein "
+"Feldname sind die einzigen Elemente, die im Text gespeichert werden. "
+"Ein Vorteil dieser Methode im Verlgeich zu anderen Filtermodulen ist "
+"die Tatsache, dass die Links auch im Falle einer Änderung des "
+"Nodetitels oder Begriffsnamens gültig bleiben."
+
+#: includes/linodef-filter-tips.inc:24
+msgid "Embed elements"
+msgstr "Element einbinden"
+
+#: includes/linodef-filter-tips.inc:25
+msgid "To embed elements into your text, prepend the element ID with the hash key # and surround them by brackets []: [#ID]. That way a node title is inserted and linked. To embed the content of a field, add the field name: [#ID:field_name]. Moreover it is possible to add a field value number in the case you have a field with multiple values and want to use a different value than the first: [#ID:field_name:number]."
+msgstr "Zur Einbindung von Elementen in Texte muss vor der Element ID die Raute # stehen und beides von rechteckigen Klammern eingerahmt sein: [#ID]. Auf diese Weise wird eine Nodetitel eingebunden und verlinkt. Um den Inhalt eines Feldes einzubinden, muss der Feldname hinzugefügt werden: [#ID:field_name]. Weiterhin ist es möglich, bei einem Feld mit mehreren Werten, den genauen Feldwert anzugeben: [#ID:field_name:zahl]."
+
+#: includes/linodef-filter-tips.inc:26;88
+msgid "The syntax is as following:"
+msgstr "Die Syntax lautet:"
+
+#: includes/linodef-filter-tips.inc:29
+msgid "Embed node title and link to the node."
+msgstr "Integriert Nodetitel und verlinkt zum Node."
+
+#: includes/linodef-filter-tips.inc:29;77;78 modules/linodef_buttonsapi/theme/linodef_buttonsapi.admin.inc:66
+msgid "node title"
+msgstr "Nodetitel"
+
+#: includes/linodef-filter-tips.inc:30;31
+msgid "Embed field value and link to the node."
+msgstr "Integriert Feldwert und verlinkt zugehörigen Node."
+
+#: includes/linodef-filter-tips.inc:30
+msgid "field value"
+msgstr "Feldwert"
+
+#: includes/linodef-filter-tips.inc:31
+msgid "certain field value of a multiple values field"
+msgstr "bestimmter Feldwert eines Feldes mit mehreren Werten"
+
+#: includes/linodef-filter-tips.inc:35
+msgid "Example for nodes and fields"
+msgstr "Beispiel für Nodes und Felder"
+
+#: includes/linodef-filter-tips.inc:36
+msgid "We have a node with id=!id and a title %title. It contains a multiple value field called !firstnames. The first value is %value1, second is %value2. Note that the field value numbers start at 0, so first value has number &quot;0&quot;, second has number &quot;1&quot; etc. If the node has a path alias then the link contains this instead of the default drupal path (the examples are limited to the default paths)."
+msgstr ""
+"Gegeben ist ein Node mit der id=!id sowie dem Titel %title. Er "
+"enthält ein Feld mit mehreren Werten und dem Feldnamen !firstnames. "
+"Der erste Wert lautet %value1, der zweite %value2. Zu beachten ist, "
+"dass die Nummern für die Feldwerte mit 0 beginnen, so dass der erste "
+"Wert die Nummer \"0\" besitzt, der zweite hat die Nummer \"1\" usw. "
+"Falls dem Node ein lesbarer Pfad zugeordnet ist, dann wird dieser "
+"anstatt des standardmäßigen Drupalpfades genutzt (die folgende "
+"Beispiele sind auf die Standardpfade beschränkt)."
+
+#: includes/linodef-filter-tips.inc:49
+msgid "Alter embedding by tag options"
+msgstr "Alternative Einbindungen durch Optionen"
+
+#: includes/linodef-filter-tips.inc:50
+msgid "Options can modify the ID type and the embed method. They are entered right after the ID or the field settings and are separated by a comma. The number of options a tag can have is not limited."
+msgstr "Optionen können die Art der ID sowie die Einbundungsmethode modifizieren. Sie werden direkt nach der ID oder der Feldeinstellungen eingegeben und durch ein Komma abgetrennt. Die Anzahl an Optionen innerhalb eines Tags ist unbegrenzt."
+
+#: includes/linodef-filter-tips.inc:53
+msgid "Embed an element with options."
+msgstr "Einbindung eines Elements mit Optionen."
+
+#: includes/linodef-filter-tips.inc:53;54;55;79
+msgid "Depends on the options used."
+msgstr "Abhängig von den verwendeten Optionen."
+
+#: includes/linodef-filter-tips.inc:54
+msgid "Embed a field value with options."
+msgstr "Einbinden eines Feldwertes mit Optionen."
+
+#: includes/linodef-filter-tips.inc:55
+msgid "Embed a certain field value with options."
+msgstr "Einbinden eines bestimmten Feldwertes mit Optionen."
+
+#: includes/linodef-filter-tips.inc:59
+msgid "Example for ID type and embed modification options"
+msgstr "Beispiel für ID Varianten und Modifikationen der Einbindung"
+
+#: includes/linodef-filter-tips.inc:60
+msgid "Here we use the embed modification option \"nolink\" to have an output without a link to the element and the ID type option \"tid\" to embed a taxonomy term instead of a node. The taxonomy term has the id=!id and the name %termname. If the term has a path alias then the link contains this instead of the default drupal path (the example is limited to the default path). Furthermore we have a node (optional option \"nid\") with id=!id and the title %nodetitle."
+msgstr "In diesem Beispiel wird die Modifikation \"nolink\" benutzt, um die Ausgabe nicht zu verlinken; sowie die ID Variante \"tid\", um einen Taxonomiebegriff anstatt eines Nodes einzubetten. Der Taxonomiebegriff hat die ID=!id und den Namen %termname. Falls dem Begriff ein lesbarer Pfad zugeordnet ist, so wird dieser anstelle des standardmäßigen Drupalpfades genutzt (die folgenden Beispiele sind auf die Standardpfade begrenzt). Weiterhin gibt es einen Node (optionale ID Variante \"nid\") mit der ID=!id und dem Titel %nodetitle."
+
+#: includes/linodef-filter-tips.inc:72
+msgid "Use comments to flag your tags for editors"
+msgstr "Kommentare zur Kennzeichnung der Tags für Bearbeiter"
+
+#: includes/linodef-filter-tips.inc:73
+msgid "Comments act as an indicator for Linodef tags, to describe your tag for yourself or other editors. A comment can be inserted inside the tag prepended with a space and it may consist of all UTF-8 characters except the closing bracket ]."
+msgstr "Kommentare dienen zur Kennzeichnung von Linodef Tags, zur Beschreibung des Tags für alle Bearbeiter. Ein Kommentar kann innerhalb des Tags eingefügt werden. Dazu braucht lediglich ein Leerzeichen vorangestellt zu sein. Er darf alle UTF-8 Zeichen bis auf die schließende, eckige Klammer ] enthalten."
+
+#: includes/linodef-filter-tips.inc:74
+msgid "Comments are visible only during editing and never appear by viewing a text. The nature of comments is that they must not modified automatically and therefore will not change unless you change it. This is important to understand since the content the tag displays can change automatically and so the comment may be outdated. So try to use a common description."
+msgstr "Kommentare sind nur während des Bearbeitens sichtbar und tauchen niemals beim Anschauen eines Textes auf. Üblicherweise werden Kommentare nicht automatisch aktualisiert. Hingegen kann der Inhalt, den ein Tag darstellt, automatisch geändert werden, so dass dann der Kommentar vielleicht nicht mehr zutreffend ist. Deshalb sind allgemein gehaltene Kommentare zu bevorzugen."
+
+#: includes/linodef-filter-tips.inc:77
+msgid "Use comments to give information about the tag during editing."
+msgstr "Kommentare zur Tag-Kennzeichnnung während des Bearbeitens nutzen."
+
+#: includes/linodef-filter-tips.inc:78
+msgid "Comment a field content."
+msgstr "Kommentieren eines Feldinhaltes."
+
+#: includes/linodef-filter-tips.inc:79
+msgid "Comments work together with options."
+msgstr "Kommentare funktionieren zusammen mit Optionen."
+
+#: includes/linodef-filter-tips.inc:86
+msgid "Create node links with own linktext"
+msgstr "Links zu Nodes mit eigenem Linktext erstellen"
+
+#: includes/linodef-filter-tips.inc:88;93;93
+msgid "your Text"
+msgstr "eigener Text"
+
+#: includes/linodef-filter-tips.inc:90
+msgid "Example"
+msgstr "Beispiel"
+
+#: includes/linodef-filter-tips.inc:133
+msgid "Tag Description"
+msgstr "Tag-Beschreibung"
+
+#: includes/linodef-filter-tips.inc:133;136
+msgid "You Type"
+msgstr "Eingegeben"
+
+#: includes/linodef-filter-tips.inc:133;136
+msgid "You Get"
+msgstr "Ergebnis"
+
+#: includes/linodef-filter.inc:68
+msgid "since a fieldname is set and therefore the node ID is used instead of the term ID"
+msgstr "da der Feldname gesetzt ist und daher die Node ID anstatt der Begriffs ID genutzt wird"
+
+#: includes/linodef-filter.inc:82
+msgid "since a taxonomy term does not use content translation"
+msgstr "weil ein Taxonomiebegriff keine Übersetzung nutzt."
+
+#: includes/linodef-filter.inc:86
+msgid "Enter a further option for Linodef tag with id %id or remove the last comma inside the tag"
+msgstr "Einen weitere Option zum Linodef Tag mit der ID %id hinzufügen oder das letzte Komma innerhalb des Tags entfernen"
+
+#: includes/linodef-filter.inc:94
+msgid "Enter an option for Linodef tag with id %id or remove the comma inside the tag"
+msgstr "Eine Option zum Linodef tag mit der ID %id hinzufügen oder das Komma innerhalb des Tags entfernen"
+
+#: includes/linodef-filter.inc:128
+msgid "desired to linking %usertext"
+msgstr "gedacht, um %usertext zu verlinken"
+
+#: includes/linodef-filter.inc:162
+msgid "to use the option %option of Linodef tag with id %nid"
+msgstr "zur Nutzung der Option %option im Linodef Tag mit der ID %nid"
+
+#: includes/linodef-filter.inc:187
+msgid "Field %field of node %nid has no content and hence cannot be embedded. Create content for that field or revise the Linodef tag which contains %erroneous_tag"
+msgstr "Das Feld %field des Nodes %nid hat keinen Inhalt und kann daher nicht eingebunden werden. Entweder etwas in dieses Feld schreiben oder den Linodef Tag mit dem Inhalt %erroneous_tag überarbeiten"
+
+#: includes/linodef-filter.inc:192
+msgid "Value %valuenumber of field %field of node %nid not found or has no content and hence cannot be embedded. Create content for that field or revise the Linodef tag which contains %erroneous_tag"
+msgstr "Der Wert %valuenumber des Feldes %field des Nodes %nid kann nicht gefunden werden oder hat keinen Inhalt. Entweder etwas in dieses Feld schreiben oder den Linodef Tag mit dem Inhalt %erroneous_tag überarbeiten"
+
+#: includes/linodef-filter.inc:197
+msgid "or is not assigned to content type of node %nid"
+msgstr "oder ist nicht dem Inhaltstyp des Nodes %nid zugewiesen"
+
+#: includes/linodef-filter.inc:251
+msgid "Shows a teaser list of nodes using term @term"
+msgstr "Zeigt eine Teaserliste von Nodes, die den Begriff @term nutzen"
+
+#: theme/linodef.admin.inc:20
+msgid "Linodef messages"
+msgstr "Linodef Benachrichtigungen"
+
+#: theme/linodef.admin.inc:24
+msgid "Access denied message"
+msgstr "Zugriff verweigert Nachricht"
+
+#: theme/linodef.admin.inc:26
+msgid "If the user has no access to an embedded element this message is shown instead of the embedded text."
+msgstr "Falls der Benutzer keinen Zugang zu einem eingebundenen Element besitzt, wird diese Nachricht anstatt des Elementes angezeigt."
+
+#: theme/linodef.admin.inc:30
+msgid "Also this message replaces items in the Linodef elementlist of an editorbutton. This is the case if the user has edit permissions but has no access to certain (or all) items of the list."
+msgstr "Desweiteren ersetzt diese Nachricht Einträge in der Linodef Elementliste einer Editorschaltfläche. Dies ist der Fall, wenn der Benutzer zwar Bearbeitungsrechte hat, aber keinen Zugang zu bestimmten (oder allen) Einträgen dieser Liste."
+
+#: theme/linodef.admin.inc:32
+msgid "!element contains the element type and the element id, e.g. Node 10 or Field field_example. It is recommended to use !element in this message."
+msgstr "!element beinhaltet den Elementtypen sowie die Element ID, z.B. Node 10 oder Feld field_example. Die Verwendung von !element innerhalb der Nachricht wird empfohlen."
+
+#: theme/linodef.admin.inc:33
+msgid "If you have a multilanguage site you have to add the translation for your message manually."
+msgstr "Übersetzungen dieser Nachricht müssen manuell erstellt werden."
+
+#: theme/linodef.admin.inc:37
+msgid "Linodef message location"
+msgstr "Ort der Linodef Benachrichtigungen"
+
+#: theme/linodef.admin.inc:39
+msgid "Show messages inline"
+msgstr "Zeige Benachrichtigungen innerhalb des Textes"
+
+#: theme/linodef.admin.inc:39
+msgid "Show page messages"
+msgstr "Zeige Benachrichtigungen als Seitennachricht"
+
+#: theme/linodef.admin.inc:40
+msgid "The place where the messages appear can be adjusted here: Page messages are displayed with the default drupal message system (messages in the green, yellow or red box)."
+msgstr "Hier können die Orte ausgewählt werden, an denen Nachrichten erscheinen sollen: Seitennachrichten werden mit dem standardmäßigen Drupal Nachrichtensystem erstellt (Nachrichten in den grünen, gelben oder roten Kästen)."
+
+#: theme/linodef.admin.inc:43
+msgid "Inline messages appear directly in the text and in the Linodef elementlist of an editorbutton."
+msgstr "Nachrichten innerhalb des Textes erscheinen direkt auf der Tagposition sowie in der Linodef Elementliste einer Editorschaltfläche."
+
+#: theme/linodef.admin.inc:46
+msgid "Inline messages appear directly in the text."
+msgstr "Nachrichten innerhalb des Textes erscheinen direkt auf der Tagposition."
+
+#: theme/linodef.admin.inc:48
+msgid "Be careful when deactivating both as it will confuse your editorial staff members and your visitors in case some Linodef tags have a wrong syntax; what could happen since without messages the editor gets no cue when he enters a Linodef tag in a wrong manner. Not to mention that finding the fault might be an exhausting task without helpful hints."
+msgstr "Wenn alle Benachrichtigungsorte deaktivert sind, können im Falle des Vorhandenseins fehlerhafter Linodef Tags Bearbeiter und Besucher verwirrt werden. Bei keiner Anzeige von Benachrichtigung ist die Wahrscheinlichkeit für die Entstehung fehlerhafter Linodef Tags erhöht, da der Bearbeiter nicht auf Fehler während der Bearbeitung hingewiesen wird. Darüberhinaus ist die Fehlerfindung ohne helfende Nachrichten extrem mühsam."
+
+#: theme/linodef.admin.inc:52
+msgid "Linodef message level"
+msgstr "Linodef Benachrichtigungsschwelle"
+
+#: theme/linodef.admin.inc:54
+msgid "Show all messages"
+msgstr "Zeige sämtliche Benachrichtigungen"
+
+#: theme/linodef.admin.inc:54
+msgid "Show critical & access messages"
+msgstr "Zeige nur kritische & Zugriffsbenachrichtigungen"
+
+#: theme/linodef.admin.inc:54
+msgid "Show critical messages only"
+msgstr "Zeige nur kritische Benachrichtigungen"
+
+#: theme/linodef.admin.inc:55
+msgid "Normal (warning) messages give the user indicators about syntax faults, lacking (optional) modules to enable a feature he tries to use and the decision Linodef has made whereupon. Critical messages show up if the tag cannot be substituted due to lacking elements and access messages in case of denied access."
+msgstr "Normale Nachrichten (Warnungsstufe) geben den Benutzer Hinweise über Syntaxfehler, fehlende (optionale) Module für benutzte Funktionen und die Entscheidungen, die Linodef daraufhin getroffen hat. Kritische Nachrichten erscheinen, wenn der Tag nicht ersetzt werden kann, weil Elemente fehlen und Zugriffsnachrichten, weil der Zugriff verweigert wurde."
+
+#: theme/linodef.admin.inc:59
+msgid "In Linodef Buttons API critical messages appear if the entire button is empty because the entered element is not valid. If it is empty due to access restrictions for the current user then an access message is shown. Furthermore access messages include information about access restriction of a single button item."
+msgstr "In der Linodef Schaltflächen API erscheinen kritische Nachrichten, falls die gesamte Schaltfläche leer ist in Folge der Eingabe eines ungültigen Elements. Falls die Schaltfläche wegen einer Zugriffsverweigerung leer ist, so ist dies eine Zugriffsnachricht. Weiterhin erscheinen Zugriffsnachrichten bei Zugriffsverweigerungen für einzelne Listeneinträge."
+
+#: message-for-editors-submodules
+msgid "Module !module not enabled!"
+msgstr "Module !module nicht aktiviert!"
+

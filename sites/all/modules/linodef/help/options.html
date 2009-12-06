@@ -1,0 +1,23 @@
+﻿<!-- $Id: options.html,v 1.1.2.1 2008/11/30 13:00:30 roidanton Exp $ -->
+Tag options enhance the applicability of Linodef tags and make them expandable without the need for changing their structure. There are two kinds of options:
+<ul>
+<li>ID type: assigns an element type to the tag ID</li>
+<li>embed modification: manipulates the way how the tag is substituted</li>
+</ul>
+Regarding the <a href="&base_url&filter/tips#linodef">usage of the options</a> there are no differences between ID type options and embed modification options. The following options are available:
+
+<h4>ID types</h4>
+<dl>
+<dt>nid</dt>
+<dd>ID refers to a node (optional, always active if other ID types not set).</dd>
+<dt>tid</dt>
+<dd>ID refers to a taxonomy term.</dd>
+</dl>
+<h4>Embed modifications</h4>
+<dl>
+<dt>nolink</dt>
+<dd>The embedded element is not linked.</dd>
+<dt>translation=%language</dt>
+<dd>If the embedded node (#Node) has a translation in the specified language than the translated node is embedded instead. Senseful if you embed a node which has no translated node yet but you want to embed the translated node as soon as it is created.
+%language = en, de or es etc. Works only with ID type <em>nid</em>.</dd>
+</dl>

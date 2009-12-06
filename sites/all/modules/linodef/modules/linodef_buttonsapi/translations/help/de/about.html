@@ -1,0 +1,12 @@
+﻿<!-- $Id: about.html,v 1.1.2.2 2008/11/30 13:00:31 roidanton Exp $ -->
+<em>Linodef</em> bietet die <em>Schaltflächen API</em> für diejenigen an, die die <em>Linodef Schaltflächen</em> in ihrem bevorzugten Editor nutzen wollen, der aber bisher noch nicht durch ein Untermodul unterstützt wird.
+
+Vorzugsweise sollte dabei das <em>Linodef - BUEditor Modul</em> als Vorlage genutzt werden (den Untermodulordner kopieren &amp; umbennenen), um sich vollkommen auf die benötigten Anpassungen der .module Datei sowie der Hilfedatei im Ordner "help" konzentrieren zu können. Bei generellen Fragen zu Modulen in Drupal, bitte die Seiten <a href="http://drupal.org/node/231276">Modulerstellung in Drupal 6.x</a> im Handbuch zu Rate ziehen.
+
+Die folgenden Dinge müssen beim Erstellen eines Editorunterstützungsmoduls beachtet werden:
+<ol>
+<li>Die JavaScript Datei, die das onClick Ereignis enthält muss den Namen <em>modulname_functions.js</em> tragen und im Wurzelverzeichnis des Moduls liegen.</li>
+<li>Die JavaScript Funktion für das onClick Ereignis muss den Namen <em>modulname_onclick</em> tragen und einen String Parameter für den Linodef Tag bereitstellen.</li>
+</ol>
+
+Falls die Dokumentation nicht ausreichen sollte, so sind detaillierte Informationen über die einzelnen Funktionen <a href="&topic:linodef/structure&">im API Modul selbst</a> zu finden.
