@@ -1,5 +1,5 @@
 <?php
-// $Id: uc_paypal.pages.inc,v 1.1.2.10 2009/09/23 15:45:56 islandusurper Exp $
+// $Id: uc_paypal.pages.inc,v 1.1.2.11 2009/11/18 21:08:06 islandusurper Exp $
 
 /**
  * @file
@@ -388,12 +388,19 @@ function uc_paypal_ec_submit_form() {
 }
 
 // Handles a complete Website Payments Standard sale.
-function uc_paypal_complete($order_id = 0) {
-  if (intval($_SESSION['cart_order']) != $order_id) {
-    $_SESSION['cart_order'] = $order_id;
+function uc_paypal_complete($order) {
+  // If the order ID specified in the return URL is not the same as the one in
+  // the user's session, we need to assume this is either a spoof or that the
+  // user tried to adjust the order on this side while at PayPal. If it was a
+  // legitimate checkout, the IPN will still come in from PayPal so the order
+  // gets processed correctly. We'll leave an ambiguous message just in case.
+  if (intval($_SESSION['cart_order']) != $order->order_id) {
+    drupal_set_message(t('Thank you for your order! We will be notified by PayPal that we have received your payment.'));
+    drupal_goto('cart');
   }
 
-  if (!($order = uc_order_load($order_id))) {
+  // Ensure the payment method is PayPal WPS.
+  if ($order->payment_method != 'paypal_wps') {
     drupal_goto('cart');
   }
 
@@ -411,4 +418,3 @@ function uc_paypal_cancel() {
 
   drupal_goto(variable_get('uc_paypal_wps_cancel_return_url', 'cart'));
 }
-

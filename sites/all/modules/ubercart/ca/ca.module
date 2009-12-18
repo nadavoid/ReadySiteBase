@@ -1,5 +1,5 @@
 <?php
-// $Id: ca.module,v 1.1.2.17 2009/07/21 14:37:19 islandusurper Exp $
+// $Id: ca.module,v 1.1.2.18 2009/11/11 21:06:48 islandusurper Exp $
 
 /**
  * @file
@@ -161,10 +161,6 @@ function ca_perm() {
  *   TRUE or FALSE indicating if at least one predicate was evaluated.
  */
 function ca_pull_trigger() {
-  // Trigger actions can pull other triggers. Lock predicates when they are
-  // marked for evaluation so they can't be evaluated again.
-  static $locked;
-
   $args = func_get_args();
   $trigger = array_shift($args);
 
@@ -194,17 +190,11 @@ function ca_pull_trigger() {
 
   // Loop through the predicates and evaluate them one by one.
   foreach ($predicates as $pid => $predicate) {
-    // Prevent the predicate from being evaluated if it already has been with
-    // the same arguments.
-    $key = $pid . serialize($arguments);
-    if (!isset($locked[$key])) {
-      // If all of a predicate's conditions evaluate to TRUE...
-      if (ca_evaluate_conditions($predicate, $arguments)) {
-        // Then perform its actions.
-        ca_perform_actions($predicate, $arguments);
-      }
+    // If all of a predicate's conditions evaluate to TRUE...
+    if (ca_evaluate_conditions($predicate, $arguments)) {
+      // Then perform its actions.
+      ca_perform_actions($predicate, $arguments);
     }
-    $locked[$key] = TRUE;
   }
 
   return TRUE;

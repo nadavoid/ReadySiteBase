@@ -1,5 +1,5 @@
 <?php
-// $Id: uc_usps.countries.inc,v 1.1.2.1 2009/09/21 14:34:47 islandusurper Exp $
+// $Id: uc_usps.countries.inc,v 1.1.2.2 2009/10/29 13:10:48 islandusurper Exp $
 
 /**
  * @file
@@ -31,7 +31,12 @@ function uc_usps_country_map($code = NULL) {
   );
 
   if ($code) {
-    return $countries[$code];
+    if (isset($countries[$code])) {
+      return $countries[$code];
+    }
+    else {
+      return uc_country_get_by_id($code);
+    }
   }
 
   return $countries;

@@ -1,5 +1,5 @@
 <?php
-// $Id: uc_store.module,v 1.14.2.34 2009/10/20 20:58:07 islandusurper Exp $
+// $Id: uc_store.module,v 1.14.2.35 2009/11/11 21:05:18 islandusurper Exp $
 
 /**
  * @file
@@ -2038,7 +2038,7 @@ function uc_referer_uri() {
  * Returns the current version of Ubercart.
  */
 function uc_version() {
-  return '6.x-2.0';
+  return '6.x-2.1';
 }
 
 /**

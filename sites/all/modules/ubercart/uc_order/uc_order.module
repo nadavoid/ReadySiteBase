@@ -1,5 +1,5 @@
 <?php
-// $Id: uc_order.module,v 1.12.2.32 2009/10/20 20:58:07 islandusurper Exp $
+// $Id: uc_order.module,v 1.12.2.36 2009/11/18 22:24:02 islandusurper Exp $
 
 /**
  * @file
@@ -121,15 +121,6 @@ function uc_order_menu() {
     'access arguments' => array('create orders'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => -5,
-    'file' => 'uc_order.admin.inc',
-  );
-  $items['admin/store/orders/create/%user'] = array(
-    'title' => 'Create order',
-    'description' => 'Create an order for a customer.',
-    'page callback' => 'uc_order_create',
-    'page arguments' => array(4),
-    'access arguments' => array('create orders'),
-    'type' => MENU_CALLBACK,
     'file' => 'uc_order.admin.inc',
   );
 
@@ -1454,8 +1445,10 @@ function uc_order_get_total($order, $products_only = FALSE) {
 
   foreach (module_list() as $module) {
     $function = $module .'_order';
-    // $order must be passed by reference.
-    if (function_exists($function) && ($value = $function('total', $order, NULL))) {
+    // $order must be passed by reference. Since hook_order() may be
+    // unknowingly implemented (see date_order() in date_api.module), we verify
+    // the results are numeric before continuing.
+    if (function_exists($function) && ($value = $function('total', $order, NULL)) && is_numeric($value)) {
       $total += $value;
     }
   }

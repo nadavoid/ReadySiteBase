@@ -1,5 +1,5 @@
 <?php
-// $Id: uc_product.module,v 1.14.2.38 2009/10/20 20:58:06 islandusurper Exp $
+// $Id: uc_product.module,v 1.14.2.39 2009/11/17 14:26:34 islandusurper Exp $
 
 /**
  * @file
@@ -411,12 +411,13 @@ function uc_product_form(&$node) {
   $sign_flag = variable_get('uc_sign_after_amount', FALSE);
   $currency_sign = variable_get('uc_currency_sign', '$');
 
-  $form['title'] = array('#type' => 'textfield',
-    '#title' => $type->title_label,
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => check_plain($type->title_label),
     '#required' => TRUE,
-    '#weight' => -5,
     '#default_value' => $node->title,
-    '#description' => t('Name of the product.')
+    '#maxlength' => 255,
+    '#weight' => -5,
   );
 
   if ($type->has_body) {

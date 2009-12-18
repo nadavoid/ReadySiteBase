@@ -1,5 +1,5 @@
 <?php
-// $Id: uc_order.admin.inc,v 1.1.2.27 2009/10/20 20:58:07 islandusurper Exp $
+// $Id: uc_order.admin.inc,v 1.1.2.28 2009/11/18 21:08:06 islandusurper Exp $
 
 /**
  * @file
@@ -621,20 +621,8 @@ function uc_order_select_form_submit($form, &$form_state) {
 /**
  * Create a new order and redirect to its edit screen.
  */
-function uc_order_create($customer = NULL) {
-  global $user;
-
-  if ($customer !== NULL) {
-    $order = uc_order_new($customer->uid, 'post_checkout');
-    uc_order_comment_save($order->order_id, $user->uid, t('Order created by the administration.'), 'admin');
-    drupal_goto('admin/store/orders/'. $order->order_id .'/edit');
-  }
-
-  drupal_add_js(array(
-    'ucURL' => array(
-      'adminOrders' => url('admin/store/orders/'),
-    ),
-  ), 'setting');
+function uc_order_create() {
+  drupal_add_js(array('ucURL' => array('adminOrders' => url('admin/store/orders/'))), 'setting');
   drupal_add_js(drupal_get_path('module', 'uc_order') .'/uc_order.js');
 
   $output = '<div id="customer-search-link" style="position: relative; top: 2px; cursor: pointer;" '
@@ -701,7 +689,12 @@ function uc_order_create_form() {
  * @see uc_order_create_form()
  */
 function uc_order_create_form_submit($form, &$form_state) {
-  uc_order_create(user_load(array('uid' => $form_state['values']['uid'])));
+  global $user;
+
+  $order = uc_order_new($form_state['values']['uid'], 'post_checkout');
+  uc_order_comment_save($order->order_id, $user->uid, t('Order created by the administration.'), 'admin');
+
+  $form_state['redirect'] = 'admin/store/orders/'. $order->order_id .'/edit';
 }
 
 /**

@@ -1,5 +1,5 @@
 <?php
-// $Id: uc_paypal.module,v 1.5.2.18 2009/10/20 20:58:07 islandusurper Exp $
+// $Id: uc_paypal.module,v 1.5.2.19 2009/11/18 21:08:06 islandusurper Exp $
 
 /**
  * @file
@@ -58,9 +58,10 @@ function uc_paypal_menu() {
   );
 
   // Callback functions for Website Payments Standard.
-  $items['uc_paypal/wps/complete'] = array(
+  $items['uc_paypal/wps/complete/%uc_order'] = array(
     'title' => 'PayPal payment complete',
     'page callback' => 'uc_paypal_complete',
+    'page arguments' => array(3),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
     'file' => 'uc_paypal.pages.inc',
