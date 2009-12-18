@@ -1,9 +1,10 @@
-// $Id: vertical_tabs.js,v 1.3.2.15 2009/11/06 23:15:25 davereid Exp $
+// $Id: vertical_tabs.js,v 1.3.2.18 2009/12/04 05:18:57 davereid Exp $
 
 Drupal.verticalTabs = Drupal.verticalTabs || {};
+Drupal.settings.verticalTabs = Drupal.settings.verticalTabs || {};
 
 Drupal.behaviors.verticalTabs = function() {
-  if (!$('.vertical-tabs-list').size()) {
+  if (!$('.vertical-tabs-list').size() && Drupal.settings.verticalTabs) {
     var ul = $('<ul class="vertical-tabs-list"></ul>');
     var panes = $('<div class="vertical-tabs-panes"></div>');
     $.each(Drupal.settings.verticalTabs, function(k, v) {
@@ -49,13 +50,14 @@ Drupal.behaviors.verticalTabs = function() {
       $('.vertical-tabs-' + k).remove();
     });
 
-    $('div.vertical-tabs').html(ul).append(panes).show();
+    $('div.vertical-tabs').html(ul).append(panes);
 
     // Activate the first tab.
     $('fieldset.vertical-tabs-pane').hide();
     $('fieldset.vertical-tabs-pane:first').show();
     $('div.vertical-tabs ul li:first').addClass('first selected');
     $('div.vertical-tabs ul li:last').addClass('last');
+    $('div.vertical-tabs').show();
   }
 }
 

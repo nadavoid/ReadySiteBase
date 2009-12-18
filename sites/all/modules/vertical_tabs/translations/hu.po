@@ -1,17 +1,16 @@
-# Hungarian translation of vertical_tabs (6.x-1.0-beta1)
+# Hungarian translation of vertical_tabs (6.x-1.0-beta4)
 # Copyright (c) 2009 by the Hungarian translation team
 # Generated from files:
-#  vertical_tabs/vertical_tabs.node_form.js: n/a
-#  vertical_tabs/vertical_tabs.module: n/a
+#  vertical_tabs.node_form.js,v 1.1.2.6 2009/07/09 17:09:23 davereid
 #  vertical_tabs/vertical_tabs.info: n/a
+#  vertical_tabs/vertical_tabs.module: n/a
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: vertical_tabs (6.x-1.0-beta1)\n"
-"POT-Creation-Date: 2009-01-27 17:31-0600\n"
-"PO-Revision-Date: 2009-01-24 03:56-0600\n"
-"Last-Translator: Balogh Zoltán\n"
-"Language-Team: Hungarian http://forditas.mindworks.hu\n"
+"Project-Id-Version: vertical_tabs (6.x-1.0-beta4)\n"
+"POT-Creation-Date: 2009-09-12 22:36+0200\n"
+"PO-Revision-Date: 2009-06-11 08:34+0200\n"
+"Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,19 +40,15 @@ msgstr "Nincs"
 
 #: vertical_tabs.node_form.js:0
 msgid "<none>"
-msgstr "<nincs>"
+msgstr "< nincs >"
 
 #: vertical_tabs.node_form.js:0
 msgid "Automatic alias"
 msgstr "Automatikus álnév"
 
-#: vertical_tabs.module:0
-msgid "vertical_tabs"
-msgstr "vertical_tabs"
-
 #: vertical_tabs.info:0
 msgid "Vertical Tabs"
-msgstr "Függőleges fülek"
+msgstr "Vertical Tabs"
 
 #: vertical_tabs.node_form.js:0
 msgid "Not in book"
@@ -61,7 +56,7 @@ msgstr "Nincs könyvben"
 
 #: vertical_tabs.node_form.js:0
 msgid "<create a new book>"
-msgstr "<új könyv létrehozása>"
+msgstr "< új könyv létrehozása >"
 
 #: vertical_tabs.node_form.js:0
 msgid "New book"
@@ -99,18 +94,18 @@ msgstr "Álnév: @alias"
 msgid "No alias"
 msgstr "Nincs álnév"
 
-#: vertical_tabs.module:158
+#: vertical_tabs.module:168
 msgid "Vertical tabs"
 msgstr "Függőleges fülek"
 
-#: vertical_tabs.module:161
+#: vertical_tabs.module:171
 msgid ""
 "The selected fieldsets will be rendered as vertical tabs for this "
 "content type. The tabs are rendered in the same version as the "
 "original form's fieldsets."
 msgstr ""
 "A kiválasztott mezőcsoportok függőleges fülekként fognak "
-"megjelenni ebben a tartalom típusban. A fülek megjelenési sorrendje "
+"megjelenni ebben a tartalomtípusban. A fülek megjelenési sorrendje "
 "megegyezik az eredeti ürlap mezőcsoportjaival."
 
 #: vertical_tabs.info:0
