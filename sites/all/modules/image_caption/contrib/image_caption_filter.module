@@ -30,17 +30,7 @@ function image_caption_filter_help($path, $arg) {
   return $output;
 } //function image_caption_filter_help
 
-
-/**
- * Implementation of hook_init().
- */
-function image_caption_filter_init() {
-  drupal_add_css(drupal_get_path('module', 'image_caption_filter') . '/image_caption_filter.css');
-}
-
-/**
- * Implementation of hook_filter().
- */
+//filter hook implementation
 function image_caption_filter_filter($op, $delta = 0, $format = -1, $text = '') {
   switch ($op) {
     case 'list':
@@ -57,36 +47,11 @@ function image_caption_filter_filter($op, $delta = 0, $format = -1, $text = '') 
       //Look for <img> tags and run the doImgTitles function on the <img> tag
       $text = preg_replace_callback('|(<img.*?>)|s', 'doImgTitles', $text);
       return $text;
-    
-    case "settings":
-      if ($delta == 0) {
-        return _image_caption_settings($format);
-      }
 
     default:
       return $text;
   }
 } //function image_caption_filter_filter
-
-/**
- * Settings for the image_caption filter.
- * based on the HTML filter
- */
-function _image_caption_settings($format) {
-  // print('the format: '. $format);
-  $form['image_caption'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('HTML filter'),
-    '#collapsible' => TRUE,
-  );
-  $form['image_caption']['image_caption_'. $format] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Do not show "Missing ALT text" warning.'),
-    '#default_value' => variable_get('image_caption_'. $format, ''),
-    '#description' => t('Whether to show a prominent warning if ALT text is missing from an image.'),
-  );
-  return $form;
-}
 
 
 //helper function to do the actual manipulation
@@ -94,10 +59,9 @@ function doImgTitles($matches) {
   $imgText = $matches[0];
 
   //Get the title out of the <img> tag
-  preg_match ('/title=\"(.*?)\"/i', $imgText, $matches);
+  preg_match ('/title=\"(.+?)\"/i', $imgText, $matches);
   $title = $matches[1];
-  // kpr($matches);
-  
+
   //Get the width out of the <img> tag
   preg_match ('/width=\"(.+?)\"/i', $imgText, $matches);
   $width = $matches[1];
@@ -105,26 +69,22 @@ function doImgTitles($matches) {
   //Get class out of the <img> tag
   preg_match ('/class=\"(.+?)\"/i', $imgText, $matches);
   $class = $matches[1];
-  
-  
-  //See if there is an alt attribute in the <img> tag, if not insert a LOUD warning
-  preg_match ('/alt=\"(.*?)\"/i', $imgText, $matches);
-  $alt = $matches[1];
 
-  if (empty($alt) && variable_get('image_caption_1', 0) == 0) {
+  //See if there is an alt attribute in the <img> tag, if not insert a LOUD warning
+  preg_match ('/alt=\"(.+?)\"/i', $imgText, $matches);
+  $alt = $matches[1];
+  if (empty($alt)) {
     $alt_warning = '<font size="+3" color="pink" style="line-height:1em">No alternate text on picture! - define alternate text in image properties</font>';
   } else {
     $alt_warning = '';
   }
-  // $alt_warning = '';
 
   //Only insert the caption and modify the <img> tag if it is has a title attribute and is one of the classes we are interested in
-  if (in_array($class, array('image-left', 'image-right', 'standalone-image')) && ($title || $alt)) {
-    $captiontext = $title? $title : $alt; // if $title is set, use it. Otherwise, sue $alt.
+  if (in_array($class, array('image-left', 'image-right', 'standalone-image')) && ($title)) {
     $imgText = preg_replace ('/class=\"(.+?)\"/i', '', $imgText);
     $returnText = "<div class=\"" . $class . "\" style=\"width: " . $width . "px\">"
                   . $imgText 
-                  . "<div class=\"caption\">" . $captiontext . "</div></div>";
+                  . "<div class=\"caption\">" . $title . "</div></div>";
     return $returnText . $alt_warning;
   }
   return $imgText . $alt_warning;

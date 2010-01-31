@@ -1,5 +1,5 @@
 <?php
-// $Id: views_cycle.module,v 1.1 2009/03/20 21:47:24 crell Exp $
+// $Id: views_cycle.module,v 1.1.2.2 2010/01/21 22:42:48 crell Exp $
 
 /**
  * Implementation of hook_init().
@@ -26,6 +26,7 @@ function views_cycle_views_api() {
 function views_cycle_views_cycle_skins() {
   $skins['default'] = array(
     'title' => t('Default'),
+    'pager_location' => 'none',
     'stylesheets' => array(
       'views_cycle_default.css',
     ),
@@ -33,8 +34,18 @@ function views_cycle_views_cycle_skins() {
 
   $skins['sidelist_right'] = array(
     'title' => t('Side list (right)'),
+    'pager_location' => 'before',
+    'prevnext_location' => 'after',
     'stylesheets' => array(
       'views_cycle_sidelist_right.css',
+    ),
+  );
+
+  $skins['sidelist_bottom'] = array(
+    'title' => t('Side list (bottom)'),
+    'pager_location' => 'after',
+    'stylesheets' => array(
+      'views_cycle_sidelist_bottom.css',
     ),
   );
 

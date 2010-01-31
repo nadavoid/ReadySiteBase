@@ -1,5 +1,5 @@
 <?php
-// $Id: views_cycle.api.php,v 1.1 2009/03/20 21:47:24 crell Exp $
+// $Id: views_cycle.api.php,v 1.1.2.2 2010/01/21 22:42:48 crell Exp $
 
 /**
  * Registry-style hook to define skins for the views_cycle plugin.
@@ -11,6 +11,10 @@
  *   title
  *     The translated user-facing name of the skin.  This value will be shown
  *     in the administrative screens.
+ *   pager_location
+ *     Text position of the pager element if it exists. Options: before, after, and none.
+ *   prevnext_location
+ *     Text position of the previous/next links if they. Options: before, after, and none.
  *   stylesheets
  *     An array of stylesheets that are part of this skin.  Do not include a path,
  *     only the name of the CSS file itself.
@@ -26,6 +30,8 @@
 function hook_views_cycle_skins() {
   $skins['default'] = array(
     'title' => t('A fancy skin'),
+    'pager_location' => 'before',
+    'prevnext_location' => 'before',
     'stylesheets' => array(
       'fancy.css',
     ),

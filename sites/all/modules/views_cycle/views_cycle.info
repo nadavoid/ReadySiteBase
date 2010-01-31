@@ -6,9 +6,9 @@ php = 5.2
 package = Views
 dependencies[] = views
 
-; Information added by drupal.org packaging script on 2009-03-20
-version = "6.x-1.0-beta1"
+; Information added by drupal.org packaging script on 2010-01-21
+version = "6.x-1.0-beta4"
 core = "6.x"
 project = "views_cycle"
-datestamp = "1237586764"
+datestamp = "1264117809"
 

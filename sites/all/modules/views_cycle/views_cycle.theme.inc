@@ -1,18 +1,20 @@
 <?php
-// $Id: views_cycle.theme.inc,v 1.1 2009/03/20 21:47:24 crell Exp $
+// $Id: views_cycle.theme.inc,v 1.1.2.10 2010/01/21 22:56:31 crell Exp $
 
 /**
  * Preprocess function to build the cycle style plugin.
  */
 function template_preprocess_views_cycle(&$vars, $hook) {
+  // Inherit the theming from the parent style.  Mostly this just gives us
+  // Nice CSS classes for each row.
+  template_preprocess_views_view_list($vars);
 
   // Some nice aliases to make the code easier to read.
   $view     = $vars['view'];
   $options  = $view->style_plugin->options;
   $handler  = $view->style_plugin;
   $fields   = &$view->field;
-
-  $rows     = $vars['rows'];
+  $rows     = &$vars['rows'];
 
   // Generate a unique ID for this cycle instance that we can pass to JS.
   $vars['cycle_id'] = 'views-cycle-'. $view->name .'-'. $view->style_plugin->display->id;
@@ -40,12 +42,41 @@ function template_preprocess_views_cycle(&$vars, $hook) {
   // HTML for the thumbnails for the cycle plugin to work, but we'll pre-theme
   // that server side and then just look it up on demand in the browser.
   if ($options['thumbnail_field']) {
+    // This is just a temporary hack.  See the note below.
+    $keys = array_keys($view->field);
+
+    // Grab each result row and add it to the thumbs list
     foreach ($view->result as $num => $row) {
-      $settings['thumbnails'][$num] = $view->field[$options['thumbnail_field']]->theme($row);
+      $classes = array();
+      if ($num == 0) {
+        $classes[] = 'views-cycle-first';
+      }
+      if ($num == (count($rows)-1)) {
+        $classes[] = 'views-cycle-last';
+      }
+      $classes[] = ($num % 2) ? "views-cycle-odd" : "views-cycle-even";
+
+      $classes[] = "views-cycle-thumb-{$num}";
+
+      $classes = implode(' ', $classes);
+
+      // Append to the list items, which will later output in a single hidden list near the cycler.
+      $vars['thumbs_data'] .= "<li class='{$classes}' >". $handler->rendered_fields[$num][$options['thumbnail_field']] ."</li>";
     }
+
     $settings['params']['pager']      = '#'. $vars['cycle_id'] .'-nav';
     $settings['use_pager_callback']   = 1;
     $settings['params']['pagerEvent'] = $options['pager']['event'];
+    $settings['params']['pagerLocation'] = $options['skin_info']['pager_location'];
+    $settings['params']['height'] = $options['height'];
+    $settings['verticalPadding'] = $options['verticalPadding'];
+  }
+
+  if ($options['skin_info']['prevnext_location'] != 'none' && $options['prevnext']['next_label'] && $options['prevnext']['prev_label']) {
+    $settings['use_prevnext_links'] = 1;
+    $settings['nextLabel'] = $options['prevnext']['next_label'];
+    $settings['prevLabel'] = $options['prevnext']['prev_label'];
+    $settings['prevnextLocation'] = $options['skin_info']['prevnext_location'];
   }
 
   // Enqueue any stylesheets set for the skin on this view are added.
@@ -58,47 +89,12 @@ function template_preprocess_views_cycle(&$vars, $hook) {
     drupal_add_css($skin_path .'/'. $stylesheet);
   }
 
-  // If this is an AHAH request, we have to forward the updated thumbnail
-  // thumbnail information manually.  We assume that jQuery, the cycle plugin,
-  // and so forth are already on the page so we don't add them again.
-  if (isset($_GET['pager_element'])) {
-    $thumbnails = drupal_to_js($settings['thumbnails']);
+  // Set up the necessary JS.
+  drupal_add_js(drupal_get_path('module', 'views_cycle') .'/jquery.cycle.js', 'module', 'footer');
+  drupal_add_js(drupal_get_path('module', 'views_cycle') .'/views_cycle.js', 'module', 'footer');
 
-    // I'm pretty sure that Drupal.settings will not exist at all if this is called
-    // via an AHAH request, but just to be on the safe side we'll go through the
-    // process of checking each level.  Why can't Javascript just be like PHP
-    // and lazy create all down the line?  *sigh*
-    $vars['js_settings'] = <<<JS
-<script type="text/javascript">
-  <!--//--><![CDATA[//><!--
-    if (!Drupal) {
-      var Drupal = {};
-    }
-    if (!Drupal.settings) {
-      Drupal.settings = {};
-    }
-    if (!Drupal.settings.views_cycle) {
-      Drupal.settings.views_cycle = {};
-    }
-    if (!Drupal.settings.views_cycle['{$vars['cycle_id']}']) {
-      Drupal.settings.views_cycle['{$vars['cycle_id']}'] = {};
-    }
-    Drupal.settings.views_cycle['{$vars['cycle_id']}'].thumbnails = {$thumbnails};
-  //--><!]]>
-</script>
+  // Key the settings for each instance of the cycle plugin by its cycle id.
+  drupal_add_js(array('views_cycle' => array($vars['cycle_id'] => $settings)), 'setting', 'footer');
 
-JS;
-  }
-  else {
-    // For a normal page request, we need to pass data through the normal Drupal
-    // Javascript handling routines.
-
-    // Set up the necessary JS.
-    drupal_add_js(drupal_get_path('module', 'views_cycle') .'/jquery.cycle.js', 'module', 'footer');
-    drupal_add_js(drupal_get_path('module', 'views_cycle') .'/views_cycle.js', 'module', 'footer');
-
-    // Key the settings for each instance of the cycle plugin by its cycle id.
-    drupal_add_js(array('views_cycle' => array($vars['cycle_id'] => $settings)), 'setting', 'footer');
-  }
 }
 

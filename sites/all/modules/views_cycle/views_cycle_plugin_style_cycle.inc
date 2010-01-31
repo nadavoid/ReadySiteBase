@@ -1,5 +1,5 @@
 <?php
-// $Id: views_cycle_plugin_style_cycle.inc,v 1.1 2009/03/20 21:47:24 crell Exp $
+// $Id: views_cycle_plugin_style_cycle.inc,v 1.1.2.5 2010/01/21 22:42:48 crell Exp $
 
 /**
  * @file
@@ -21,10 +21,15 @@ class views_cycle_plugin_style_cycle extends views_plugin_style_list {
 
     $options['skin'] = 'default';
     $options['skin_info'] = array();
+    $options['height'] = 0;
+    $options['verticalPadding'] = 5;
     $options['thumbnail_field'] = array('default' => '');
+    $options['prevnext']['prev_label'] = array('default' => t('Prev'));
+    $options['prevnext']['next_label'] = array('default' => t('Next'));
     $options['pager']['event'] = array('default' => 'click');
     $options['params']['fx'] = array('default' => 'fade');
     $options['params']['timeout'] = array('default' => 2000);
+    $options['params']['speed'] = array('default' => 2000);
 
     return $options;
   }
@@ -86,7 +91,7 @@ class views_cycle_plugin_style_cycle extends views_plugin_style_list {
     }
     asort($skins);
 
-    // Relabel the description field of the list type option to be more descriptive
+    // Relabel the description field of the list type option to be more descriptive.
     // for this plugin.
     $form['type']['#description'] = t('Whether to use an ordered or unordered list for the retrieved cycle items. Most use cases will prefer Unordered.');
 
@@ -108,6 +113,43 @@ class views_cycle_plugin_style_cycle extends views_plugin_style_list {
       '#description' => t('Select the field that will be used as the thumbnail field, if one is required.'),
     );
 
+    $form['height'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Height'),
+      '#default_value' => $this->options['height'],
+      '#description' => t('Enter the height for the views cycle block. To have the cycler adjust to the height of the largest picture, please enter 0.'),
+    );
+
+    $form['verticalPadding'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Vertical Padding'),
+      '#default_value' => $this->options['verticalPadding'],
+      '#description' => t('Enter the the vertical padding in pixels to increase the height of the container beyond the size of the images.'),
+    );
+
+
+    $form['prevnext'] = array(
+      '#type' => 'fieldset',
+      '#tree' => TRUE,
+      '#title' => t('Show Previous / Next Links'),
+      '#description' => t('Add previous and next links.  Their position is controlled by the skin.  Note that not all skins support previous and next links, so these may not show in all skins.  Leave blank to disable previous/next links.'),
+    );
+
+    $form['prevnext']['prev_label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Previous Button Label'),
+      '#default_value' => $this->options['prevnext']['prev_label'],
+      '#description' => t('Enter the text for the previous link.'),
+    );
+
+    $form['prevnext']['next_label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Next Button Label'),
+      '#default_value' => $this->options['prevnext']['next_label'],
+      '#description' => t('Enter the text for the next link.'),
+    );
+
+
     $form['pager'] = array(
       '#type' => 'fieldset',
       '#tree' => TRUE,
@@ -119,7 +161,7 @@ class views_cycle_plugin_style_cycle extends views_plugin_style_list {
       '#type' => 'select',
       '#title' => t('Transition event'),
       '#options' => $events,
-      '#default_value' => $this->options['event'],
+      '#default_value' => $this->options['pager']['event'],
       '#description' => t('Determines what sort of user input will result in a cycle transition.'),
       '#tree' => TRUE,
     );
@@ -145,6 +187,14 @@ class views_cycle_plugin_style_cycle extends views_plugin_style_list {
       '#title' => t('Timeout (ms)'),
       '#default_value' => $this->options['params']['timeout'],
       '#description' => t('The time in milliseconds before the cycle auto-advances. Set to 0 to disable auto-advance.'),
+      '#required' => TRUE,
+    );
+
+    $form['params']['speed'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Speed (ms)'),
+      '#default_value' => $this->options['params']['speed'],
+      '#description' => t('The time in milliseconds that each transition takes.'),
       '#required' => TRUE,
     );
   }
@@ -173,6 +223,8 @@ function views_cycle_get_skins() {
           // of error checking later.
           $skin_items[$skin] += array(
             'title' => t('Untitled skin'),
+            'pager_location' => 'after',
+            'prevnext_location' => 'before',
             'module' => $module,
             'path' => '',
             'stylesheets' => array(),

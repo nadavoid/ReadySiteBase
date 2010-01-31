@@ -1,17 +1,17 @@
-/* $Id: views_cycle_sidelist_right.css,v 1.2 2009/03/20 21:57:17 crell Exp $ */
+/* $Id: views_cycle_sidelist_right.css,v 1.2.2.1 2010/01/21 22:56:31 crell Exp $ */
 
   div.views-cycle
   {
     width: 550px;
     /*height: 292px;*/
   }
-  .view-cycle-pager
+  .views-cycle-pager
   {
     width: 150px;
     float: right;
   }
 
-  #content .view-cycle-pager li
+  #content .views-cycle-pager li
   {
     float: left;
     width: 65px;
@@ -22,7 +22,7 @@
     background-color: #000;
   }
 
-  .view-cycle-pager li a.activeSlide
+  .views-cycle-pager li a.activeSlide
   {
     display: block;
     line-height: 0;
@@ -30,8 +30,8 @@
     height: 65px;
   }
 
-  .view-cycle-pager li a.activeSlide img,
-  .view-cycle-pager li a:hover img
+  .views-cycle-pager li a.activeSlide img,
+  .views-cycle-pager li a:hover img
   {
     -moz-opacity:0.5;
     opacity:0.5;

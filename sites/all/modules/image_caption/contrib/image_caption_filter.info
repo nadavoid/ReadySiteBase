@@ -4,9 +4,9 @@ description = Create captions on images using the title attribute.
 core = 6.x
 version = 6.x-1.x-dev
 
-; Information added by drupal.org packaging script on 2008-11-15
-version = "6.x-2.3"
+; Information added by drupal.org packaging script on 2010-01-03
+version = "6.x-2.4"
 core = "6.x"
 project = "image_caption"
-datestamp = "1226707512"
+datestamp = "1262497537"
 
