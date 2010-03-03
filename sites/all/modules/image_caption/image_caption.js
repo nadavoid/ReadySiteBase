@@ -1,4 +1,4 @@
-/*$Id: image_caption.js,v 1.2.2.1 2010/01/03 05:39:18 davidwhthomas Exp $*/
+/*$Id: image_caption.js,v 1.2.2.3 2010/02/03 07:50:25 davidwhthomas Exp $*/
 $(document).ready(function(){
   $("img.caption").each(function(i) {
     var imgwidth = $(this).width();
@@ -7,9 +7,13 @@ $(document).ready(function(){
     var style = $(this).attr('style');
     var alignment = $(this).attr('align');
     //Clear image styles to prevent conflicts with parent div
-    $(this).attr('style','');
-    $(this).wrap("<div class=\"image-caption-container\" style=\"" + style + "; text-align: " + alignment + "\"></div>");
-    $(this).parent().width(imgwidth);
-    $(this).parent().append("<div class=\"image-caption\">" + captiontext + "</div>");
+    $(this).attr({align:""});
+    $(this).attr({style:""});
+    $(this).wrap("<span class=\"image-caption-container\" style=\"display:block;" + style + "; float: " + alignment + "\"></span>");
+    $(this).parent().addClass('image-caption-container-' + alignment);
+    if(imgwidth != 'undefined' && imgwidth != 0){
+      $(this).parent().width(imgwidth);
+    }
+    $(this).parent().append("<span style=\"display:block;\" class=\"image-caption\">" + captiontext + "</span>");
   });
 });
