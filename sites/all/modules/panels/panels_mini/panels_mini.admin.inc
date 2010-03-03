@@ -1,5 +1,5 @@
 <?php
-// $Id: panels_mini.admin.inc,v 1.6.2.9 2009/09/08 16:23:48 merlinofchaos Exp $
+// $Id: panels_mini.admin.inc,v 1.6.2.10 2010/01/15 23:18:40 merlinofchaos Exp $
 
 /**
  * @file
@@ -424,6 +424,7 @@ function panels_mini_edit_form(&$form_state, $panel_mini) {
     '#size' => 24,
     '#default_value' => $panel_mini->name,
     '#title' => t('Mini panel name'),
+    '#maxlength' => 32,
     '#description' => t('A unique name used to identify this panel page internally. It must be only be alpha characters and underscores. No spaces, numbers or uppercase characters.'),
   );
 

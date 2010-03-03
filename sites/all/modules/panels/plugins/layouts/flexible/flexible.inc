@@ -1,26 +1,23 @@
 <?php
-// $Id: flexible.inc,v 1.1.2.17 2009/10/02 17:35:48 merlinofchaos Exp $
+// $Id: flexible.inc,v 1.1.2.18 2010/01/13 06:25:15 merlinofchaos Exp $
 
 /**
  * Implementation of hook_panels_layouts()
  */
-function panels_flexible_panels_layouts() {
-  $items['flexible'] = array(
-    'title' => t('Flexible'),
-    'icon' => 'flexible.png',
-    'theme' => 'panels_flexible',
-    'admin theme' => 'panels_flexible_admin',
-    'css' => 'flexible.css',
-    'admin css' => 'flexible-admin.css',
-    'settings form' => 'panels_flexible_settings_form',
-    'settings submit' => 'panels_flexible_settings_submit',
-    'settings validate' => 'panels_flexible_settings_validate',
-    'panels function' => 'panels_flexible_panels',
-    'hook menu' => 'panels_flexible_menu',
-  );
-
-  return $items;
-}
+// Plugin definition
+$plugin = array(
+  'title' => t('Flexible'),
+  'icon' => 'flexible.png',
+  'theme' => 'panels_flexible',
+  'admin theme' => 'panels_flexible_admin',
+  'css' => 'flexible.css',
+  'admin css' => 'flexible-admin.css',
+  'settings form' => 'panels_flexible_settings_form',
+  'settings submit' => 'panels_flexible_settings_submit',
+  'settings validate' => 'panels_flexible_settings_validate',
+  'panels function' => 'panels_flexible_panels',
+  'hook menu' => 'panels_flexible_menu',
+);
 
 /**
  * Delegated implementation of hook_menu().

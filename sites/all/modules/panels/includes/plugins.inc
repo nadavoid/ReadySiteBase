@@ -1,5 +1,5 @@
 <?php
-// $Id: plugins.inc,v 1.13.2.12 2009/10/14 20:00:40 merlinofchaos Exp $
+// $Id: plugins.inc,v 1.13.2.15 2010/01/12 23:18:44 merlinofchaos Exp $
 
 /**
  * @file
@@ -45,10 +45,10 @@ function panels_get_panels($layout, $display) {
  * @param $incoming_content
  *   Any incoming content if this display is a wrapper.
  */
-function panels_get_pane_content($display, $pane, $keywords, $args = array(), $context = NULL, $incoming_content = '') {
+function panels_get_pane_content($display, $pane, $keywords, $args = array(), $context = array(), $incoming_content = '') {
   ctools_include('context');
-  if (!$context) {
-    $context = new ctools_context;
+  if (!is_array($context)) {
+    $context = array();
   }
 
   if (!$incoming_content === '') {
@@ -70,6 +70,7 @@ function panels_get_pane_content($display, $pane, $keywords, $args = array(), $c
       $cache = new panels_cache_object();
       $cache->set_content($content);
       panels_set_cached_content($cache, $display, $args, $context, $pane);
+      $content->content = $cache->content;
     }
   }
 

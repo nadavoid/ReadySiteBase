@@ -1,5 +1,5 @@
 <?php
-// $Id: display-edit.inc,v 1.7.2.30 2009/10/21 21:02:24 merlinofchaos Exp $
+// $Id: display-edit.inc,v 1.7.2.31 2010/01/13 20:04:09 merlinofchaos Exp $
 
 /*
  * @file
@@ -366,16 +366,18 @@ function panels_edit_display_form_submit($form, &$form_state) {
   $old_content = $display->content;
   $display->content = array();
 
-  foreach ($form_state['values']['panel']['pane'] as $panel_id => $panes) {
-    $display->panels[$panel_id] = array();
-    if ($panes) {
-      $pids = explode(',', $panes);
-      // need to filter the array, b/c passing it in a hidden field can generate trash
-      foreach (array_filter($pids) as $pid) {
-        if ($old_content[$pid]) {
-          $display->panels[$panel_id][] = $pid;
-          $old_content[$pid]->panel = $panel_id;
-          $display->content[$pid] = $old_content[$pid];
+  if (!empty($form_state['values']['panel']['pane'])) {
+    foreach ($form_state['values']['panel']['pane'] as $panel_id => $panes) {
+      $display->panels[$panel_id] = array();
+      if ($panes) {
+        $pids = explode(',', $panes);
+        // need to filter the array, b/c passing it in a hidden field can generate trash
+        foreach (array_filter($pids) as $pid) {
+          if ($old_content[$pid]) {
+            $display->panels[$panel_id][] = $pid;
+            $old_content[$pid]->panel = $panel_id;
+            $display->content[$pid] = $old_content[$pid];
+          }
         }
       }
     }

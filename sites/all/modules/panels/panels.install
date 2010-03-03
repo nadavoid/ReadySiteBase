@@ -1,5 +1,5 @@
 <?php
-// $Id: panels.install,v 1.4.2.24 2009/10/07 22:20:28 merlinofchaos Exp $
+// $Id: panels.install,v 1.4.2.27 2010/01/13 00:51:47 merlinofchaos Exp $
 
 /**
  * Test requirements for installation and running.
@@ -52,6 +52,7 @@ function panels_schema_2() {
   $schema['panels_display']['fields']['title_pane'] = array(
     'type' => 'int',
     'default' => 0,
+    'no export' => TRUE,
   );
 
   return $schema;
@@ -69,6 +70,7 @@ function panels_schema_1() {
     'export' => array(
       'object' => 'panels_display',
       'bulk export' => FALSE,
+      'export callback' => 'panels_export_display',
       'can disable' => FALSE,
       'identifier' => 'display',
     ),
@@ -112,6 +114,7 @@ function panels_schema_1() {
         'type' => 'int',
         'size' => 'tiny',
         'default' => 0,
+        'no export' => TRUE,
       ),
     ),
     'primary key' => array('did'),
@@ -1270,6 +1273,19 @@ function panels_update_6305() {
 
   // Add new field
   db_add_field($ret, 'panels_display', 'title_pane', $schema['panels_display']['fields']['title_pane']);
+
+  return $ret;
+}
+
+/**
+ * Drop a table that should have been gone long ago.
+ */
+function panels_update_6306() {
+  $ret = array();
+
+  if (db_table_exists('panels_page_router_store')) {
+    db_drop_table($ret, 'panels_page_router_store');
+  }
 
   return $ret;
 }
