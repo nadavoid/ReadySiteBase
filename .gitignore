@@ -1,4 +1,5 @@
 .bzr*
+.git*
 sites/default/*
 sites/default/tmp/*
 sites/default/files/*
