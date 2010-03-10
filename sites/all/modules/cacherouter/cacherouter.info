@@ -1,7 +1,0 @@
-; $Id: cacherouter.info,v 1.1.2.3 2008/12/26 02:23:54 slantview Exp $
-name = CacheRouter
-description = "Controls access to split caching functionality into self contained objects."
-package = Cache
-version = VERSION
-core = 6.x
-
