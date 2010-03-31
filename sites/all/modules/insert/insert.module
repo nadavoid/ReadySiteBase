@@ -1,5 +1,5 @@
 <?php
-// $Id: insert.module,v 1.2 2010/01/08 18:58:23 quicksketch Exp $
+// $Id: insert.module,v 1.4 2010/03/13 21:23:49 quicksketch Exp $
 
 /**
  * @file
@@ -58,16 +58,19 @@ function insert_theme() {
     'insert_image' => array(
       'arguments' => array('item' => NULL, 'widget' => NULL),
       'template' => 'templates/insert-image',
+      'file' => 'includes/insert.inc',
     ),
     'insert_link' => array(
       'arguments' => array('item' => NULL, 'widget' => NULL),
       'template' => 'templates/insert-link',
+      'includes/insert.inc',
     ),
 
     // Theme functions in includes/imagecache.inc.
     'imagecache_insert_image' => array(
       'arguments' => array('item' => NULL, 'widget' => NULL, 'preset_name' => NULL),
       'template' => 'templates/imagecache-insert-image',
+      'includes/imagecache.inc',
     ),
   );
 }
@@ -188,7 +191,7 @@ function insert_process($element) {
   if ($element['fid']['#value']) {
     $insert_styles = array_filter((array) $field['widget']['insert_styles']);
     $default = !empty($field['widget']['insert_default']) ? $field['widget']['insert_default'] : 'auto';
-    if (empty($insert_styles)) {
+    if (!isset($insert_styles[$default])) {
       $insert_styles[$default] = $default;
     }
     foreach ($insert_styles as $style_name => $enabled) {
@@ -261,7 +264,7 @@ function insert_widget_form($widget) {
     '#title' => t('Insert'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
-    '#description' => t('These options allow the user to easily insert an &lt;a&gt; or &lt;img&gt; tag into text areas or WYSIWYG editors after uploading a file or image.'),
+    '#description' => t('These options allow the user to easily insert an HTML tags into text areas or WYSIWYG editors after uploading a file or image. The "Automatic" style will insert a &lt;img&gt; tag for images and a &lt;a&gt; tag for other files. Other styles may insert tags that may not match the file type.'),
     '#weight' => 15,
   );
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: imagefield.inc,v 1.2 2010/01/08 18:23:12 quicksketch Exp $
+// $Id: imagefield.inc,v 1.3 2010/03/13 21:06:52 quicksketch Exp $
 
 /**
  * @file
@@ -14,7 +14,7 @@ function imagefield_insert_widgets() {
     'imagefield_widget' => array(
       'wrapper' => '.filefield-element',
       'fields' => array(
-        'alt' => 'input[name$="[alt]"]',
+        'alt' => 'input[name$="[alt]"], textarea[name$="[alt]"]',
         'title' => 'input[name$="[title]"], textarea[name$="[title]"]',
         'description' => 'input[name$="[description]"], textarea[name$="[description]"]',
       ),
