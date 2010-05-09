@@ -1,5 +1,5 @@
 <?php
-// $Id: image_resize_filter.module,v 1.44 2010/04/08 03:00:39 quicksketch Exp $
+// $Id: image_resize_filter.module,v 1.45 2010/04/09 14:56:31 quicksketch Exp $
 
 /**
  * @file image_resize_filter.module
@@ -252,18 +252,20 @@ function image_resize_filter_get_images($settings, $text) {
       // tag, base our calculations off the style tag, since that's what the
       // browser will display.
       $property_key = 0;
-      if (count($property_matches[1]) > 1) {
-        $needs_property = FALSE;
+      $property_count = count($property_matches[1]);
+      $needs_property = TRUE;
+      if ($property_count) {
         $property_key = array_search(':', $property_matches[1]);
+        $needs_property = FALSE;
       }
       // Only a style property found, we'll need to add a real height/width tag
       // to the HTML later. This specifically prevents problems with FCKeditor
       // that only adds style tags when resizing images.
-      elseif (!empty($property_matches[1]) && $property_matches[1][$property_key] == ':'){
+      if ($property_count == 1 && strcmp($property_matches[1][$property_key], ':') == 0){
         $needs_property = TRUE;
       }
       ${$property} = !empty($property_matches[2][$property_key]) ? $property_matches[2][$property_key] : FALSE;
-      ${'needs_'. $property} = isset($needs_property) ? $needs_property : ${'needs_'. $property};
+      ${'needs_'. $property} = $needs_property;
     }
 
     // Find the image title if any.
