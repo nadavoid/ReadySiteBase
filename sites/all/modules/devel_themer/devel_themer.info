@@ -6,9 +6,9 @@ dependencies[] = devel
 core = 6.x
 
 
-; Information added by drupal.org packaging script on 2010-03-16
+; Information added by drupal.org packaging script on 2010-11-10
 version = "6.x-1.x-dev"
 core = "6.x"
 project = "devel_themer"
-datestamp = "1268741087"
+datestamp = "1289390809"
 
