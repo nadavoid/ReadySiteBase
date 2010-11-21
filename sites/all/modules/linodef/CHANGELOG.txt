@@ -1,4 +1,65 @@
-// $Id: CHANGELOG.txt,v 1.1.2.3 2008/12/03 17:59:00 roidanton Exp $
+// $Id: CHANGELOG.txt,v 1.1.2.19 2009/12/19 02:38:17 roidanton Exp $
+
+Linodef 6.x-1.0-rc5, 2009-12-19
+-------------------------------
+- Fixed additional forms recognized as option in linodef_taglists admin.
+- Fixed error message on taglist management page if db contains no taglists.
+- Fixed wrong field properties for description in linodef_taglists db scheme.
+#662592 by hefox: Fixed deprecated warning ignoring message level.
+
+Linodef 6.x-1.0-rc4, 2009-12-17
+-------------------------------
+#637662 by hefox, Roi Danton: Added tracking of processes to prevent duplicated messages and multiple execution of token_replace. Configurable title heeds now the 'title' set by option 'attributes'.
+- Fixed loading of the wysiwyg plugin object. Now only those objects with a corresponding taglist are loaded.
+- Fixed wysiwyg Javascript.
+- Added the instance ID of the editor calling the taglist popup window to the paths.
+#637662 by hefox: Added configurable title text.
+#334520 by Roi Danton: Added module Linodef WYSIWYG which incorporates a plugin that uses the taglists in WYSIWYG editors. Javascript needs work.
+#560042 by Roi Danton: Added option attributes to attach custom HTML attributes to embedded HTML tags.
+#619166 by Roi Danton: Changed preg replace function to avoid escaping of '.
+- Disabled documentation until it reflects the current module status. The doc update won't happen before the final 1.0 release.
+- Replaced module Linodef buttons bueditor by Linodef BUEditor which uses the new taglist module.
+- Added user interface for taglist creation using CTools.
+- Added caching of taglists.
+- Replaced module Linodef buttons API by Linodef taglists which uses the database to store lists of Linodef tags.
+#468738 by Roi Danton: Added an option selection page to admin menu. Options can be disabled or activated for all tags.
+- Merged the tag type options into option called 'type'. The option value is the type.
+- Changed option 'linktext' into 'override'.
+- Changed option 'viewdisplay' into 'display', added a dynamic value handler and linked it with field selector. So [#viewname:displayname] is possible.
+- Changed the internal CCK field handling by assigning fields to option 'content'.
+- Added a link feature between the field selector of the Linodef tags and options.
+- Added a dynamic value handler to option 'content'. So it can dynamically extend the range of valid values.
+- Added option 'content' to display certain object parts. This replaces 'viewtitle' and adds title, content and body selection of objects.
+#379130 by Roi Danton: Added option 'visibility' to display a tag depending on build mode (teaser or full view only).
+- Added option 'formatter' to use a certain formatter of a field.
+- Added support for CCK formatters to support all fields and enable a flexible field output. No field does use plain values anymore.
+#543694 by Roi Danton: Fixed options without value are not heeded.
+
+Linodef 6.x-1.0-rc3, 2009-07-06
+-------------------------------
+- Updated documentation.
+#510882 by Roi Danton: Fixed wrong arguments in hook_theme of Buttons API.
+- Added classes to each filtered link.
+- Changed autocomplete data caching from variables to cache table.
+- Changed Buttons API tag option to path conversion to hex so tag options may contain every valid character, now.
+- Changed tag option validation so Filter and Buttons API are using the identical function.
+- Fixed inconsistency in indentations and switched from spaces to tabs.
+#350085 by Roi Danton: Added the usage of views to create button lists. All view options except the view fields layout are heeded See also http://drupal.org/node/342132.
+- Fixed forwarding of options from Buttons API to Javascript function so it supports "" for option values properly.
+- Added list of all views to Buttons API.
+- Fixed linktext support for views.
+- Added inline comment.
+- Added default Drupal message classes to Linodef inline messages.  Works only if HTML input filter allows span tags.
+#434656 by Roi Danton: Fixed unwanted space following embedded elements. Now this space is included only in case an inline message is shown. Thanks to tonycpsu for reporting.
+- Updated documentation for hints about using embedding of views especially regarding the influence of the HTML filter to the view display.
+#434656 by Roi Danton: Added the option linktext="text". Though node link tag <#nid>text</#> is still available it is marked as deprecated.
+#434656 by Roi Danton: Optimized regex for feature and performance enhancements. Now option values enclosed by "" may contain almost all 8-bit characters.
+#357319 by druppi: Added backwards compatibility for RC1 syntax.
+- Added input filter sort order information to the documentation.
+#357319 by druppi: Removed needless check_markup of fields since it caused bugs and confusion.
+- Added view embedding including arguments, displays and pure title linking. There are still style issues to be solved due to the changes other filters apply to the embedded view.
+- Changed dependency for taxonomy module, now optional.
+- Updated messages to support the new features.
 
 Linodef 6.x-1.0-rc2, 2008-12-03
 -------------------------------

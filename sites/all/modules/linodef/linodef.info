@@ -1,14 +1,13 @@
-; $Id: linodef.info,v 1.1.2.1 2008/11/14 14:02:23 roidanton Exp $
+; $Id: linodef.info,v 1.1.2.3 2009/04/23 12:30:14 roidanton Exp $
 name = Linodef
-description = Provides tags for internal node and term links based on their ID and dynamically embeds node titles, field values and term names
+description = A filter module which provides tags to embed (parts of) Drupal elements and create corresponding links
 dependencies[] = content
 dependencies[] = text
-dependencies[] = taxonomy
 package = Linodef
 core = 6.x
-; Information added by drupal.org packaging script on 2008-12-03
-version = "6.x-1.0-rc2"
+; Information added by drupal.org packaging script on 2009-12-19
+version = "6.x-1.0-rc5"
 core = "6.x"
 project = "linodef"
-datestamp = "1228336822"
+datestamp = "1261191342"
 

@@ -1,0 +1,392 @@
+<?php
+// $Id: linodef_taglists.module,v 1.1.2.3 2009/12/19 02:38:17 roidanton Exp $
+
+/**
+ * @defgroup linodef_taglists Linodef taglists: Creating object lists and attach Linodef tags.
+ *
+ * Provides an admin interface to create object lists that contains a Linodef tag for each object.
+ * These lists can be used by other modules to create user interfaces (e.g. buttons or blocks).
+ */
+
+/**
+ * @file
+ *
+ * The main module provides the functions to be used by other modules.
+ *
+ * @ingroup linodef_taglists
+ * @author Roi Danton
+ */
+
+// ___________________________________________________________________________¸
+// 1) Retrieve the data object list data for Linodef submodules that adds (or
+//    provides functions for) contrib editor buttons and return a formatted
+//    list of items with links.
+// ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+
+/**
+ * Loads a taglist definition from the table.
+ *
+ * @param $condition
+ *   Enter the tlid or the name of the taglist or leave it empty.
+ *   If no parameter is passed then all taglist definitions are returned.
+ * @return
+ *   array: The taglist object.
+ *   bool: FALSE if db contains no taglist.
+ */
+function linodef_taglists_load_definition($condition = NULL) {
+	$table_name = 'linodef_taglists';
+	$fields = drupal_schema_fields_sql($table_name, 't');
+	$fields = implode(', ', $fields);
+	if (!empty($condition)) {
+		if (is_numeric($condition)) {
+			$taglist_definition = db_fetch_object(db_query('SELECT %s FROM {%s} t WHERE t.tlid = %s', $fields, $table_name, $condition));
+		}
+		elseif (is_string($condition)) {
+			$taglist_definition = db_fetch_object(db_query('SELECT %s FROM {%s} t WHERE t.name = "%s"', $fields, $table_name, $condition));
+		}
+		if ($taglist_definition->source) {
+			$taglist_definition->source = unserialize($taglist_definition->source);
+		}
+		if ($taglist_definition->tagoptions) {
+			$taglist_definition->tagoptions = unserialize($taglist_definition->tagoptions);
+		}
+		if ($taglist_definition->properties) {
+			$taglist_definition->properties = unserialize($taglist_definition->properties);
+		}
+	}
+	else {
+		$result = db_query('SELECT %s FROM {%s} t ORDER BY t.tlid asc', $fields, $table_name);
+		while ($ergebnis = db_fetch_object($result)) {
+			$tlid = $ergebnis->tlid;
+			$taglist_definition->$tlid = $ergebnis;
+			if ($ergebnis->source) {
+				$taglist_definition->$tlid->source = unserialize($ergebnis->source);
+			}
+			if ($ergebnis->tagoptions) {
+				$taglist_definition->$tlid->tagoptions = unserialize($ergebnis->tagoptions);
+			}
+			if ($ergebnis->properties) {
+				$taglist_definition->$tlid->properties = unserialize($ergebnis->properties);
+			}
+		}
+	}
+	if (empty($taglist_definition)) {
+		return FALSE;
+	}
+	return $taglist_definition;
+}
+
+/**
+ * This function loads the taglists content, e.g. the single fields etc.
+ *
+ * @param string $tlid
+ *    The taglist id.
+ * @return
+ *    array
+ *      Same as the taglist.load functions return. Additionally the following key is updated:
+ *      - options: Added the linodef tag options which are defined by the taglist.
+ *    string with error message
+ *
+ * @see linodef_taglists_itemlist(), _linodef_taglists_autocomplete()
+ */
+function linodef_taglists_load($tlid) {
+	// Retrieve cached data.
+	if (variable_get('linodef_taglists_use_cache', 0) && ($taglist_cache = cache_get('linodef_taglists:' . $tlid)) != 0) {
+		return $taglist_cache->data;
+	}
+	$taglist = linodef_taglists_load_definition($tlid);
+	module_load_include('inc', 'linodef_taglists', '/includes/taglist.load');
+
+	$taglist->tagoptionstransformed = $taglist->tagoptions ? linodef_taglists_transform_options($taglist->objecttype, $taglist->tagoptions) : '';
+
+	switch ($taglist->sourcetype) {
+	case 'view':
+		$view_display = $taglist->source['display'] ? $taglist->source['display'] : NULL;
+		$view_args = $taglist->source['arguments'] ? $taglist->source['arguments'] : NULL;
+		$taglist->content = _linodef_taglists_getelementsbyviewname($taglist->source['source'], $view_display, $view_args, $taglist->tagoptionstransformed['string'], $taglist->properties);
+		break;
+	case 'contenttype':
+		$taglist->content = _linodef_taglists_getnodesbycontenttype($taglist->source['source'], $taglist->tagoptionstransformed['string'], $taglist->properties);
+		break;
+	case 'field':
+		$taglist->content = _linodef_taglists_getfieldsbyfieldname($taglist->source['source'], $taglist->tagoptionstransformed['string'], $taglist->properties);
+		break;
+	case 'vocabulary':
+		$taglist->content = _linodef_taglists_gettermsbyvid($taglist->source['source'], $taglist->tagoptionstransformed['string'], $taglist->properties);
+		break;
+	case 'getallviews':
+		$taglist->content = _linodef_taglists_getallviews($taglist->tagoptionstransformed['string'], $taglist->properties);
+		break;
+	}
+
+	// Set cache.
+	if (variable_get('linodef_taglists_use_cache', 0)) {
+		cache_set('linodef_taglists:' . $tlid, $taglist, 'cache', CACHE_TEMPORARY);
+	}
+	// Debug: print('Taglist: <pre>');print_r($taglist);print('</pre>');
+	return $taglist;
+}
+
+/**
+ * Create a formatted list with links of taglist items.
+ *
+ * @param $taglist
+ *      A loaded taglist object.
+ * @param $calling_module
+ *      The name of the module that calls this function. Needed for javascript file and function to use when clicked on/submitting an item.
+ * @return string
+ *       The html list with the items or a message ready to be processed by javascript.
+ *
+ * @see linodef_taglists_load(), linodef_taglists_popup()
+ */
+function linodef_taglists_itemlist($taglist, $calling_module, $instanceID) {
+	if (is_array($taglist->content)) {
+		// Format output.
+		foreach ($taglist->content as $value) {
+			// l() shows character binary for some character, not applicable here. $links[] = l($value['desc'], '#', array('attributes' => array( 'onclick' => $calling_module .'_onclick(\''. $value['tag'] .';return false;\')' )));
+			$value['tag'] = str_replace('"', "\xf4\x80\x81\x8c", $value['tag']);
+			// For compatibility with Javascript/Perl replace function.
+			$value['tag'] = utf8_encode($value['tag']);
+			$links[] = '<a href="#" title="' . $value['tag'] . '" onclick="' . $calling_module . '_onclick(\'' . $value['tag'] . '\',\'' . $instanceID . '\');return false;">' . $value['desc'] . '</a>';
+		}
+		return theme('item_list', $links);
+	}
+	else {
+		// Likely a hint or warning message, e.g. when contenttype not found or similar.
+		return drupal_to_js($taglist->content);
+	}
+}
+
+/**
+ * Creates a string of Linodef tag options.
+ * Unneccessary options are excluded.
+ * Validation done already by wizard, deprecated elements are checked in
+ * taglist overview (admin.inc).
+ */
+function linodef_taglists_transform_options($objecttype, $options_array) {
+	$options_string = '';
+	$optional_options = array();
+	switch ($objecttype) {
+	case 'nodes':
+		$optional_options = array(
+			'type' => 'node',
+			'content' => 'title'
+		);
+		break;
+	case 'fields':
+		$optional_options = array(
+			'type' => 'node',
+			'content' => '{First field of the view.}',
+		);
+		break;
+	case 'views':
+		$optional_options = array(
+			'content' => 'content'
+		);
+	 break;
+	}
+	foreach ($options_array as $option => $value) {
+		// Skip optional options.
+		foreach ($optional_options as $ooption => $ovalue) {
+			if ($option == $ooption && $value == $ovalue) {
+				continue 2;
+			}
+		}
+		$tagoption = $option;
+		if ($value) {
+			$tagoption .= '="' . check_plain($value) . '"';
+		}
+		$output_options_string .= ',' . $tagoption;
+		$output_options_array[] = $tagoption;
+	}
+	// Debug: print('OT:' . $objecttype . ' Options: <pre>');print_r($options_array);print_r($optional_options);print_r($output_options_array);print('</pre>);
+	return array('string' => $output_options_string, 'array' => $output_options_array);
+}
+
+/**
+ * Array of valid taglist objecttypes. Used for FAPI elements.
+ */
+function linodef_taglists_objecttype() {
+	$output = array(
+		'nodes' => t('Nodes'),
+		'fields' => t('Fields'),
+	);
+	if (module_exists('taxonomy')) {
+		$output += array('terms' => t('Taxonomy terms'));
+	}
+	if (module_exists('views')) {
+		$output += array('views' => t('Views'));
+	}
+	return $output;
+}
+
+/**
+ * Array of valid taglist widgets. Used for FAPI elements.
+ */
+function linodef_taglists_widgets() {
+	// Designed to be able to use array_key_exists() because it seems to be faster than in_array().
+	return array(
+		'list' => array(
+			'#title' => t('Drop-down list'),
+			'#description' => t('Recommended for small taglists with less than 20 items.')
+		),
+		'popup' => array(
+			'#title' => t('Popup list'),
+			'#description' => t('Recommended for bigger taglists.')
+		),
+		'autocomplete' => array(
+			'#title' => t('Autocomplete'),
+			'#description' => t('Recommended for huge taglists which are used in places with limited space, e.g. as editor button or as block.')
+		),
+	);
+}
+
+/**
+ * Array of valid sort options. Used for FAPI elements.
+ */
+function linodef_taglists_sortcriteria($type) {
+	$output = array(
+		'sequence' => array(
+			'asc' => t('Ascending'),
+			'desc' => t('Descending')
+		)
+	);
+	switch ($type) {
+	case 'fields':
+		$output = array(
+			'method' => array(
+				'nid' => t('Node ID'),
+				'vid' => t('Revision ID'),
+			),
+		)+$output;
+		break;
+	case 'nodes':
+		$output = array(
+			'method' => array(
+				'title' => t('Title'),
+				'created' => t('Creation date'),
+				'changed' => t('Time of the last update'),
+				'nid' => t('Node ID'),
+				'uid' => t('Author'),
+				'language' => t('Language'),
+			),
+		)+$output;
+		break;
+	}
+	return $output;
+}
+
+/**
+ * Reduces an array to key - (string) value pairs. The array must include the '#title' key.
+ *
+ * @return
+ *      Array ready to be used as option in a form field definition.
+ */
+function linodef_make_fapi_option(&$array) {
+	foreach ($array as $formatter => &$value) {
+		$value = $value['#title'];
+	}
+}
+
+/**
+ * Get all labels of a field.
+ */
+function linodef_taglists_field_labels($fieldname) {
+	$content_type_info = _content_type_info();
+	foreach ($content_type_info['content types'] as $content_type) {
+		if (isset($content_type['fields'][$fieldname])) {
+			$labels[] .= $content_type['name'] . ': ' . $content_type['fields'][$fieldname]['widget']['label'];
+		}
+	}
+	return is_array($labels) ? $labels : FALSE;
+}
+
+// ___________________________________________________________________________¸
+// 2) Drupal hooks.
+// ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+
+/**
+ * Implementation of hook_menu().
+ */
+function linodef_taglists_menu() {
+	$base = array(
+		'file path' => drupal_get_path('module', 'linodef_taglists') .'/includes'
+	);
+	// Popup with item list or autocomplete (since autocomplete must not be a part of the editors from).
+	$items['linodef/taglist/%/%/%/%'] = array(
+		'type' => MENU_CALLBACK,
+		'title' => 'Linodef taglist',
+		'page callback' => 'linodef_taglists_popup',
+		'page arguments' => array(2, 3, 4, 5),
+		'access arguments' => array('access content'),
+		'file' => 'pages.inc',
+	) + $base;
+
+	// Required for autocomplete list.
+	$items['linodef/autocomplete'] = array(
+		'type' => MENU_CALLBACK,
+		'title' => 'Linodef autocomplete',
+		'page callback' => 'linodef_taglists_autocomplete',
+		'access arguments' => array('access content'),
+		'file' => 'pages.inc',
+	) + $base;
+
+	// Admin.
+	$items['admin/build/taglists'] = array(
+		'title' => 'Taglists',
+		'description' => 'Linodef tag lists for editor buttons, blocks etc',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('linodef_taglists_admin_taglists'),
+		'file' => 'admin.inc',
+		'access arguments' => array('administer site configuration'),
+	) + $base;
+
+	$items['admin/build/taglists/%ctools_js/%/%/%'] = array(
+		'title' => 'Taglist wizard',
+		'type' => MENU_CALLBACK,
+		'description' => 'Page to add and edit taglists',
+		'page callback' => 'linodef_taglists_wizard',
+		'page arguments' => array(3, 4, 5, 6),
+		'file' => 'admin.inc',
+		'access arguments' => array('administer site configuration'),
+	) + $base;
+	return $items;
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function linodef_taglists_theme() {
+	// Popup for editors.
+	$hooks['linodef_taglists_popup'] = array(
+		'arguments' => array(
+			'title' => NULL,
+			'taglist_name' => NULL,
+			'text' => NULL,
+			'taglist_content' => NULL,
+			'calling_module' => NULL,
+			'instanceID' => NULL,
+		),
+		'file' => 'theme.inc',
+		'path' => drupal_get_path('module', 'linodef_taglists') . '/theme',
+		'template' => 'linodef-taglists-popup',
+	);
+	// Admin.
+	$hooks['linodef_taglists_admin_taglists'] = array(
+		'arguments' => array('form' => NULL),
+		'file' => 'admin.inc',
+		'path' => drupal_get_path('module', 'linodef_taglists') . '/includes',
+	);
+	return $hooks;
+}
+
+/**
+ * Implementation of hook_form_[form_id]_alter().
+ *
+ * Extends Linodef settings with Linodef taglists settings.
+ */
+function linodef_taglists_form_linodef_settings_form_alter(&$form, $form_state) {
+	module_load_include('inc', 'linodef_taglists', '/includes/admin');
+	_linodef_taglists_form_linodef_settings_form_alter($form, $form_state);
+}
+

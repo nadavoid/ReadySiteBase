@@ -1,0 +1,109 @@
+<?php
+// $Id: linodef_taglists.install,v 1.1.2.2 2009/12/19 02:38:17 roidanton Exp $
+/**
+ * @file
+ * Contains install and update functions for Linodef taglists.
+ *
+ * @ingroup linodef_taglists
+ */
+
+function linodef_taglists_schema() {
+	$schema['linodef_taglists'] = array(
+		'description' => t('The base table for taglists.'),
+		'fields' => array(
+			'tlid' => array(
+				'description' => t('The primary identifier for a taglist.'),
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE
+			),
+			'name' => array(
+				'description' => t('The name of the taglist.'),
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => TRUE,
+				'default' => ''
+			),
+			'description' => array(
+				'description' => t('Description of the taglist.'),
+				'type' => 'text',
+				'size' => 'big',
+				'serialize' => FALSE
+			),
+			'objecttype' => array(
+				'description' => t('The desired object type of a taglist. Can differ from actual object type if using views.'),
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => ''
+			),
+			'sourcetype' => array(
+				'description' => t('The source type of a taglist.'),
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => ''
+			),
+			'source' => array(
+				'description' => t('The object the list is created with.'),
+				'type' => 'text',
+				'size' => 'big',
+				'serialize' => TRUE
+			),
+			'tagoptions' => array(
+				'description' => t('Tag options.'),
+				'type' => 'text',
+				'size' => 'big',
+				'serialize' => TRUE
+			),
+			'properties' => array(
+				'description' => t('List properties.'),
+				'type' => 'text',
+				'size' => 'big',
+				'serialize' => TRUE
+			),
+		),
+		'indexes' => array(
+			'taglist_name' => array('name'),
+		),
+		'primary key' => array('tlid'),
+	);
+	return $schema;
+}
+
+function linodef_taglists_install() {
+	// Create my tables.
+	drupal_install_schema('linodef_taglists');
+	// Remove/update variables from <=RC3.
+	linodef_taglists_update_variables(array('del' => array('linodef_buttonsapi_comments', 'linodef_buttonsapi_itemsort_field_method', 'linodef_buttonsapi_itemsort_field_sequence', 'linodef_buttonsapi_itemsort_node_method', 'linodef_buttonsapi_itemsort_node_sequence')));
+}
+
+function linodef_taglists_uninstall() {
+	// Drop my tables.
+	drupal_uninstall_schema('linodef_taglists');
+}
+
+function linodef_taglists_update_variables($vars, $search = NULL, $replace = NULL) {
+	global $conf;
+	foreach ($vars as $mode) {
+		switch ($mode) {
+		case 'del':
+			foreach ($mode as $name) {
+				if (isset($conf[$name])) {
+					variable_del($name);
+				}
+			}
+			break;
+		case 'update':
+			foreach ($mode as $name) {
+				if (isset($conf[$name])) {
+					if (!empty($search) && !empty($replace)) {
+						variable_set(str_replace($search, $replace, $name), variable_get($name));
+					}
+					variable_del($name);
+				}
+			}
+			break;
+		}
+	}
+}

@@ -1,15 +1,16 @@
-﻿<!-- $Id: about.html,v 1.1.2.1 2008/12/03 17:24:38 roidanton Exp $ -->
-<em>Linodef</em> is a filter for internal links and dynamic element embedding based exclusively on IDs. It provides tags to link and embed the following element types:
+﻿<!-- $Id: about.html,v 1.1.2.3 2009/07/02 17:59:53 roidanton Exp $ -->
+<em>Linodef</em> is a filter for internal links and dynamic element embedding based exclusively on IDs. It provides tags to embed, insert and link the following element types:
 <ul>
 <li>nodes</li>
 <li><a href="&topic:linodef/fieldtypes&">fields</a></li>
 <li>taxonomy terms</li>
-<li>Planned: image- and filefield, comments, views</li>
+<li>views (support for certain displays and arguments)</li>
+<li>Planned: image- and filefield, comments</li>
 </ul>
-Moreover Linodef supplies buttons for <a href="&topic:linodef/editors&">supported editors</a> to insert the tags into text and body fields. The buttons contain a list of elements (e.g. node titles) with the corresponding Linodef tag. The user can select an element with the help of an itemlist or an autocomplete field. A button is created by defining <a href="&topic:linodef_buttonsapi/elementtypes&">different elementtypes</a>.
+Moreover Linodef supplies (optional) buttons for <a href="&topic:linodef/editors&">supported editors</a> to insert the tags into text and body fields. The buttons contain a list of elements (e.g. node titles) with the corresponding Linodef tag. The user can select an element with the help of an itemlist or an autocomplete field. A button is created by defining <a href="&topic:linodef_buttonsapi/elementtypes&">different elementtypes</a>.
 
 <h6>Application field</h6>
-Those tags are required if you have a text that needs to include references to other nodes/terms or contains elements of other nodes. Some examples:
+Those tags are required if you have a text that needs to include references to other elements or contains content which is already available in other elements. Some examples:
 <ul>
 <li>You write an article that refers to things you've already saved as node or taxonomy term or you want to quote news/other articles (yes, you can dynamically embed whole texts, with or without linking them).</li>
 <li>You write a thesis with many difficult terms (the spelling of some of them will change likely) and you require (1) a common spelling as well as (2) links to an explanation for yourself and your readers (each term is a node or taxonomy term).</li>
@@ -18,7 +19,7 @@ Those tags are required if you have a text that needs to include references to o
 This is only an incomplete list of examples. Linodef is applicable in many more cases than those.
 
 <h6>Differences of Linodef in comparison to similar modules</h6>
-To achieve that goal the ID of a node, ID of a term and optionally a fieldname are the only elements that are saved within your text. The other data is included on-the-fly. That is the difference to similar filter modules that uses node names to create links (wiki-like behavior) or that limit their tags to the Node ID, too, but do not embed anything else. Following is a list of advantages the method Linodef uses has:
+To achieve the required flexibility the ID of a node, ID of a term and optionally a fieldname are the only elements that are saved within your text. The other data is included on-the-fly. That is the difference to similar filter modules that uses node names to create links (wiki-like behavior) or that limit their tags to the Node ID, too, but do not embed anything else. Following is a list of advantages the method Linodef uses has:
 <ul>
 <li>if you change the title or field value of the linked node then the title or field value are updated in your text automatically</li>
 <li>if you change the name of a term then the name is updated in your text automatically</li>
@@ -26,6 +27,7 @@ To achieve that goal the ID of a node, ID of a term and optionally a fieldname a
 <li>links don't break even if you change the title of a linked node or the name of a linked taxonomy term</li>
 <li>the tags are hardcoded and thus reliable so other modules can work with those tags</li>
 <li>the tag syntax is extensible i.e. in the future more element types can be supported without the need for a syntax change</li>
+<li>a tag validation system sends messages to the text and/or the Drupal message system so the user knows if he entered a tag with a wrong syntax and knows how to correct this (optional, messages can be deactivated)</li>
 <li>buttons are provided which ease the selection and inclusion of tags</li>
 </ul>
 

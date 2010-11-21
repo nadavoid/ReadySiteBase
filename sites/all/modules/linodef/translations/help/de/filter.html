@@ -1,7 +1,7 @@
-﻿<!-- $Id: filter.html,v 1.1.2.1 2008/11/30 13:00:31 roidanton Exp $ -->
-Nach der Installation von Linodef zur Seite <a href="&base_url&admin/settings/filters">Verwaltung &rarr; Einstellungen &rarr; Eingabeformate</a> wechseln und <em>Linodef</em> im bevorzugten Eingabeformat aktivieren.
+﻿<!-- $Id: filter.html,v 1.1.2.2 2009/01/21 17:19:40 roidanton Exp $ -->
+Nach der Installation von Linodef zur Seite <a href="&base_url&admin/settings/filters">Verwaltung &rarr; Einstellungen &rarr; Eingabeformate</a> wechseln und <em>Linodef</em> im bevorzugten Eingabeformat aktivieren. Weiterhin muss <em>Linodef</em> als erstes vom Eingabeformat ausgeführt werden. Dazu die Sortierungsseite aufrufen (admin/settings/filters/*/order) und <em>Linodef</em> nach oben schieben (so dass es die kleinste Zahl in der Stellenwertanzeige besitzt).
 
 Nähere Hinweise zur Benutzung der <em>Linodef Tags</em> inklusive Beispiele finden sich auf der <a href="&base_url&filter/tips#linodef">Hilfeseite zu den Eingabeformaten</a>.
 
 <h6>Layout von eingebundenen Feldern</h6>
-Eingebundene Felder besitzen das gleiche Layout wie im originalen Node, d.h. alle eingestellten Filter des standardmäßigen Eingabeformats werden berücksichtigt. Mit einer Ausnahme: Um eine unendliche Rekursion zu vermeiden, werden Linodef tags entfernt. Dieser Fall kann auftreten, wenn sich Felder gegenseitig oder sich selbst mittels Linodef Tags referenzieren.
+Eingebundene Felder besitzen das gleiche Layout wie im originalen Node, so lange das dortige Eingabeformat mit dem des einbindenden Feldes übereinstimmt oder die Unterschiede der Eingabeformate nicht das Layout beeinflussen. Allerdings gibt es eine Ausnahme: Um eine unendliche Rekursion zu vermeiden, werden Linodef tags entfernt. Dieser Fall kann auftreten, wenn sich Felder gegenseitig oder sich selbst mittels Linodef Tags referenzieren.

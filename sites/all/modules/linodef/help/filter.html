@@ -1,7 +1,7 @@
-﻿<!-- $Id: filter.html,v 1.1.2.1 2008/11/30 13:00:30 roidanton Exp $ -->
-After you've installed Linodef go to <a href="&base_url&admin/settings/filters">Administer &rarr; Settings &rarr; Input types</a> and enable <em>Linodef</em> for the input type of your choice.
+﻿<!-- $Id: filter.html,v 1.1.2.2 2009/01/21 17:19:39 roidanton Exp $ -->
+After you've installed Linodef go to <a href="&base_url&admin/settings/filters">Administer &rarr; Settings &rarr; Input types</a> and enable <em>Linodef</em> for the input type of your choice. Now go to the order page of your input filter (admin/settings/filters/*/order) and move <em>Linodef</em> to the top so it will be run first (i.e. Linodef has the lowest weight). Only that way the other filters can apply their markup to the fields embedded by Linodef.
 
 For information how to use the <em>Linodef tags</em> refer to the <a href="&base_url&filter/tips#linodef">Input type tips page</a>.
 
 <h6>Layout of embedded fields</h6>
-Embedded fields will have the same layout as in their original node i.e. they use all the filters of the default input format to markup their text. With one exception: If that field contains Linodef tags they are removed to avoid an infinite recursion. This is the case if users refer fields to each other or to itself with Linodef tags.
+Embedded fields have the same layout as in their original node as long as the input format is the same in the embedding field or as long as the differences of the input formats don't affect the markup. However there is one exception: If that field contains Linodef tags they are removed to avoid an infinite recursion. This is the case if users refer fields to each other or to itself with Linodef tags.

@@ -1,0 +1,47 @@
+<?php
+// $Id: linodef_bueditor.module,v 1.1.2.3 2009/12/14 20:31:51 roidanton Exp $
+
+/**
+ * @file
+ * Create appropriate Linodef values for BUEditor buttons
+ *
+ * @package Linodef
+ * @author Roi Danton
+ */
+
+/**
+ * Function to be called from the editor itself.
+ *
+ * By using drupal_add_js we can include custom javascript in BUEditor without using BUEditor settings.
+ *
+ * @param string $tlid
+ *   The Taglist ID.
+ * @return string
+ *      Output formatted to be useable by the editor.
+ */
+function linodef_bueditor($tlid) {
+	global $base_url;
+
+	// Enter the name of this module.
+	// Needed to initialize the local Javascript file and onclick function.
+	// For more information see js file included in linodef_bueditor.
+	$this_module_name = 'linodef_bueditor';
+
+	$taglist_def = linodef_taglists_load_definition($tlid);
+
+	// Local Javascript.
+	drupal_add_js(drupal_get_path('module', $this_module_name) . '/' . $this_module_name . '_functions.js');
+	// Popup Javascript.
+	drupal_add_js(drupal_get_path('module', 'linodef_taglists') .'/linodef_taglists_functions.js');
+
+	if ($taglist_def->properties['widget'] == 'list') {
+			$taglist = linodef_taglists_load($tlid);
+			$taglist_list = linodef_taglists_itemlist($taglist, $this_module_name, 'active');
+			return 'js: linodef_bueditor_quickpop(' . $taglist_list . ', "slideDown");';
+	}
+	else {
+			// Autocomplete doesn't work in another form therefore we need external button or popup.
+			// The function to open the popup window requires the width & height of the window.
+			return 'js: linodef_taglists_popup("' . $base_url . '/linodef/taglist/' . $tlid . '/' . $taglist_def->properties['widget'] . '/' . $this_module_name . '/active", 600, 500);';
+	}
+}

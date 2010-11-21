@@ -1,0 +1,50 @@
+<?php
+// $Id: linodef_wysiwyg.module,v 1.1.2.1 2009/12/12 00:40:55 roidanton Exp $
+
+/**
+ * @defgroup linodef_wysiwyg Linodef WYSIWYG: Creating editor buttons for Linodef tags in WYSIWYG editors.
+ */
+
+/**
+ * @file
+ * Handle the WYSIWYG plugin and provide taglist data.
+ *
+ * @ingroup linodef_wysiwyg
+ * @author Roi Danton
+ */
+
+
+/**
+ * Implementation of hook_wysiwyg_include_directory().
+ *
+ * @param string $type
+ *   Contains either "plugins" or "editors"?
+ * @return string
+ *   The function returns the include directory "plugins". This directory must only
+ *   contain wysiwyg api integration files.
+ */
+function linodef_wysiwyg_wysiwyg_include_directory($type) {
+	switch ($type) {
+		case 'plugins':
+      // You can just return $type, if you place your Wysiwyg plugins into a
+      // sub-directory named 'plugins'.
+			return $type;
+	}
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+/*function linodef_wysiwyg_menu() {
+	// Popup with item list.
+	$items['linodef/popup/wysiwyg'] = array(
+		'type' => MENU_CALLBACK,
+		'title' => 'Linodef popup',
+		'page callback' => 'linodef_wysiwyg_popup',
+		'page arguments' => array(),
+		'file' => 'pages.inc',
+		'file path' => drupal_get_path('module', 'linodef_wysiwyg') .'/includes',
+		'access arguments' => array('access content'),
+	);
+	return $items;
+}*/

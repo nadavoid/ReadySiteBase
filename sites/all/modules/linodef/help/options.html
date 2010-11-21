@@ -1,23 +1,42 @@
-﻿<!-- $Id: options.html,v 1.1.2.1 2008/11/30 13:00:30 roidanton Exp $ -->
+﻿<!-- $Id: options.html,v 1.1.2.5 2009/07/06 12:02:01 roidanton Exp $ -->
 Tag options enhance the applicability of Linodef tags and make them expandable without the need for changing their structure. There are two kinds of options:
 <ul>
-<li>ID type: assigns an element type to the tag ID</li>
-<li>embed modification: manipulates the way how the tag is substituted</li>
+<li>element type: assigns an element type to the tag ID</li>
+<li>modification: manipulates the way how the tag is substituted</li>
 </ul>
-Regarding the <a href="&base_url&filter/tips#linodef">usage of the options</a> there are no differences between ID type options and embed modification options. The following options are available:
+Regarding the <a href="&base_url&filter/tips#linodef">usage of the options</a> there are no differences between element type options and modification options.
 
-<h4>ID types</h4>
+Some options need a value. They are assigned the following way:
+<pre>option="value"</pre>
+Value may contain all 8-bit characters except <em>]</em> and <em>"</em>.
+
+The following options are available:
+<h4>Element types</h4>
 <dl>
 <dt>nid</dt>
-<dd>ID refers to a node (optional, always active if other ID types not set).</dd>
+<dd>ID refers to a node (optional, always active if other ID types not set). ID = node ID (number).</dd>
 <dt>tid</dt>
-<dd>ID refers to a taxonomy term.</dd>
+<dd>ID refers to a taxonomy term. ID = term id (number).</dd>
+<dt>viewid</dt>
+<dd>ID refers to a view. ID = viewname (alphanumeric).</dd>
 </dl>
 <h4>Embed modifications</h4>
+For all element types:
 <dl>
 <dt>nolink</dt>
 <dd>The embedded element is not linked.</dd>
-<dt>translation=%language</dt>
-<dd>If the embedded node (#Node) has a translation in the specified language than the translated node is embedded instead. Senseful if you embed a node which has no translated node yet but you want to embed the translated node as soon as it is created.
-%language = en, de or es etc. Works only with ID type <em>nid</em>.</dd>
+<dt>linktext="%text"</dt>
+<dd>Instead of the node title, taxonomy term, field value etc this custom text will be linked. This option replaces the old Linodef tag &lt;#nid&gt;%text&lt;/#&gt; which is now deprecated.</dd>
+For element type <em>node</em> (nid):
+<dt>translation="%language"</dt>
+<dd>If the embedded node has a translation in the specified language than the translated node is embedded instead. Senseful if you embed a node which has no translated node yet but you want to embed the translated node as soon as it is created.
+    As value use the abbrevation of the language. Often a Drupal language uses the abbrevation defined by <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO 639-1/2</a>, e.g. translation="de".</dd>
 </dl>
+For element type <em>view</em> (viewid):
+<dt>viewtitle</dt>
+<dd>Only the viewtitle with a link to the view will be embedded. The link heeds the values for <em>viewdisplay</em> and <em>viewargs</em>.
+    <em>By default the embedded view is not linked to itself,</em> because a view contains HTML block tags what would cause a weird output if surrounded with an inline link tag. So if you would like to embed and have a link to the view then use a second tag with this option.</dd>
+<dt>viewdisplay="%display"</dt>
+<dd>Choose the view display that will be shown. If the input type Linodef is part of uses a HTML filter then <em>make sure that those HTML tags used by the view are allowed by the HTML filter</em>, e.g. &lt;table&gt; for view displays using a table. Otherwise the embedded view will look weird.</dd>
+<dt>viewargs="%arguments"</dt>
+<dd>Arguments passed to the view. Separate them by <em>&amp;</em>, e.g. viewargs="Satyr&amp;Pan&amp;Faunus&amp;Centaur".</dd>

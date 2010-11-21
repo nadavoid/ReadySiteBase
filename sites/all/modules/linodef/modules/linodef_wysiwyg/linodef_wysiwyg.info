@@ -1,0 +1,13 @@
+; $Id: linodef_wysiwyg.info,v 1.1.2.1 2009/12/12 00:40:55 roidanton Exp $
+name = Linodef WYSIWYG
+description = Supportfunctions for WYSIWYG Buttons using Linodef filter
+dependencies[] = linodef_taglists
+dependencies[] = wysiwyg
+package = Linodef
+core = 6.x
+; Information added by drupal.org packaging script on 2009-12-19
+version = "6.x-1.0-rc5"
+core = "6.x"
+project = "linodef"
+datestamp = "1261191342"
+

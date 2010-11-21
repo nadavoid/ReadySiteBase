@@ -1,5 +1,5 @@
-﻿<!-- $Id: about.html,v 1.1.2.1 2008/12/03 17:24:38 roidanton Exp $ -->
-<em>Linodef</em> ist ein Filtermodul für interne Verlinkung und dynamisches Einbinden von Elementen unter ausschließlicher Nutzung von IDs. Für das Verlinken und Einbetten stellt es Tags bereit, die folgende Elementtypen unterstützen:
+﻿<!-- $Id: about.html,v 1.1.2.2 2009/01/21 17:19:40 roidanton Exp $ -->
+<em>Linodef</em> ist ein Filtermodul für interne Verlinkung und dynamisches Einbinden von Elementen unter ausschließlicher Nutzung von IDs. Für das Einbetten, Einfügen und Verlinken stellt es Tags bereit, die folgende Elementtypen unterstützen:
 <ul>
 <li>Beiträge</li>
 <li><a href="&topic:linodef/fieldtypes&">Felder</a></li>
@@ -18,7 +18,7 @@ Die Verwendung von Tags anstatt unveränderlicher Links ist dann sinnvoll, wenn 
 Dies ist nur eine unvollständige Liste von Beispielen. Der Einsatz von Linodef ist auch in vielen weiteren Anwendungsfällen sinnvoll.
 
 <h6>Unterschiede von Linodef gegenüber vergleichbaren Modulen</h6>
-Um diese Ziele zu erreichen, werden lediglich eine NodeID oder die ID eines Taxonomiebegriffes und optional ein Feldname im Text gespeichert. Dinge wie Nodetitel oder Feldwerte werden beim Aufrufen des Textes automatisch geladen. Dadurch unterscheidet sich Linodef von ähnlichen Modulen, die etwa zur Verlinkung den Nodetitel nutzen (wie es bei Wikis verbreitet ist) beziehungsweise sich zwar ebenfalls auf die NodeID beschränken, dafür aber keine weiteren Daten in den Text einbinden. Hier eine Liste von Vorteilen durch die Methode von Linodef:
+Um die nötige Flexibilität zu erreichen, werden lediglich eine NodeID oder die ID eines Taxonomiebegriffes und optional ein Feldname im Text gespeichert. Dinge wie Nodetitel oder Feldwerte werden beim Aufrufen des Textes automatisch geladen. Dadurch unterscheidet sich Linodef von ähnlichen Modulen, die etwa zur Verlinkung den Nodetitel nutzen (wie es bei Wikis verbreitet ist) beziehungsweise sich zwar ebenfalls auf die NodeID beschränken, dafür aber keine weiteren Daten in den Text einbinden. Hier eine Liste von Vorteilen durch die Methode von Linodef:
 <ul>
 <li>wenn der Nodetitel oder der eingebundene Feldwert des verlinkten Nodes modifiziert wird, so werden der Nodetitel bzw. der Feldwert im Text automatisch aktualisiert</li>
 <li>bei der Namensänderung eines verlinkten Taxonomiebegriffes wird der Name im Text ebenfalls automatisch auf den neuesten Stand gebracht</li>
@@ -26,6 +26,7 @@ Um diese Ziele zu erreichen, werden lediglich eine NodeID oder die ID eines Taxo
 <li>die Links bleiben gültig, auch wenn sich der Titel eines verlinkten Nodes bzw. der Name eines verlinkten Taxonomiebegriffs ändert</li>
 <li>die Tags sind vordefiniert und daher unveränderlich, so dass auch andere Module damit arbeiten können</li>
 <li>die Syntax ist erweiterbar, d.h. es können zukünftig mehr Elemente unterstützt werden, ohne die Syntax ändern zu müssen</li>
+<li>eine Gültigkeitsprüfung für Tags sendet Hinweise zum Text und/oder zum Drupal Benachrichtigungssystem, damit der Benutzer bei fehlerhafter Eingabe eines Tags weiß, was er falsch gemacht hat (die Benachrichtigungen können deaktiviert werden)</li>
 <li>es werden Schaltflächen mitgeliefert die das Auswählen und Einfügen der Tags stark vereinfachen</li>
 </ul>
 

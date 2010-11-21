@@ -1,7 +1,9 @@
-﻿<!-- $Id: comments.html,v 1.1.2.1 2008/11/30 13:00:30 roidanton Exp $ -->
+﻿<!-- $Id: comments.html,v 1.1.2.3 2009/07/06 12:02:01 roidanton Exp $ -->
 Linodef tags support comments. Comments are for those who want to get a better idea of the purpose of a Linodef tag during editing. Therefore the comment has the following characteristics:
 <ul>
 <li>it is only visible while editing a node</li>
 <li>it is not loaded when viewing a node so no one is able to see the comment by viewing a node</li>
 <li>it may contain any UTF-8 character except <strong>]</strong></li>
+<li>it is <em>not</em> modified automatically (e.g. when the element content gets an update) and therefore will not change unless the editor changes it manually</li>
 </ul>
+Easteregg: You may use [# your comment] to create an inline comment that is visible only when editing the node.

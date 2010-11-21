@@ -1,23 +1,42 @@
-﻿<!-- $Id: options.html,v 1.1.2.1 2008/11/30 13:00:31 roidanton Exp $ -->
+﻿<!-- $Id: options.html,v 1.1.2.3 2009/04/23 12:30:14 roidanton Exp $ -->
 Tag Optionen erweitern die Anwendbarkeit der Linodef Tags und machen sie ausbaufähig, ohne ihre Struktur zu verändern. Es gibt zwei Optionsarten:
 <ul>
-<li>ID Variante: weist der Tag ID einen Elementtyp zu</li>
-<li>Modifikation der Einbindung: manipuliert die Art der Tagersetzung</li>
+<li>Elementtyp: weist der Tag ID einen Elementtyp zu</li>
+<li>Modifikation: manipuliert die Art und Weise der Tagersetzung</li>
 </ul>
-Hinsichtlich der <a href="&base_url&filter/tips#linodef">Verwendung der Optionen</a> gibt es keinen Unterschied zwischen ID Varianten und Einbindungsmodifikationen. Folgende Optionen sind verfügbar:
+Hinsichtlich der <a href="&base_url&filter/tips#linodef">Verwendung der Optionen</a> gibt es keinen Unterschied zwischen Elementtypen und Modifikationen.
 
-<h4>ID Variante</h4>
+Einige Optionen benötigen Werte. Die Syntax lautet:
+<pre>Option="Wert"</pre>
+<em>Wert</em> darf alle 8-bit Zeichen außer <em>]</em> und <em>"</em> enthalten.
+
+Folgende Optionen sind verfügbar:
+<h4>Elementtyp</h4>
 <dl>
 <dt>nid</dt>
-<dd>ID bezieht sich auf ein Node (optional, immer aktiviert, wenn andere ID Varianten nicht benutzt werden)</dd>
+<dd>ID bezieht sich auf einen Beitrag/Node (optional, immer aktiviert, wenn andere ID Varianten nicht benutzt werden). ID = Node ID (Zahl)</dd>
 <dt>tid</dt>
-<dd>ID bezieht sich auf einen Taxonomiebegriff.</dd>
+<dd>ID bezieht sich auf einen Taxonomiebegriff. ID = Begriffs-ID (Zahl).</dd>
+<dt>viewid</dt>
+<dd>ID bezieht sich auf einen View. ID = Viewname.</dd>
 </dl>
-<h4>Modifikation der Einbindung</h4>
+<h4>Modifikationen</h4>
+Für alle Elementtypen:
 <dl>
 <dt>nolink</dt>
 <dd>Das eingebundene Element wird nicht verlinkt.</dd>
-<dt>translation=%language</dt>
-<dd>Falls der eingebundene Node (#Node) eine Übersetzung in einer bestimmten Sprache besitzt, dann wird der übersetzte Node eingebunden. Das ist dann nützlich, wenn der Node zum Zeitpunkt der Einbindung noch keine Übersetzung besitzt, diese aber nach der Erstellung sofort automatisch eingebunden werden soll.
-%language = en, de oder es etc. Diese Option arbeitet nur mit der ID Variante <em>nid</em>.</dd>
+<dt>linktext="%text"</dt>
+<dd>Statt des Nodetitels, Taxonomiebegriffes, Feldwertes etc wird der hier eingegebene Text verlinkt. Diese Option ersetzt das nicht mehr unterstützte &lt;#nid&gt;%text&lt;/#&gt;.</dd>
+Für Elementtyp <em>Node</em> (nid):
+<dt>translation="%language"</dt>
+<dd>Falls der eingebundene Node eine Übersetzung in einer bestimmten Sprache besitzt, dann wird der übersetzte Node eingebunden. Das ist dann nützlich, wenn der Node zum Zeitpunkt der Einbindung noch keine Übersetzung besitzt, diese aber nach der Erstellung sofort automatisch eingebunden werden soll.
+    Als Wert wird die Sprachenabkürzung verwendet. Sprachen in Drupal benutzen oft die nach <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO 639-1/2</a> definierten Abkürzungen, z.B. translation = "de".</dd>
 </dl>
+Für Elementtyp <em>View</em> (viewid):
+<dt>viewtitle</dt>
+<dd>Only the viewtitle with a link to the view will be embedded. The link heeds the values for <em>viewdisplay</em> and <em>viewargs</em>.
+    <em>By default the embedded view is not linked to itself,</em> because a view contains HTML block tags what would cause a weird output if surrounded with an inline link tag. So if you would like to embed and have a link to the view then use a second tag with this option.</dd>
+<dt>viewdisplay="%display"</dt>
+<dd>Choose the view display that will be shown. If the input type Linodef is part of uses a HTML filter then <em>make sure that those HTML tags used by the view are allowed by the HTML filter</em>, e.g. &lt;table&gt; for view displays using a table. Otherwise the embedded view will look weird.</dd>
+<dt>viewargs="%arguments"</dt>
+<dd>Arguments passed to the view. Separate them by <em>&amp;</em>, e.g. viewargs="Satyr&amp;Pan&amp;Faunus&amp;Centaur".</dd>

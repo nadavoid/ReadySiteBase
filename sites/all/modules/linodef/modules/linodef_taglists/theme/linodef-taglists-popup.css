@@ -1,0 +1,21 @@
+/* $Id: linodef-taglists-popup.css,v 1.1.2.1 2009/12/12 00:40:55 roidanton Exp $ */
+
+/**
+ * Linodef popup
+ */
+#linodef-popup #header {
+	background: white;
+}
+#linodef-popup #header img {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+#linodef-popup #header #closebutton {
+	float: right;
+	padding: 1px;
+}
+#linodef-popup #description {
+	background: #f4f4f4;
+	border-bottom: 1px #ededed solid;
+}
