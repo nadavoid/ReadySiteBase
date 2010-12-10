@@ -1,5 +1,5 @@
 <?php
-// $Id: imagefield.module,v 1.112 2010/06/29 23:04:42 quicksketch Exp $
+// $Id: imagefield.module,v 1.116 2010/12/10 17:33:11 quicksketch Exp $
 
 /**
  * @file
@@ -295,6 +295,22 @@ function imagefield_form_content_field_overview_submit(&$form, &$form_state) {
 }
 
 /**
+ * Implementation of hook_filefield_data_info().
+ */
+function imagefield_filefield_data_info() {
+  return array(
+    'alt' => array(
+      'title' => t('Alt text'),
+      'callback' => 'check_plain',
+    ),
+    'title' => array(
+      'title' => t('Title'),
+      'callback' => 'check_plain',
+    ),
+  );
+}
+
+/**
  * @defgroup "Theme Callbacks"
  * @{
  * @see imagefield_theme().
@@ -329,8 +345,14 @@ function theme_imagefield_image($file, $alt = '', $title = '', $attributes = NUL
     $query_string = $query_character . $file['timestamp'];
   }
 
+  // Strip off the file directory path if present.
+  $path = $file['filepath'];
+  if (strpos($path, file_directory_path() .'/') === 0) {
+    $path = trim(substr($path, strlen(file_directory_path())), '\\/');
+  }
+
   // Encode the parts of the path.
-  $parts = explode('/', $file['filepath']);
+  $parts = explode('/', $path);
   foreach ($parts as $n => $part) {
     $parts[$n] = rawurlencode($part);
   }
@@ -359,6 +381,11 @@ function theme_imagefield_admin_thumbnail($item = NULL) {
     return '<!-- link to default admin thumb -->';
   }
   $thumb_path = imagefield_file_admin_thumb_path($item);
+
+  // Strip off the file directory path if present.
+  if (strpos($thumb_path, file_directory_path() .'/') === 0) {
+    $thumb_path = trim(substr($thumb_path, strlen(file_directory_path())), '\\/');
+  }
 
   // Encode the parts of the path.
   $parts = explode('/', $thumb_path);

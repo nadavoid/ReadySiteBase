@@ -3,9 +3,9 @@ description = "The SpamSpan module obfuscates email addresses to help prevent sp
 package = "Input filters"
 dependencies[] = filter
 core = 6.x
-; Information added by drupal.org packaging script on 2009-09-17
-version = "6.x-1.4"
+; Information added by drupal.org packaging script on 2010-12-05
+version = "6.x-1.6"
 core = "6.x"
 project = "spamspan"
-datestamp = "1253189554"
+datestamp = "1291544156"
 

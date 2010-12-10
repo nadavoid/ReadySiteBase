@@ -1,5 +1,5 @@
 <?php
-// $Id: field_file.inc,v 1.37 2010/06/29 19:14:16 quicksketch Exp $
+// $Id: field_file.inc,v 1.39 2010/12/06 00:33:49 quicksketch Exp $
 
 /**
  * @file
@@ -42,8 +42,10 @@ function field_file_load($fid, $reset = NULL) {
     }
 
     foreach (module_implements('file_load') as $module) {
-      $function = $module .'_file_load';
-      $function($file);
+      if ($module != 'field') {
+        $function = $module .'_file_load';
+        $function($file);
+      }
     }
 
     // Cache the fully loaded file for later use.
@@ -156,7 +158,10 @@ function field_file_save_file($filepath, $validators = array(), $dest = FALSE, $
   // Call the validation functions.
   $errors = array();
   foreach ($validators as $function => $args) {
-    array_unshift($args, $file);
+      // Add the $file variable to the list of arguments and pass it by
+      // reference (required for PHP 5.3 and higher).
+    array_unshift($args, NULL);
+    $args[0] = &$file;
     $errors = array_merge($errors, call_user_func_array($function, $args));
   }
 
