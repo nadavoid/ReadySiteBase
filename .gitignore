@@ -4,6 +4,7 @@ sites/default/*
 sites/default/tmp/*
 sites/default/files/*
 sites/all/themes/*
+cache
 backup
 backup/*
 _sites.txt
