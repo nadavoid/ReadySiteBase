@@ -1,5 +1,5 @@
 <?php
-// $Id: imagefield.module,v 1.116 2010/12/10 17:33:11 quicksketch Exp $
+// $Id: imagefield.module,v 1.117 2010/12/12 23:36:07 quicksketch Exp $
 
 /**
  * @file
@@ -345,19 +345,10 @@ function theme_imagefield_image($file, $alt = '', $title = '', $attributes = NUL
     $query_string = $query_character . $file['timestamp'];
   }
 
-  // Strip off the file directory path if present.
-  $path = $file['filepath'];
-  if (strpos($path, file_directory_path() .'/') === 0) {
-    $path = trim(substr($path, strlen(file_directory_path())), '\\/');
-  }
+  // Encode the path so that unusual characters are printed correctly.
+  $path = field_file_urlencode_path($file['filepath']);
 
-  // Encode the parts of the path.
-  $parts = explode('/', $path);
-  foreach ($parts as $n => $part) {
-    $parts[$n] = rawurlencode($part);
-  }
-  $path = implode('/', $parts);
-
+  // Construct the URL.
   $url = file_create_url($path) . $query_string;
   $attributes['src'] = $url;
   $attributes = drupal_attributes($attributes);
@@ -382,17 +373,8 @@ function theme_imagefield_admin_thumbnail($item = NULL) {
   }
   $thumb_path = imagefield_file_admin_thumb_path($item);
 
-  // Strip off the file directory path if present.
-  if (strpos($thumb_path, file_directory_path() .'/') === 0) {
-    $thumb_path = trim(substr($thumb_path, strlen(file_directory_path())), '\\/');
-  }
-
-  // Encode the parts of the path.
-  $parts = explode('/', $thumb_path);
-  foreach ($parts as $n => $part) {
-    $parts[$n] = rawurlencode($part);
-  }
-  $thumb_path = implode('/', $parts);
+  // Encode the path so that unusual characters are printed correctly.
+  $thumb_path = field_file_urlencode_path($thumb_path);
 
   // Add a timestamp to the URL to ensure it is immediately updated after editing.
   $query_string = '';
