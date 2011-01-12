@@ -1,5 +1,5 @@
 <?php
-// $Id: filefield.module,v 1.230 2010/12/08 04:57:07 quicksketch Exp $
+// $Id: filefield.module,v 1.231 2010/12/12 23:37:11 quicksketch Exp $
 
 /**
  * @file
@@ -134,7 +134,7 @@ function filefield_file_download($filepath) {
   }
 
   // If the file is not found in the database, we're not responsible for it.
-  if (!isset($file)) {
+  if (empty($file)) {
     return;
   }
 

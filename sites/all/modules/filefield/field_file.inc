@@ -1,5 +1,5 @@
 <?php
-// $Id: field_file.inc,v 1.39 2010/12/06 00:33:49 quicksketch Exp $
+// $Id: field_file.inc,v 1.40 2010/12/12 23:36:07 quicksketch Exp $
 
 /**
  * @file
@@ -373,6 +373,34 @@ function field_file_strip_path($path) {
   $dirlen = drupal_strlen($dirpath);
   if (drupal_substr($path, 0, $dirlen + 1) == $dirpath .'/') {
     $path = drupal_substr($path, $dirlen + 1);
+  }
+  return $path;
+}
+
+/**
+ * Encode a file path in a way that is compatible with file_create_url().
+ *
+ * This function should be used on the $file->filepath property before any call
+ * to file_create_url(). This ensures that the file directory path prefix is
+ * unmodified, but the actual path to the file will be properly URL encoded.
+ */
+function field_file_urlencode_path($path) {
+  // Encode the parts of the path to ensure URLs operate within href attributes.
+  // Private file paths are urlencoded for us inside of file_create_url().
+  if (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PUBLIC) {
+    $file_directory_path = file_directory_path();
+    if (strpos($path, $file_directory_path . '/') === 0) {
+      $path = trim(substr($path, strlen($file_directory_path)), '\\/');
+    }
+
+    $parts = explode('/', $path);
+    foreach ($parts as $index => $part) {
+      $parts[$index] = rawurlencode($part);
+    }
+    $path = implode('/', $parts);
+
+    // Add the file directory path again (not encoded).
+    $path = $file_directory_path . '/' . $path;
   }
   return $path;
 }
