@@ -1,5 +1,4 @@
 <?php
-// $Id: fieldset.inc,v 1.11.2.6 2010/10/19 04:53:38 quicksketch Exp $
 
 /**
  * @file

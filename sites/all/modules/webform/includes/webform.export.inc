@@ -1,5 +1,4 @@
 <?php
-// $Id: webform.export.inc,v 1.4.2.2 2010/04/03 04:06:28 quicksketch Exp $
 
 /**
  * @file

@@ -1,5 +1,4 @@
 <?php
-// $Id: markup.inc,v 1.13.2.5 2010/10/18 07:20:54 quicksketch Exp $
 
 /**
  * @file

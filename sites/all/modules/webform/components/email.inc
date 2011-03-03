@@ -1,5 +1,4 @@
 <?php
-// $Id: email.inc,v 1.28.2.8 2010/10/18 07:20:54 quicksketch Exp $
 
 /**
  * @file
