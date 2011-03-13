@@ -1,5 +1,5 @@
 <?php
-// $Id: views_cycle.theme.inc,v 1.1.2.10 2010/01/21 22:56:31 crell Exp $
+// $Id: views_cycle.theme.inc,v 1.1.2.13 2010/07/20 19:02:31 crell Exp $
 
 /**
  * Preprocess function to build the cycle style plugin.
@@ -68,9 +68,10 @@ function template_preprocess_views_cycle(&$vars, $hook) {
     $settings['use_pager_callback']   = 1;
     $settings['params']['pagerEvent'] = $options['pager']['event'];
     $settings['params']['pagerLocation'] = $options['skin_info']['pager_location'];
-    $settings['params']['height'] = $options['height'];
-    $settings['verticalPadding'] = $options['verticalPadding'];
   }
+
+  $settings['params']['height'] = (int)$options['height'];
+  $settings['verticalPadding'] = (int)$options['verticalPadding'];
 
   if ($options['skin_info']['prevnext_location'] != 'none' && $options['prevnext']['next_label'] && $options['prevnext']['prev_label']) {
     $settings['use_prevnext_links'] = 1;
@@ -90,11 +91,15 @@ function template_preprocess_views_cycle(&$vars, $hook) {
   }
 
   // Set up the necessary JS.
-  drupal_add_js(drupal_get_path('module', 'views_cycle') .'/jquery.cycle.js', 'module', 'footer');
+  $path = libraries_get_path('jquery.cycle');
+  drupal_add_js($path .'/jquery.cycle.all.min.js', 'module', 'footer');
   drupal_add_js(drupal_get_path('module', 'views_cycle') .'/views_cycle.js', 'module', 'footer');
 
-  // Key the settings for each instance of the cycle plugin by its cycle id.
-  drupal_add_js(array('views_cycle' => array($vars['cycle_id'] => $settings)), 'setting', 'footer');
+  // Allow alteration of javascript settings
+  $js_settings = array($vars['cycle_id'] => $settings);
+  drupal_alter('views_cycle_settings', $js_settings);
 
+  // Key the settings for each instance of the cycle plugin by its cycle id.
+  drupal_add_js(array('views_cycle' => $js_settings), 'setting', 'footer');
 }
 

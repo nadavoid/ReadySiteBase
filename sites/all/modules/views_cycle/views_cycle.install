@@ -1,0 +1,44 @@
+<?php
+// $Id: views_cycle.install,v 1.1.2.3 2010/07/20 22:07:31 crell Exp $
+
+/**
+ * Implmentation of hook_requirements().
+ */
+function views_cycle_requirements($phase) {
+  $requirements = array();
+  if ($phase == 'runtime') {
+    // Users upgrading from < 1.0 versions may not have libraries installed yet,
+    // so at least we shouldn't blow up on them.
+    if (module_exists('libraries')) {
+      $path = libraries_get_path('jquery.cycle');
+      if (file_exists($path .'/jquery.cycle.all.min.js')) {
+        $requirements['views_cycle'] = array(
+          'title' => t('jQuery Cycle'),
+          'description' => t('The jQuery Cycle plugin was found.'),
+          'severity' => REQUIREMENT_OK,
+        );
+      }
+      else {
+        $requirements['views_cycle'] = array(
+          'title' => t('jQuery Cycle'),
+          'description' => t('The jQuery Cycle plugin could not be found, but is required for the Views Cycle module to work. Please consult the README.txt file included in the views_cycle module directory for installation instructions.'),
+          'severity' => REQUIREMENT_ERROR,
+        );
+      }
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Warn about new module dependency.
+ */
+function views_cycle_update_6001() {
+
+  if (!module_exists('libraries')) {
+    drupal_set_message(t('Views Cycle now requires the <a href="!library">Libraries module</a> in order to function. The jquery.cycle plugin now needs to be loaded as a Library.   Please install the Libraries module and see the README.txt file for the new setup instructions.', array('!library' => 'http://drupal.org/project/libraries')), 'warning', FALSE);
+  }
+
+  return array();
+}

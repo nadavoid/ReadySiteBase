@@ -1,0 +1,13 @@
+.item-list ul.views-cycle-container li {
+  /* This does not override Garland's bullets, which are added using an image. */
+  list-style-type: none;
+  margin:0;
+  padding:0;
+}
+
+.item-list ul.views-cycle-pager li {
+  /* This does not override Garland's bullets, which are added using an image. */
+  list-style-type: none;
+  margin:0;
+  padding:0;
+}

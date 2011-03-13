@@ -1,4 +1,4 @@
-// $Id: views_cycle.js,v 1.2.2.17 2010/01/21 23:13:13 crell Exp $
+// $Id: views_cycle.js,v 1.2.2.18 2010/07/20 19:10:05 crell Exp $
 
 Drupal.behaviors.viewsCycle = function(context) {
 
@@ -114,5 +114,5 @@ Drupal.theme.prototype.viewsCyclePager = function(body, classes, id) {
 }
 
 Drupal.theme.prototype.viewsCyclePrevNext = function(nextLabel, prevLabel, id) {
-  return '<div id="' + id + '"><a href="#" class="views-cycle-prev">' + prevLabel + '</a> <a href="#" class="views-cycle-next">' + nextLabel + "</a></div>\n";
+  return '<div id="' + id + '" class="views-cycle-prev-next-links"><a href="#" class="views-cycle-prev">' + prevLabel + '</a> <a href="#" class="views-cycle-next">' + nextLabel + "</a></div>\n";
 }
