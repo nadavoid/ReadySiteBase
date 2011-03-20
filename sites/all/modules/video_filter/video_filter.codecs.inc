@@ -1,5 +1,4 @@
 <?php
-// $Id: video_filter.codecs.inc,v 1.3.2.18 2009/10/22 20:45:29 blackdog Exp $
 
 function video_filter_codec_info() {
   $codecs = array();
@@ -9,13 +8,14 @@ function video_filter_codec_info() {
     'sample_url' => 'http://www.youtube.com/watch?v=uN1qUeId',
     'callback' => 'video_filter_youtube',
     'regexp' => '/youtube\.com\/watch\?v=([a-z0-9\-_]+)/i',
-    'ratio' => 425 / 355,
+    'ratio' => 16 / 9,
+    'control_bar_height' => 25,
   );
   $codecs['google'] = array(
     'name' => t('Google Video'),
     'sample_url' => 'http://video.google.com/videoplay?docid=-uN1qUeId',
     'callback' => 'video_filter_google',
-    'regexp' => '/video\.google\.[a-z]+\/videoplay\?docid=(\-?[0-9]+)/',
+    'regexp' => '/video\.google\.[a-z]+\.?[a-z]+?\/videoplay\?docid=(\-?[0-9]+)/',
     'ratio' => 400 / 326,
   );
   $codecs['tangle'] = array(
@@ -30,17 +30,11 @@ function video_filter_codec_info() {
   );
   $codecs['dailymotion'] = array(
     'name' => t('DailyMotion'),
-    'sample_url' => 'http://www.dailymotion.com/xxxxx_some_title',
+    'sample_url' => 'http://www.dailymotion.com/video/some_video_title',
     'callback' => 'video_filter_dailymotion',
-    'regexp' => '/dailymotion\.com\/.*video\/([a-z0-9]+)/i',
-    'ratio' => 420 / 336,
-  );
-  $codecs['eyespot'] = array(
-    'name' => t('Eyespot'),
-    'sample_url' => 'http://eyespot.com/share?cmd=permalink&r=0XCzIG2UEx9hoXiEJW07IWpUtT',
-    'callback' => 'video_filter_eyespot',
-    'regexp' => '/eyespot\.com\/.*r=([a-z0-9]+)/i',
-    'ratio' => 432 / 407,
+    'regexp' => '/dailymotion\.com\/video\/([a-z0-9\-_]+)/i',
+    'ratio' => 4 / 3,
+    'control_bar_height' => 20,
   );
   $codecs['revver'] = array(
     'name' => t('Revver'),
@@ -54,21 +48,24 @@ function video_filter_codec_info() {
     'sample_url' => 'http://www.vimeo.com/123456',
     'callback' => 'video_filter_vimeo',
     'regexp' => '/vimeo\.com\/([0-9]+)/',
-    'ratio' => 400 / 225,
+    'ratio' => 16 / 9,
+    'control_bar_height' => 0,
   );
   $codecs['flickr_slideshows'] = array(
     'name' => t('Flickr Slideshows'),
     'sample_url' => 'http://www.flickr.com/photos/username/sets/1234567890/show/',
     'callback' => 'video_filter_flickr_slideshows',
     'regexp' => '/flickr\.com\/photos\/([a-zA-Z0-9@_\-]+)\/sets\/([0-9]+)\/?[show]?\/?/i',
-    'ratio' => 400 / 300,
+    'ratio' => 4 / 3,
+    'control_bar_height' => 0,
   );
   $codecs['flickr_video'] = array(
     'name' => t('Flickr Video'),
     'sample_url' => 'http://www.flickr.com/photos/hansnilsson/1234567890/',
     'callback' => 'video_filter_flickr_video',
     'regexp' => '/flickr\.com\/photos\/([a-zA-Z0-9@_\-]+)\/([0-9]+)/',
-    'ratio' => 400 / 226,
+    'ratio' => 4 / 3,
+    'control_bar_height' => 0,
   );
   $codecs['gamevideos'] = array(
     'name' => t('Game Videos'),
@@ -82,7 +79,15 @@ function video_filter_codec_info() {
     'sample_url' => 'http://www.metacafe.com/watch/1234567890/some_title/',
     'callback' => 'video_filter_metacafe',
     'regexp' => '/metacafe\.com\/watch\/([a-z0-9\-_]+)\/([a-z0-9\-_]+)/i',
-    'ratio' => 400 / 345,
+    'ratio' => 400 / 313,
+    'control_bar_height' => 32,
+  );
+  $codecs['streamhoster'] = array(
+    'name' => t('Streamhoster'),
+    'sample_url' => 'http://web26.streamhoster.com/username/filename.flv',
+    'callback' => 'video_filter_streamhoster',
+    'regexp' => '/([a-z0-9]+)\:\/\/([a-z0-9\-_]+)\.streamhoster\.com\/([a-z0-9\-_]+)\/([a-z0-9\-_\.]+)/i',
+    'ratio' => 480 / 360,
   );
   $codecs['gametrailers'] = array(
     'name' => t('Game Trailers'),
@@ -99,14 +104,21 @@ function video_filter_codec_info() {
     'sample_url' => 'http://www.collegehumor.com/video:1234567890',
     'callback' => 'video_filter_collegehumor',
     'regexp' => '/collegehumor\.com\/video\:([0-9]+)/',
-    'ratio' => 480 / 360,
+    'ratio' => 16 / 9,
+    'control_bar_height' => 0,
   );
   $codecs['myspace'] = array(
     'name' => t('MySpace'),
-    'sample_url' => 'http://vids.myspace.com/index.cfm?fuseaction=vids.individual&VideoID=1234567890',
+    'sample_url' => 'http://myspace.com/video/vid/1234567890',
     'callback' => 'video_filter_myspace',
-    'regexp' => '/vids\.myspace\.com\/.*VideoID=([0-9]+)/i',
-    'ratio' => 425 / 360,
+    'regexp' => array(
+      '/vids\.myspace\.com\/.*VideoID=([0-9]+)/i',
+      '/myspace\.com\/video\/([a-z])+\/([0-9]+)/i',
+      '/myspace\.com\/video\/([a-z0-9\-_]+)\/([a-z0-9\-_]+)\/([a-z0-9]+)/i',
+      '/myspace\.com\/([a-z0-9\-_]+)\/videos\/([a-z0-9\-_]+)\/([a-z0-9]+)/i',
+    ),
+    'ratio' => 620 / 400,
+    'control_bar_height' => 40,
   );
   $codecs['capped'] = array(
     'name' => t('Capped'),
@@ -125,7 +137,8 @@ function video_filter_codec_info() {
                   '@blip\.tv/file/([^"\&\?/]+)@i',
                   '@blip\.tv/play/([^"\&\?/]+)@i',
                 ),
-    'ratio' => 480 / 335,
+    'ratio' => 16 / 9,
+    'control_bar_height' => 30,
   );
   $codecs['slideshare'] = array(
     'name' => t('Slideshare'),
@@ -133,22 +146,31 @@ function video_filter_codec_info() {
     'callback' => 'video_filter_slideshare',
     'instructions' => t('You need to construct your own URL, using the "Wordpress Embed" code from Slideshare, extract the "id" and "doc" parts, and form the URL like this: slideshare.net/?id=1759622&amp;doc=usingdrupal-090723103440-phpapp01.'),
     'regexp' => '/slideshare\.net\/\?id=([a-z0-9]+).*doc=([a-z0-9-]+)/',
-    'ratio' => 500 / 410,
+    'ratio' => 425 / 320,
+    'control_bar_height' => 38,
   );
   $codecs['picasa_slideshows'] = array(
     'name' => t('Picasa Slideshows'),
-    'sample_url' => 'http://picasaweb.google.com/data/feed/base/user/USER_NAME/albumid/5568104935784209834?alt=rss&kind=photo&hl=en_US',
+    'sample_url' => 'http://picasaweb.google.com/data/feed/base/user/USER_NAME/albumid/5568104935784209834?alt=rss&amp;kind=photo&amp;hl=en_US',
     'callback' => 'video_filter_picasa_slideshows',
     'instructions' => t('You must use the URL of the RSS feed for the Picasa album:') .
                       '<ol>' .
                       '<li>' . t('View the album in Picasa (you should see thumbnails, not a slideshow).') . '</li>' .
                       '<li>' . t('Find the "RSS" link and click it.') . '</li>' .
                       '<li>' . t('Copy the resulting URL from the browser address bar.  Example: ') . '<br />' .
-                      '<code>[video: http://picasaweb.google.com/data/feed/base/user/USER_NAME/albumid/5568104935784209834?alt=rss&kind=photo&hl=en_US]</code>' .
+                      '<code>[video: http://picasaweb.google.com/data/feed/base/user/USER_NAME/albumid/5568104935784209834?alt=rss&amp;kind=photo&amp;hl=en_US]</code>' .
                       '</li>' .
                       '</ol>',
     'regexp' => '/picasaweb\.google\.com\/data\/feed\/base\/user\/([a-zA-Z0-9@_\-]+)\/albumid\/([a-z0-9]+)/i',
     'ratio' => 800 / 600,
+  );
+
+  $codecs['teachertube'] = array(
+    'name' => t('Teachertube'),
+    'sample_url' => 'http://www.teachertube.com/viewVideo.php?video_id=VIDEOID',
+    'callback' => 'video_filter_teachertube',
+    'regexp' => '/teachertube\.com\/viewVideo.php\?video_id\=([0-9]+)/i',
+    'ratio' => 16 / 9,
   );
 
   return $codecs;
@@ -174,12 +196,6 @@ function video_filter_tangle($video) {
 
 function video_filter_dailymotion($video) {
   $video['source'] = 'http://www.dailymotion.com/swf/'.$video['codec']['matches'][1];
-
-  return video_filter_flash($video);
-}
-
-function video_filter_eyespot($video) {
-  $video['source'] = 'http://eyespot.com/flash/medialoader.swf?vurl=http%3A%2F%2Fdownloads.eyespot.com%2Fplay%3Fr%3D'.$video['codec']['matches'][1].'&_autoPlay='.($video['autoplay'] ? 'true' : 'false');
 
   return video_filter_flash($video);
 }
@@ -228,6 +244,29 @@ function video_filter_metacafe($video) {
   return video_filter_flash($video);
 }
 
+function video_filter_streamhoster($video) {
+  $video['source'] = 'http://public.streamhoster.com/Resources/Flash/JWFLVMediaPlayer/mediaplayer.swf';
+
+  $params = array('allowscriptaccess' => 'always');
+  $protocol = $video['codec']['matches'][1];
+
+  if ($protocol == 'rtmp') {
+    $params['flashvars'] = 'file=' . urlencode('/' . $video['codec']['matches'][4]);
+    $params['flashvars'] .= '&amp;streamer=' . urlencode('rtmp://' . $video['codec']['matches'][2] . '.streamhoster.com/' . $video['codec']['matches'][3]);
+    $params['flashvars'] .= '&amp;type=rtmp';
+  }
+  elseif ($protocol == 'http') {
+    $params[flashvars] = 'file=' . urlencode('http://' . $video['codec']['matches'][2] . '.streamhoster.com/' . $video['codec']['matches'][3] . '/' . $video['codec']['matches'][4]);
+    $params['flashvars'] .= '&amp;type=video';
+  }
+
+  $params['flashvars'] .= '&amp;width=' . $video['width'] ;
+  $params['flashvars'] .= '&amp;height=' . $video['height'] ;
+  $params['flashvars'] .= !empty($video['autoplay']) ? '&amp;autostart=true' : '&amp;autostart=false';
+
+  return video_filter_flash($video, $params);
+}
+
 function video_filter_gametrailers($video) {
   if (is_numeric($video['codec']['matches'][1])) {
     $match = $video['codec']['matches'][1];
@@ -247,7 +286,9 @@ function video_filter_collegehumor($video) {
 }
 
 function video_filter_myspace($video) {
-  $video['source'] = 'http://mediaservices.myspace.com/services/media/embed.aspx/m='.$video['codec']['matches'][1];
+  // The last match is the ID we need.
+  $last = count($video['codec']['matches']);
+  $video['source'] = 'http://mediaservices.myspace.com/services/media/embed.aspx/m='.$video['codec']['matches'][$last-1];
 
   return video_filter_flash($video, $params);
 }
@@ -320,6 +361,14 @@ function video_filter_picasa_slideshows($video) {
   $set_id = $video['codec']['matches'][2];
 
   $params['flashvars'] = "host=picasaweb.google.com&amp;&amp;feat=flashalbum&amp;RGB=0x000000&amp;feed=http%3A%2F%2Fpicasaweb.google.com%2Fdata%2Ffeed%2Fapi%2Fuser%2F" . $user_name . "%2Falbumid%2F" . $set_id . "%3Falt%3Drss%26kind%3Dphoto%26" . ($video['autoplay'] ? '' : '&amp;noautoplay=1');
+
+  return video_filter_flash($video, $params);
+}
+
+function video_filter_teachertube($video) {
+  $video['source'] = 'http://www.teachertube.com/embed/player.swf';
+
+  $params['flashvars'] = 'file=http://www.teachertube.com/embedFLV.php?pg=video_'.$video['codec']['matches'][1].'&amp;menu=false&amp;frontcolor=ffffff&amp;lightcolor=FF0000&amp;logo=http://www.teachertube.com/www3/images/greylogo.swf&amp;skin=http://www.teachertube.com/embed/overlay.swf&amp;volume=80&amp;controlbar=over&amp;displayclick=link&amp;viral.link=http://www.teachertube.com/viewVideo.php?video_id='.$video['codec']['matches'][1].'&amp;stretching=exactfit&amp;plugins=viral-2&amp;viral.callout=none&amp;viral.onpause=false';
 
   return video_filter_flash($video, $params);
 }

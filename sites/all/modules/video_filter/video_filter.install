@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Install file for video_filter.
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function video_filter_uninstall() {
+  db_query("DELETE FROM {variable} WHERE name LIKE 'video_filter%'");
+}
+
+/*
+ * Update function that removes unused variables.
+ */
+function video_filter_update_6201(&$sandbox) {
+  $ret = array();
+
+  db_query("DELETE FROM {variable} WHERE name LIKE 'video_filter_priority_%'");
+
+  return $ret;
+}

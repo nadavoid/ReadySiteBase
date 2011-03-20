@@ -1,0 +1,35 @@
+/**
+ * Default alignment styles
+ */
+.video-left {
+  float: left;
+}
+
+.video-right {
+  float: right;
+}
+
+.video-center {
+  display: block;
+  margin: 0 auto;
+}
+
+
+/**
+ * TinyMCE styles
+ */
+.defaultSkin span.mce_videofilter {
+  background-image: url('wysiwyg/tinymce/images/movie_track.png');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+#mceVideoPopup #file {
+  width: 97%;
+  padding:5px;
+}
+
+#mceVideoPopup ul {
+  margin:0;
+  padding-left:13px;
+}

@@ -1,4 +1,3 @@
-$Id: README.txt,v 1.2.2.5 2009/10/22 19:40:44 blackdog Exp $
 
 This is a highly flexible and easy extendable filter module to embed any type of video in your site using a simple tag. Other modules can add video sites/formats (called codecs) using an easy plug-in architecture.
 

@@ -4,7 +4,7 @@
       // Register commands
       ed.addCommand('mceVideoFilter', function() {
         ed.windowManager.open({
-          file : Drupal.settings.basePath + 'video_filter/load',
+          file : Drupal.settings.basePath + '?q=video_filter/load',
           width : 480,
           height : 480,
           inline : 1,

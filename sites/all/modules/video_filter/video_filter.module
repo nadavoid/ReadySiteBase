@@ -1,5 +1,4 @@
 <?php
-// $Id: video_filter.module,v 1.12.2.10 2009/10/22 19:40:44 blackdog Exp $
 
 module_load_include('inc', 'video_filter', 'video_filter.codecs');
 
@@ -48,6 +47,7 @@ function video_filter_filter_tips($delta, $format, $long = FALSE) {
         <li>Random video out of multiple:<br /><code>[video:http://www.youtube.com/watch?v=uN1qUeId1,http://www.youtube.com/watch?v=uN1qUeId2]</code></li>
         <li>Override default autoplay setting: <code>[video:http://www.youtube.com/watch?v=uN1qUeId autoplay:1]</code></li>
         <li>Override default width and height:<br /><code>[video:http://www.youtube.com/watch?v=uN1qUeId width:X height:Y]</code></li>
+        <li>Override default aspect ratio:<br /><code>[video:http://www.youtube.com/watch?v=uN1qUeId ratio:4/3]</code></li>
         <li>Align the video:<br /><code>[video:http://www.youtube.com/watch?v=uN1qUeId align:right]</code></li>
       </ul>
       <p>Supported sites: @codecs.</p>
@@ -65,8 +65,6 @@ function video_filter_process($text, $format = -1) {
     foreach ($matches_code[0] as $ci => $code) {
       $video = array(
         'source' => $matches_code[2][$ci],
-        'width' => variable_get('video_filter_width_'.$format, 400),
-        'height' => variable_get('video_filter_height_'.$format, 400),
         'autoplay' => variable_get('video_filter_autoplay_'.$format, 0),
         'related' => variable_get('video_filter_related_'.$format, 1),
       );
@@ -82,7 +80,7 @@ function video_filter_process($text, $format = -1) {
       $codecs = module_invoke_all('codec_info');
 
       // Find codec
-      foreach ($codecs as $codec) {
+      foreach ($codecs AS $codec_name => $codec) {
         if (!is_array($codec['regexp'])) {
           $codec['regexp'] = array($codec['regexp']);
         }
@@ -93,53 +91,84 @@ function video_filter_process($text, $format = -1) {
             $video['codec'] = $codec;
             $video['codec']['delta'] = $delta;
             $video['codec']['matches'] = $matches;
+            $video['codec']['codec_name'] = $codec_name; // used in theme function
+            $video['codec']['control_bar_height'] = 0; // default
             break 2;
           }
         }
       }
 
       // Codec found
-      if ($video['codec']) {
+      if (isset($video['codec'])) {
         // Override default attributes
-        if ($matches_code[3][$ci] && preg_match_all('/\s+([a-z]+)\:([^\s]+)/i', $matches_code[3][$ci], $matches_attributes)) {
-          foreach ($matches_attributes[0] as $ai => $attribute) {
-            $video[$matches_attributes[1][$ai]] = $matches_attributes[2][$ai];
+        if ($matches_code[3][$ci] && preg_match_all('/\s+([a-zA-Z_]+)\:(\s+)?([0-9a-zA-Z\/]+)/i', $matches_code[3][$ci], $matches_attributes)) {
+          foreach ($matches_attributes[0] AS $ai => $attribute) {
+            $video[$matches_attributes[1][$ai]] = $matches_attributes[3][$ai];
           }
         }
 
-        // Resize within width and height to given ratio
-        if ($video['codec']['ratio']) {
-          // @todo - make this section prettier?
-          if (variable_get('video_filter_priority_'.$format, 'height') == 'height') {
-            if ($video['width'] * $video['codec']['ratio'] > $video['height']) {
-              $video['width'] = round($video['height'] * $video['codec']['ratio']);
-              $video['height'] = round($video['width'] / $video['codec']['ratio']);
-            }
-            else {
-              $video['height'] = round($video['width'] / $video['codec']['ratio']);
-              $video['width'] = round($video['height'] * $video['codec']['ratio']);
-            }
-          }
-          else {
-            if ($video['height'] * $video['codec']['ratio'] > $video['width']) {
-              $video['height'] = round($video['width'] / $video['codec']['ratio']);
-              $video['width'] = round($video['height'] * $video['codec']['ratio']);
-            }
-            else {
-              $video['width'] = round($video['height'] * $video['codec']['ratio']);
-              $video['height'] = round($video['width'] / $video['codec']['ratio']);
-            }
-          }
+        // Use configured ratio if present, use that from the codec otherwise
+        $ratio = 1;
+        if (isset($video['ratio']) && preg_match('/(\d+)\/(\d+)/', $video['ratio'], $tratio) ) {
+          //validate given ratio parameter
+          $ratio = $tratio[1] / $tratio[2];
+        }
+        else {
+          $ratio = $video['codec']['ratio'];
+        }
+
+        // Sets video width & height after any user input has been parsed.
+        // First, check if user has set a width.
+        if (isset($video['width']) && !isset($video['height'])) {
+          $video['height'] = variable_get('video_filter_height_'.$format, 400);
+        }
+        // Else, if user has set height.
+        elseif (isset($video['height']) && !isset($video['width'])) {
+          $video['width'] = $video['height'] * $ratio;
+        }
+        // Maybe both?
+        elseif (isset($video['height']) && isset($video['width'])) {
+          $video['width'] = $video['width'];
+          $video['height'] = $video['height'];
+        }
+        // Fall back to defaults.
+        elseif (!isset($video['height']) && !isset($video['width'])) {
+          $video['width'] = variable_get('video_filter_width_'.$format, 400);
+          $video['height'] = variable_get('video_filter_height_'.$format, 400);
+        }
+
+        // Default value for control bar height
+        $control_bar_height = 0;
+        if (isset($video['control_bar_height'])) {
+          // respect control_bar_height option if present
+          $control_bar_height = $video['control_bar_height'];
+        }
+        elseif (isset($video['codec']['control_bar_height'])) {
+          // respect setting provided by codec otherwise
+          $control_bar_height = $video['codec']['control_bar_height'];
+        }
+
+        // Resize to fit within width and height repecting aspect ratio
+        if ($ratio) {
+          $scale_factor = min(array(($video['height']-$control_bar_height), $video['width']/($ratio)));
+          $video['height'] = round($scale_factor + $control_bar_height);
+          $video['width'] = round($scale_factor * $ratio);
         }
 
         $video['autoplay'] = (bool) $video['autoplay'];
-        $video['align'] = in_array($video['align'], array('left', 'right')) ? $video['align'] : NULL;
+        $video['align'] = (isset($video['align']) && in_array($video['align'], array('left', 'right', 'center'))) ? $video['align'] : NULL;
 
-        $replacement = $video['codec']['callback']($video);
+        if (is_callable($video['codec']['callback'], FALSE)) {
+          $replacement = call_user_func($video['codec']['callback'], $video);
+        }
+        else {
+          // Invalid callback
+          $replacement = '<!-- VIDEO FILTER - INVALID CALLBACK IN: ' . $pattern . ' -->';
+        }
       // Invalid format
       }
       else {
-        $replacement = '<!-- VIDEO FILTER - INVALID CODEC IN: '.$code.' -->';
+        $replacement = '<!-- VIDEO FILTER - INVALID CODEC IN: ' . $code . ' -->';
       }
 
       $text = str_replace($code, $replacement, $text);
@@ -177,16 +206,6 @@ function video_filter_settings($format) {
       1 => t('Yes'),
     ),
   );
-  $form['video_filter']['video_filter_priority_'.$format] = array(
-    '#type' => 'radios',
-    '#title' => t('Default priority setting'),
-    '#description' => t('Should height or width take priority when videos are re-sized to fit?'),
-    '#default_value' => variable_get('video_filter_priority_'.$format, 'height'),
-    '#options' => array(
-      height => t('Height'),
-      width => t('Width'),
-    ),
-  );
   $form['video_filter']['video_filter_related_'.$format] = array(
     '#type' => 'radios',
     '#title' => t('Related videos setting'),
@@ -202,6 +221,13 @@ function video_filter_settings($format) {
 }
 
 /**
+ * Implementation of hook_init().
+ */
+function video_filter_init() {
+  drupal_add_css(drupal_get_path('module', 'video_filter') .'/video_filter.css');
+}
+
+/**
  * Wrapper that calls the theme function.
  */
 function video_filter_flash($video, $params = array()) {
@@ -213,16 +239,29 @@ function video_filter_flash($video, $params = array()) {
  *
  * @ingroup themeable
  */
-function theme_video_filter_flash($video, $params) {
+function theme_video_filter_flash($video, $params = array()) {
   $output = '';
 
-  $output .= '<object type="application/x-shockwave-flash" ';
+  // Create classes
+  $classes = array(
+    'video-filter',
+    'video-' . $video['codec']['codec_name'],  // Adds codec name
+  );
 
-  if ($video['align']) {
-    $output .= 'style="float:'.$video['align'].'" ';
+  // Adds alignment
+  if (isset($video['align'])) {
+    $classes[] = 'video-' . $video['align'];
   }
 
-  $output .= 'width="'.$video['width'].'" height="'.$video['height'].'" data="'.$video['source'].'">'."\n";
+  // First match is the URL, we don't want that as a class.
+  unset($video['codec']['matches'][0]);
+  foreach ($video['codec']['matches'] AS $match) {
+    $classes[] = 'vf-' . strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $match));
+  }
+
+  $output .= '<object class="' . implode(' ', $classes) . '" type="application/x-shockwave-flash" ';
+
+  $output .= 'width="' . $video['width'] . '" height="' . $video['height'] . '" data="' . $video['source'] . '">' . "\n";
 
   $defaults = array(
     'movie' => $video['source'],
@@ -233,10 +272,10 @@ function theme_video_filter_flash($video, $params) {
   $params = array_merge($defaults, (is_array($params) && count($params)) ? $params : array());
 
   foreach ($params as $name => $value) {
-    $output .= '  <param name="'.$name.'" value="'.$value.'" />'."\n";
+    $output .= '  <param name="' . $name . '" value="' . $value . '" />' . "\n";
   }
 
-  $output .= '</object>'."\n";
+  $output .= '</object>' . "\n";
 
   return $output;
 }
@@ -275,7 +314,7 @@ function video_filter_wysiwyg_plugin($editor, $version) {
   switch ($editor) {
     case 'tinymce':
       if ($version > 3) {
-        drupal_add_css(drupal_get_path('module', 'video_filter') . '/wysiwyg/tinymce/video_filter.css');
+        drupal_add_css(drupal_get_path('module', 'video_filter') . '/video_filter.css');
         return array(
           'videofilter' => array(
             'path' => drupal_get_path('module', 'video_filter') . '/wysiwyg/tinymce/editor_plugin.js',
@@ -300,26 +339,47 @@ function video_filter_loader() {
   $output .= "<head>\n";
   $output .= '<title>{#videofilter_dlg.title}</title>' ."\n";
   $path = base_path() . drupal_get_path('module', 'video_filter') . '/wysiwyg';
-  $tinymce_path = base_path() .'sites/all/libraries';
-  $tinymce_js = $tinymce_path .'/tinymce/jscripts/tiny_mce/tiny_mce_popup.js';
+  $tinymce_js = wysiwyg_get_path('tinymce', TRUE) .'/jscripts/tiny_mce/tiny_mce_popup.js';
   $output .= '<script type="text/javascript" src="'. $tinymce_js .'"></script>' . "\n";
   $output .= '<script type="text/javascript" src="' . $path . '/tinymce/langs/en_dlg.js"></script>'."\n";
   $output .= '<script type="text/javascript" src="' . $path . '/tinymce/jscripts/video_filter.js"></script>'."\n";
-  $output .= '<link href="' . $path . '/tinymce/video_filter.css" rel="stylesheet" type="text/css" />' . "\n";
+  $output .= '<link href="' . base_path() . drupal_get_path('module', 'video_filter') . '/video_filter.css" rel="stylesheet" type="text/css" />' . "\n";
   $output .= "</head>\n\n";
   $output .= '<body id="mceVideoPopup">'; 
   $output .= '<form onsubmit="insertVideo();return false;" action="#">' . "\n";
   $output .= '<h3 style="clear:both;">{#videofilter_dlg.title}</h3>' . "\n";
   $output .= '<!-- Gets filled with the selected elements name -->' . "\n";
   $output .= '<div style="margin-top: 10px; margin-bottom: 10px">' . "\n";
+  $output .= '<label for="file">' . t('File url') . '</label>' . "\n";
   $output .= '<input id="file" name="file" type="text" value="" onfocus="this.select();" />' . "\n";
+  $output .= '</div>' . "\n";
+  $output .= '<div style="margin-top: 10px; margin-bottom: 10px">' . "\n";
+  $output .= '<label for="width">' . t('Width') . '</label>' . "\n";
+  $output .= '<input id="width" name="width" type="text" value="" onfocus="this.select();" />' . "\n";
+  $output .= '</div>' . "\n";
+  $output .= '<div style="margin-top: 10px; margin-bottom: 10px">' . "\n";
+  $output .= '<label for="height">' . t('Height') . '</label>' . "\n";
+  $output .= '<input id="height" name="height" type="text" value="" onfocus="this.select();" />' . "\n";
+  $output .= '</div>' . "\n";
+  $output .= '<div style="margin-top: 10px; margin-bottom: 10px">' . "\n";
+  $output .= '<label for="align">' . t('Align') . '</label>' . "\n";
+  $output .= '<select id="align" name="align" onfocus="this.select();">' . "\n";
+  $output .= '<option value="none">' . t('None') . '</option>' . "\n";
+  $output .= '<option value="left">' . t('Left') . '</option>' . "\n";
+  $output .= '<option value="right">' . t('Right') . '</option>' . "\n";
+  $output .= '<option value="center">' . t('Center') . '</option>' . "\n";
+  $output .= '</select>' . "\n";
+  $output .= '</div>' . "\n";
+  $output .= '<div style="margin-top: 10px; margin-bottom: 10px">' . "\n";
+  $output .= '<label for="autoplay">' . t('Autoplay') . '</label>' . "\n";
+  $output .= '<input id="autoplay" name="autoplay" type="checkbox" value="1" onfocus="this.select();" />' . "\n";
   $output .= '</div>' . "\n";
   $output .= '<div class="mceActionPanel">' . "\n";
   $output .= '<div style="float: left">' . "\n";
-  $output .= '<input type="submit" id="insert" name="insert" value="Insert" />' . "\n";
+  $output .= '<input type="submit" id="insert" name="insert" value="'. t('Insert') .'" />' . "\n";
   $output .= '</div>' . "\n";
   $output .= '<div style="float: right">' . "\n";
-  $output .= '<input type="button" id="cancel" name="cancel" value="Cancel" onclick="tinyMCEPopup.close();" />' . "\n";
+  $output .= '<input type="button" id="cancel" name="cancel" value="'. t('Cancel') .'" onclick="tinyMCEPopup.close();" />' . "\n";
   $output .= '</div></div>' . "\n";
   $output .= '</form>' . "\n";
   $output .= '<div id="instructions" style="clear:both;"><h3>'. t('Instructions') . '</h3>' . "\n";

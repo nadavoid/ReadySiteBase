@@ -13,7 +13,22 @@ function insertVideo() {
     return;
   }
   else {
-    ed.execCommand('mceInsertContent', false, '[video:'+nl.file.value+']');
+    var str = '[video:' + nl.file.value;
+    if (nl.width.value !== '') {
+      str += ' width:' + nl.width.value;
+    }
+    if (nl.height.value !== '') {
+      str += ' height:' + nl.height.value;
+    }
+    if (nl.align.value !== 'none') {
+      str += ' align:' + nl.align.value;
+    }
+    if (nl.autoplay.checked) {
+      str += ' autoplay:' + nl.autoplay.value;
+    }
+    str += ']';
+
+    ed.execCommand('mceInsertContent', false, str);
     ed.undoManager.add();
     tinyMCEPopup.close();
     return;
