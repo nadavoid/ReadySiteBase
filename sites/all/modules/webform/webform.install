@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_schema().
+ * Implements hook_schema().
  */
 function webform_schema() {
   $schema = array();
@@ -364,7 +364,7 @@ function webform_schema() {
 }
 
 /**
- * Implementation of hook_install().
+ * Implements hook_install().
  */
 function webform_install() {
   module_load_include('inc', 'node', 'content_types');
@@ -386,7 +386,7 @@ function webform_install() {
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function webform_uninstall() {
   // Unset webform variables.
@@ -415,6 +415,25 @@ function webform_uninstall() {
 
   // Drop tables.
   drupal_uninstall_schema('webform');
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function webform_requirements($phase) {
+  $requirements = array();
+  $t = get_t();
+
+  if (version_compare(VERSION, '6.16') < 0) {
+    $requirements['webform_drupal_version'] = array(
+      'title' => $t('Webform'),
+      'value' => VERSION,
+      'severity' => REQUIREMENT_ERROR,
+      'description' => $t('Webform requires at least version @version of Drupal core.', array('@version' => '6.16')),
+    );
+  }
+
+  return $requirements;
 }
 
 /**
@@ -1321,6 +1340,16 @@ function webform_update_6325() {
 function webform_update_6326() {
   $ret = array();
   db_add_index($ret, 'webform_submissions', 'nid_uid_sid', array('nid', 'uid', 'sid'));
+  return $ret;
+}
+
+/**
+ * Remove unused Webform variables.
+ */
+function webform_update_6327() {
+  $ret = array();
+  variable_del('node_types');
+  variable_del('components');
   return $ret;
 }
 
