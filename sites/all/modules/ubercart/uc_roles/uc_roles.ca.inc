@@ -1,10 +1,9 @@
 <?php
-// $Id: uc_roles.ca.inc,v 1.1.2.16 2010/07/15 17:18:58 islandusurper Exp $
 
 /**
  * @file
- * This file contains the Conditional Actions hooks and functions necessary to make the
- * roles-related entity, conditions, events, and actions work.
+ * This file contains the Conditional Actions hooks and functions necessary to
+ * make the roles-related entity, conditions, events, and actions work.
  */
 
 /******************************************************************************
@@ -12,7 +11,7 @@
  ******************************************************************************/
 
 /**
- * Implementation of hook_ca_entity().
+ * Implements hook_ca_entity().
  *
  * An entity is defined in order to get a role expiration down
  * to token in the email.
@@ -28,7 +27,7 @@ function uc_roles_ca_entity() {
 }
 
 /**
- * Implementation of hook_ca_predicate().
+ * Implements hook_ca_predicate().
  */
 function uc_roles_ca_predicate() {
   $predicates = array();
@@ -186,7 +185,7 @@ function uc_roles_ca_predicate() {
 }
 
 /**
- * Implementation of hook_ca_action().
+ * Implements hook_ca_action().
  */
 function uc_roles_ca_action() {
   // Renew a role expiration.
@@ -240,7 +239,7 @@ function uc_roles_ca_action() {
 }
 
 /**
- * Implementation of hook_ca_trigger().
+ * Implements hook_ca_trigger().
  */
 function uc_roles_ca_trigger() {
   $order = array(
@@ -296,7 +295,7 @@ function uc_roles_ca_trigger() {
 }
 
 /**
- * Send an email with order and role replacement tokens.
+ * Sends an email with order and role replacement tokens.
  *
  * The recipients, subject, and message fields take order token replacements.
  *
@@ -340,7 +339,7 @@ function uc_roles_action_order_email_form($form_state, $settings = array()) {
 }
 
 /**
- * Send an email with order and role replacement tokens.
+ * Sends an email with order and role replacement tokens.
  *
  * The recipients, subject, and message fields take order token replacements.
  *
@@ -366,7 +365,7 @@ function uc_roles_action_user_email($account, $role_expiration, $settings) {
     $sent = drupal_mail('uc_order', 'action-mail', $email, uc_store_mail_recipient_language($email), $settings, $settings['from']);
 
     if (!$sent['result']) {
-      watchdog('ca', 'Attempt to e-mail @email concerning order @order_id failed.', array('@email' => $email, '@order_id' => $order->order_id), WATCHDOG_ERROR);
+      watchdog('ca', 'Attempt to e-mail @email concerning role notification failed.', array('@email' => $email), WATCHDOG_ERROR);
     }
   }
 }
@@ -381,7 +380,7 @@ function uc_roles_action_user_email_form($form_state, $settings = array()) {
 }
 
 /**
- * Renew an orders product roles.
+ * Renews an orders product roles.
  *
  * This function updates expiration time on all roles found on all products
  * on a given order. First, the order user is loaded, then the order's products
@@ -393,6 +392,7 @@ function uc_roles_action_user_email_form($form_state, $settings = array()) {
  *
  * @param $order
  *   An Ubercart order object.
+ *
  * @see uc_roles_action_order_renew_form()
  */
 function uc_roles_action_order_renew($order, $settings) {

@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_order.ca.inc,v 1.1.2.30 2010/07/16 15:45:09 islandusurper Exp $
 
 /**
  * @file
@@ -462,16 +461,18 @@ function uc_order_condition_delivery_zone($order, $settings) {
  * @see uc_order_condition_delivery_zone_form()
  */
 function uc_order_condition_delivery_zone_form($form_state, $settings = array()) {
+  $options = array();
   $result = db_query("SELECT z.*, c.country_name FROM {uc_zones} AS z LEFT JOIN {uc_countries} AS c ON z.zone_country_id = c.country_id ORDER BY c.country_name, z.zone_name");
   while ($zone = db_fetch_object($result)) {
-    $options[$zone->country_name][$zone->zone_id] = $zone->zone_name;
+    $options[t($zone->country_name)][$zone->zone_id] = $zone->zone_name;
   }
+  uksort($options, 'strnatcasecmp');
 
   $form['zones'] = array(
     '#type' => 'select',
     '#title' => uc_get_field_name('zone'),
     '#options' => $options,
-    '#default_value' => $settings['zones'],
+    '#default_value' => isset($settings['zones']) ? $settings['zones'] : NULL,
     '#multiple' => TRUE,
     // '#required' => TRUE,
   );
@@ -520,7 +521,7 @@ function uc_order_condition_billing_postal_code_form($form_state, $settings = ar
   $form['pattern'] = array(
     '#type' => 'textfield',
     '#title' => uc_get_field_name('postal_code'),
-    '#default_value' => $settings['pattern'],
+    '#default_value' => isset($settings['pattern']) ? $settings['pattern'] : NULL,
     '#description' => t('Specify a postal code or postal code pattern. Use "*" as a wild card to specify a range of postal codes.<br /><b>Example:</b> In the US, 402* represents all areas from 40200 to 40299.'),
     '#size' => 15,
     // '#required' => TRUE,
@@ -544,14 +545,15 @@ function uc_order_condition_billing_zone($order, $settings) {
 function uc_order_condition_billing_zone_form($form_state, $settings = array()) {
   $result = db_query("SELECT z.*, c.country_name FROM {uc_zones} AS z LEFT JOIN {uc_countries} AS c ON z.zone_country_id = c.country_id ORDER BY c.country_name, z.zone_name");
   while ($zone = db_fetch_object($result)) {
-    $options[$zone->country_name][$zone->zone_id] = $zone->zone_name;
+    $options[t($zone->country_name)][$zone->zone_id] = $zone->zone_name;
   }
+  uksort($options, 'strnatcasecmp');
 
   $form['zones'] = array(
     '#type' => 'select',
     '#title' => uc_get_field_name('zone'),
     '#options' => $options,
-    '#default_value' => $settings['zones'],
+    '#default_value' => isset($settings['zones']) ? $settings['zones'] : NULL,
     '#multiple' => TRUE,
     // '#required' => TRUE,
   );
@@ -573,7 +575,7 @@ function uc_order_condition_billing_country($order, $settings) {
  */
 function uc_order_condition_billing_country_form($form_state, $settings = array()) {
   $form['countries'] = uc_country_select(uc_get_field_name('country'));
-  $form['countries']['#default_value'] = $settings['countries'];
+  $form['countries']['#default_value'] = isset($settings['countries']) ? $settings['countries'] : NULL;
   $form['countries']['#multiple'] = TRUE;
   // $form['countries']['#required'] = TRUE;
 
@@ -591,13 +593,13 @@ function uc_order_condition_has_products($order, $settings) {
     $products[] = $product->model;
   }
   $required = array_intersect($settings['products'], $products);
-  if ($settings['required']) {
+  if (isset($settings['required']) && $settings['required']) {
     $required_check = $required == $settings['products'];
   }
   else {
     $required_check = (bool)count($required);
   }
-  if ($settings['forbidden']) {
+  if (isset($settings['forbidden']) && $settings['forbidden']) {
     $forbidden = array_diff($products, $settings['products']);
     $forbidden_check = (bool)count($forbidden);
   }
@@ -611,7 +613,8 @@ function uc_order_condition_has_products($order, $settings) {
  * @see uc_order_condition_has_products()
  */
 function uc_order_condition_has_products_form($form_state, $settings) {
-  $form['required'] = array('#type' => 'radios',
+  $form['required'] = array(
+    '#type' => 'radios',
     '#title' => t('Require selected products'),
     '#options' => array(
       0 => t('Order has any of these products.'),
@@ -619,7 +622,8 @@ function uc_order_condition_has_products_form($form_state, $settings) {
     ),
     '#default_value' => isset($settings['required']) ? $settings['required'] : 0,
   );
-  $form['forbidden'] = array('#type' => 'radios',
+  $form['forbidden'] = array(
+    '#type' => 'radios',
     '#title' => t('Forbid other products'),
     '#options' => array(
       0 => t('Order may have other products.'),
@@ -634,10 +638,11 @@ function uc_order_condition_has_products_form($form_state, $settings) {
     $options += uc_product_get_models(node_load($product->nid), FALSE);
   }
 
-  $form['products'] = array('#type' => 'select',
+  $form['products'] = array(
+    '#type' => 'select',
     '#title' => t('Product models'),
     '#options' => $options,
-    '#default_value' => $settings['products'],
+    '#default_value' => isset($settings['products']) ? $settings['products'] : NULL,
     '#multiple' => TRUE,
   );
   return $form;
@@ -686,7 +691,8 @@ function uc_order_condition_count_products_form($form_state, $settings = array()
   while ($product = db_fetch_object($result)) {
     $options[$product->nid] = $product->model;
   }
-  $form['products'] = array('#type' => 'select',
+  $form['products'] = array(
+    '#type' => 'select',
     '#title' => t('Products'),
     '#options' => $options,
     '#default_value' => $settings['products'],
@@ -762,14 +768,16 @@ function uc_order_condition_products_weight_form($form_state, $settings = array(
   while ($product = db_fetch_object($result)) {
     $options[$product->nid] = $product->model;
   }
-  $form['products'] = array('#type' => 'select',
+  $form['products'] = array(
+    '#type' => 'select',
     '#title' => t('Products'),
     '#options' => $options,
     '#default_value' => $settings['products'],
     '#description' => check_plain(t('Selecting "- All products -" will override any other selections and returns the total number of products in the order.')),
     '#multiple' => TRUE,
   );
-  $form['weight_units'] = array('#type' => 'select',
+  $form['weight_units'] = array(
+    '#type' => 'select',
     '#title' => t('Unit of measurement'),
     '#default_value' => $settings['weight_units'] ? $settings['weight_units'] : variable_get('uc_weight_unit', 'lb'),
     '#options' => array(
@@ -1132,37 +1140,51 @@ function uc_order_action_add_comment_form($form_state, $settings = array()) {
 }
 
 /**
- * Send an email concerning an order.
+ * Sends an email concerning an order.
  *
- * The recipients, subject, and message fields take order token replacements.
+ * The 'Sender', 'Recipients', 'Subject', and 'Message' fields accept
+ * order, global, and user token replacements.
  *
  * @see uc_order_action_email_form()
  */
 function uc_order_action_email($order, $settings) {
   $account = uc_order_user_load($order);
 
-  // Token replacements for the subject and body
+  // Token replacements for the from and recipient addresses
   $settings['replacements'] = array(
     'global' => NULL,
     'order' => $order,
     'user' => $account,
   );
 
-  // Apply token replacements to from and recipient e-mail addressses.
+  // Apply token replacements to from e-mail address.
   $from = token_replace_multiple($settings['from'], $settings['replacements']);
-  $addresses = token_replace_multiple($settings['addresses'], $settings['replacements']);
+  if (empty($from)) {
+    $from = uc_store_email_from();
+  }
 
+  // Apply token replacements to recipient e-mail addresses.
+  $addresses = token_replace_multiple($settings['addresses'], $settings['replacements']);
   // Split up our recipient e-mail addresses.
   $recipients = array();
   foreach (explode("\n", $addresses) as $address) {
-    $recipients[] = trim($address);
+    $address = trim($address);
+    // Remove blank lines
+    if (!empty($address)) {
+      $recipients[] = $address;
+    }
+  }
+
+  if (empty($recipients)) {
+    watchdog('uc_order', 'Attempted to send an order e-mail with no recipient.', array(), WATCHDOG_ERROR);
+    return;
   }
 
   foreach ($recipients as $email) {
-    $sent = drupal_mail('uc_order', 'action-mail', $email, uc_store_mail_recipient_language($email), $settings, empty($settings['from']) ? uc_store_email_from() : $settings['from']);
+    $sent = drupal_mail('uc_order', 'action-mail', $email, uc_store_mail_recipient_language($email), $settings, $from);
 
     if (!$sent['result']) {
-      watchdog('ca', 'Attempt to e-mail @email concerning order @order_id failed.', array('@email' => $email, '@order_id' => $order->order_id), WATCHDOG_ERROR);
+      watchdog('uc_order', 'Attempt to e-mail @email concerning order @order_id failed.', array('@email' => $email, '@order_id' => $order->order_id), WATCHDOG_ERROR);
     }
   }
 }
@@ -1175,7 +1197,7 @@ function uc_order_action_email_form($form_state, $settings = array()) {
     '#type' => 'textfield',
     '#title' => t('Sender'),
     '#default_value' => isset($settings['from']) ? $settings['from'] : uc_store_email_from(),
-    '#description' => t('The "From" address.'),
+    '#description' => t("Enter the 'From' email addresses, or leave blank to use your store email address. You may use order tokens for dynamic email addresses."),
     '#required' => TRUE,
   );
   $form['addresses'] = array(
@@ -1267,7 +1289,7 @@ function uc_order_action_email_invoice_form($form_state, $settings = array()) {
     '#type' => 'textfield',
     '#title' => t('Sender'),
     '#default_value' => isset($settings['from']) ? $settings['from'] : uc_store_email_from(),
-    '#description' => t('The "From" address.'),
+    '#description' => t("Enter the 'From' email addresses, or leave blank to use your store email address. You may use order tokens for dynamic email addresses."),
     '#required' => TRUE,
   );
   $form['addresses'] = array(

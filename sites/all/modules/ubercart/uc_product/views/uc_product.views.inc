@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_product.views.inc,v 1.1.2.7 2009/10/20 20:58:06 islandusurper Exp $
 
 /**
  * @file

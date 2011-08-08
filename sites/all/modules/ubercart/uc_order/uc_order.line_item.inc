@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_order.line_item.inc,v 1.1.2.10 2010/07/12 01:31:08 tr Exp $
 
 /**
  * @file
@@ -97,7 +96,7 @@ function uc_line_items_calculate($order) {
     ),
   );
 
-  if (is_array($order->line_items)) {
+  if (isset($order->line_items) && is_array($order->line_items)) {
     foreach ($order->line_items as $item) {
       $context['subject']['line_item'] = $item;
       if (_line_item_data($item['type'], 'calculated') == TRUE) {

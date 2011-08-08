@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_catalog.module,v 1.15.2.24 2010/03/10 23:24:20 tr Exp $
 
 /**
  * @file
@@ -220,12 +219,12 @@ function uc_catalog_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       case 'view':
         if ($a4 == TRUE && variable_get('uc_catalog_breadcrumb', TRUE)) {
           $crumbs = array();
-          if (variable_get('site_frontpage', 'node') != 'catalog') {
+          if (!_uc_catalog_is_frontpage()) {
             $crumbs[] = l(t('Home'), '');
           }
           $terms = taxonomy_node_get_terms_by_vocabulary($node, variable_get('uc_catalog_vid', 0));
           if (count($terms)) {
-            $crumbs[] = l(variable_get('uc_catalog_name', t('Catalog')), variable_get('uc_catalog_url', 'catalog'));
+            $crumbs[] = l(variable_get('uc_catalog_name', t('Catalog')), 'catalog');
             $used_tids = array();
             foreach ($terms as $term) {
               if (!isset($parents[$term->tid])) {
@@ -348,7 +347,8 @@ function uc_catalog_form_alter(&$form, $form_state, $form_id) {
 
     $form['identification']['name']['#weight'] = -1;
     $form['identification']['image']['#weight'] = 0;
-    $form['identification']['image']['image'] = array('#type' => 'file',
+    $form['identification']['image']['image'] = array(
+      '#type' => 'file',
       '#title' => t('Image'),
       '#weight' => 0,
     );
@@ -361,7 +361,8 @@ function uc_catalog_form_alter(&$form, $form_state, $form_id) {
       else {
         $image_display = theme('image', $image->filepath, t('Term image'));
       }
-      $form['identification']['image']['remove'] = array('#type' => 'checkbox',
+      $form['identification']['image']['remove'] = array(
+        '#type' => 'checkbox',
         '#title' => t('Remove category image: !image', array('!image' => $image_display)),
         '#weight' => 1,
       );
@@ -522,7 +523,7 @@ function uc_catalog_pathauto_bulkupdate() {
  *   A taxonomy object
  */
 function _uc_catalog_pathauto_alias($category, $op) {
-  _pathauto_include();
+  module_load_include('inc', 'pathauto');
   $count = 0;
 
   if ($category->vid == variable_get('uc_catalog_vid', 0)){
@@ -801,7 +802,7 @@ function uc_catalog_set_breadcrumb($tid) {
   static $terms = array();
   if (variable_get('uc_catalog_breadcrumb', TRUE)) {
     if (empty($breadcrumbs)) {
-      if (variable_get('site_frontpage', 'node') != 'catalog') {
+      if (!_uc_catalog_is_frontpage()) {
         $breadcrumbs[] = l(t('Home'), '');
       }
       if ($tid != 0) {
@@ -880,7 +881,11 @@ function _uc_catalog_navigation($branch) {
     $here = FALSE;
   }
   if (!isset($terms)) {
-    $terms = taxonomy_node_get_terms_by_vocabulary(menu_get_object('node', 1), $vid);
+    $terms = array();
+    $node  = menu_get_object('node');
+    if (isset($node)) {
+      $terms = taxonomy_node_get_terms_by_vocabulary($node, $vid);
+    }
   }
   // Determine whether to expand menu item.
   if ((arg(0) == 'node' && array_key_exists($branch->tid, $terms))) {
@@ -998,4 +1003,8 @@ function uc_catalog_add_node_type($type) {
   if (!db_result(db_query("SELECT vid FROM {vocabulary_node_types} WHERE vid = %d and type = '%s'", $vid, $type))){
     db_query("INSERT INTO {vocabulary_node_types} (vid, type) VALUES (%d, '%s')", $vid, $type);
   }
+}
+
+function _uc_catalog_is_frontpage() {
+  return drupal_get_normal_path(variable_get('site_frontpage', 'node')) == 'catalog';
 }

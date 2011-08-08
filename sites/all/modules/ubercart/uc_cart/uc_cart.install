@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_cart.install,v 1.7.2.10 2010/03/19 21:27:18 tr Exp $
 
 /**
  * @file
@@ -174,6 +173,21 @@ function uc_cart_update_6201() {
   if (empty($_SESSION['messages']['error'])) {
     unset($_SESSION['messages']['error']);
   }
+
+  return $ret;
+}
+
+/**
+ * Unify cart block title setting.
+ */
+function uc_cart_update_6202() {
+  $ret = array();
+
+  if ($title = variable_get('uc_cart_block_title', '')) {
+    $ret[] = update_sql("UPDATE {blocks} SET title = '" . db_escape_string($title) . "' WHERE module = 'uc_cart' AND delta = 0");
+  }
+
+  variable_del('uc_cart_block_title');
 
   return $ret;
 }

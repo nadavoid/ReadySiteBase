@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_cart.admin.inc,v 1.1.2.18 2010/06/05 18:53:14 tr Exp $
 
 /**
  * @file
@@ -426,15 +425,16 @@ function uc_cart_checkout_panes_form() {
   foreach ($panes as $pane) {
     $form['panes'][$pane['id']]['uc_pane_'. $pane['id'] .'_enabled'] = array(
       '#type' => 'checkbox',
-      '#default_value' => $pane['enabled'],
+      '#default_value' => variable_get('uc_pane_'. $pane['id'] .'_enabled', TRUE),
     );
     $form['panes'][$pane['id']]['title'] = array(
       '#value' => $pane['title'],
     );
     $form['panes'][$pane['id']]['uc_pane_'. $pane['id'] .'_weight'] = array(
       '#type' => 'weight',
-      '#default_value' => $pane['weight'],
+      '#default_value' => variable_get('uc_pane_'. $pane['id'] .'_weight', 0),
     );
+    $form['panes'][$pane['id']]['#weight'] = variable_get('uc_pane_'. $pane['id'] .'_weight', 0);
 
     $null = NULL;
     $pane_settings = $pane['callback']('settings', $null, NULL);
@@ -517,8 +517,8 @@ function uc_cart_checkout_messages_form() {
     '#title' => t('Checkout completion for existing users'),
     '#description' => t("Message displayed upon checkout for a user who has an account but wasn't logged in. <a href=\"!url\">Uses order and global tokens</a>.", array('!url' => url('admin/store/help/tokens'))),
     '#summary' => variable_get('uc_msg_order_existing_user', uc_get_message('completion_existing_user'))
-               ? t('Completion text for users who aren\'t logged in is set.')
-               : t('Completion text for users who aren\'t logged in is not set.'),
+               ? t("Completion text for users who aren't logged in is set.")
+               : t("Completion text for users who aren't logged in is not set."),
 
     '#default_value' => variable_get('uc_msg_order_existing_user', uc_get_message('completion_existing_user')),
     '#rows' => 3,

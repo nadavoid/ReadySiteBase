@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_order-customer.tpl.php,v 1.1.2.1 2010/07/16 15:45:09 islandusurper Exp $
 
 /**
  * @file
@@ -239,7 +238,7 @@
                               } ?>
                               <br />
                               <?php echo t('SKU: ') . $product->model; ?><br />
-                              <?php if (is_array($product->data['attributes']) && count($product->data['attributes']) > 0) {?>
+                              <?php if (isset($product->data['attributes']) && is_array($product->data['attributes']) && count($product->data['attributes']) > 0) {?>
                               <?php foreach ($product->data['attributes'] as $attribute => $option) {
                                 echo '<li>'. t('@attribute: @options', array('@attribute' => $attribute, '@options' => implode(', ', (array)$option))) .'</li>';
                               } ?>

@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_payment_order_pane.inc,v 1.5.2.8 2010/07/12 01:57:44 tr Exp $
 
 /**
  * @file
@@ -17,10 +16,14 @@
 function uc_order_pane_payment($op, $arg1) {
   switch ($op) {
     case 'view':
+      $output = '';
       if (variable_get('uc_payment_tracking', TRUE)) {
         $context = array(
           'revision' => 'formatted-original',
           'type' => 'amount',
+          'subject' => array(
+            'order' => $arg1,
+          ),
         );
         $output = t('Balance: @balance', array('@balance' => uc_price(uc_payment_balance($arg1), $context)));
         $output .= ' ('. l(t('View'), 'admin/store/orders/'. $arg1->order_id .'/payments') .')<br />';
@@ -44,7 +47,7 @@ function uc_order_pane_payment($op, $arg1) {
       if (empty($method_name)) {
         $method_name = _payment_method_data($arg1->payment_method, 'name');
       }
-      $output .= t('Method: @payment_method', array('@payment_method' => $method_name));
+      $output = t('Method: @payment_method', array('@payment_method' => $method_name));
       $func = _payment_method_data($arg1->payment_method, 'callback');
       if (function_exists($func)) {
         $method_output = $func('customer-view', $arg1);

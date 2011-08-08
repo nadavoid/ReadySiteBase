@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_usps.admin.inc,v 1.1.2.8 2010/07/12 01:57:35 tr Exp $
 
 /**
  * @file
@@ -17,7 +16,7 @@ function uc_usps_admin_settings() {
   $form['uc_usps_user_id'] = array(
     '#type' => 'textfield',
     '#title' => t('USPS user ID'),
-    '#description' => t('To acquire or locate your user ID, refer to the <a href="!url">USPS documentation</a>.', array('!url' => 'http://www.ubercart.org/docs/user/312/usps_web_tool_shipping_quote_settings')),
+    '#description' => t('To acquire or locate your user ID, refer to the <a href="!url">USPS documentation</a>.', array('!url' => 'http://www.ubercart.org/docs/user/14054/us_postal_service')),
     '#default_value' => variable_get('uc_usps_user_id', ''),
   );
 
@@ -101,6 +100,15 @@ function uc_usps_admin_settings() {
       1 => t('All in one'),
     ),
     '#description' => t('Indicate whether each product is quoted as shipping separately or all in one package. Orders with one kind of product will still use the package quantity to determine the number of packages needed, however.'),
+  );
+ 
+  // Insurance
+  $form['uc_usps_insurance'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Package insurance'),
+    '#default_value' => variable_get('uc_usps_insurance', FALSE),
+    '#description' => t('When enabled, the quotes presented to the customer will include the cost of insurance for the full sales price of all products in the order.'),
+    '#disabled' => TRUE,
   );
 
   return system_settings_form($form);

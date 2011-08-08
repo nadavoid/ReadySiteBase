@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_cart_links.install,v 1.2.2.8 2010/08/11 17:52:20 islandusurper Exp $
 
 /**
  * @file
@@ -59,10 +58,17 @@ function uc_cart_links_uninstall() {
 }
 
 /**
+ * Implementation of hook_update_last_removed().
+ */
+function uc_cart_links_update_last_removed() {
+  return 1;
+}
+
+/**
  * Remove obsolete variable.
  */
 function uc_cart_links_update_6001() {
-  variable_del('uc_cart_links_empty');
-
+  // Update removed, "empty cart" functionality restored.
+  // See http://drupal.org/node/881752.
   return array();
 }

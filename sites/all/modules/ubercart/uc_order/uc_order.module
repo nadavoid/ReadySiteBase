@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_order.module,v 1.12.2.40 2010/08/11 15:10:46 islandusurper Exp $
 
 /**
  * @file
@@ -14,6 +13,55 @@
 require_once('uc_order.order_pane.inc');
 require_once('uc_order.line_item.inc');
 require_once('uc_order.ca.inc');
+
+/**
+ * Defines an order object.
+ */
+class UcOrder {
+
+  public $order_id = 0;
+  public $uid = 0;
+  public $order_status = '';
+  public $order_total = 0;
+  public $primary_email = '';
+
+  public $delivery_first_name = '';
+  public $delivery_last_name = '';
+  public $delivery_phone = '';
+  public $delivery_company = '';
+  public $delivery_street1 = '';
+  public $delivery_street2 = '';
+  public $delivery_city = '';
+  public $delivery_zone = 0;
+  public $delivery_postal_code = '';
+  public $delivery_country = 0;
+
+  public $billing_first_name = '';
+  public $billing_last_name = '';
+  public $billing_phone = '';
+  public $billing_company = '';
+  public $billing_street1 = '';
+  public $billing_street2 = '';
+  public $billing_city = '';
+  public $billing_zone = 0;
+  public $billing_postal_code = '';
+  public $billing_country = 0;
+
+  public $products = array();
+  public $line_items = array();
+
+  public $payment_method = '';
+  public $data = array();
+  public $created = 0;
+  public $modified = 0;
+  public $currency = '';
+
+  function __construct() {
+    $this->order_status = uc_order_state_default('in_checkout');
+    $this->currency = variable_get('uc_currency_code', 'USD');
+  }
+
+}
 
 /*******************************************************************************
  * Hook Functions (Drupal)
@@ -320,7 +368,17 @@ function uc_order_theme() {
     'uc_order' => array(
       'template' => 'uc_order',
       'path' => drupal_get_path('module', 'uc_order') .'/templates',
-      'arguments' => array('order' => NULL, 'op' => 'view', 'template' => 'customer'),
+      'arguments' => array(
+        'order' => NULL,
+        'op' => 'view',
+        'template' => 'customer',
+        'thank_you_message' => FALSE,
+        'help_text' => FALSE,
+        'email_text' => FALSE,
+        'store_footer' => FALSE,
+        'business_header' => FALSE,
+        'shipping_method' => FALSE,
+      ),
     ),
     'uc_order_state_table' => array(
       'arguments' => array('form' => NULL),
@@ -351,6 +409,7 @@ function uc_order_theme() {
  */
 function uc_order_token_values($type, $object = NULL) {
   $values = array();
+
   switch ($type) {
     case 'order':
       $order = $object;
@@ -383,7 +442,7 @@ function uc_order_token_values($type, $object = NULL) {
             );
             $subtotal = uc_price($order->line_items[$key]['amount'], $context);
           }
-          if ($value['type'] == 'shipping' && is_null($ship_method)) {
+          if ($value['type'] == 'shipping' && !isset($ship_method)) {
             $ship_method = $value['title'];
           }
         }
@@ -400,7 +459,7 @@ function uc_order_token_values($type, $object = NULL) {
       $values['order-email'] = check_plain($order->primary_email);
       $values['order-shipping-address'] = uc_order_address($order, 'delivery');
       $values['order-shipping-phone'] = check_plain($order->delivery_phone);
-      $values['order-shipping-method'] = is_null($ship_method) ? t('Standard delivery') : $ship_method;
+      $values['order-shipping-method'] = !isset($ship_method) ? t('Standard delivery') : $ship_method;
       $values['order-billing-address'] = uc_order_address($order, 'billing');
       $values['order-billing-phone'] = check_plain($order->billing_phone);
       if (variable_get('uc_customer_list_address', 'billing') == 'shipping') {
@@ -430,6 +489,7 @@ function uc_order_token_values($type, $object = NULL) {
  */
 function uc_order_token_list($type = 'all') {
   $tokens = array();
+
   if ($type == 'order' || $type == 'ubercart' || $type == 'all') {
     $tokens['order']['new-username'] = t('New username associated with an order if applicable.');
     $tokens['order']['new-password'] = t('New password associated with an order if applicable.');
@@ -544,10 +604,10 @@ function uc_order_mail($key, &$message, $params) {
 
       // Apply an input format to the message body if specified.
       if (isset($params['format'])) {
-        $message['body'] = check_markup($body, $params['format'], FALSE);
+        $message['body'][] = check_markup($body, $params['format'], FALSE);
       }
       else {
-        $message['body'] = $body;
+        $message['body'][] = $body;
       }
 
       break;
@@ -732,6 +792,7 @@ function uc_order_uc_invoice_templates() {
  */
 function theme_uc_order_state_table($form) {
   $header = array(t('State'), t('Default order status'));
+  $rows = array();
 
   foreach (element_children($form) as $state_id) {
     $rows[] = array(
@@ -748,6 +809,8 @@ function theme_uc_order_state_table($form) {
  */
 function theme_uc_order_status_table($form) {
   $header = array(t('ID'), t('Title'), t('List position'), t('State'), t('Remove'));
+  $rows = array();
+  $create = '';
 
   foreach (element_children($form) as $state_id) {
     if ($state_id == 'create') {
@@ -778,12 +841,14 @@ function theme_uc_order_status_table($form) {
  *   The parent's displayed name
  * @param $parent_id
  *   The parent's machine-readable ID
+ *
  * @return
  *   An array of summary information
  *
- * This function summarizes the order panes that have been defined for each screen.
- * Everything is then organized under a series of parent nodes correlating with the
- * different screens, and specifying which panes are enabled on which screen.
+ * This function summarizes the order panes that have been defined for each
+ * screen.  Everything is then organized under a series of parent nodes
+ * correlating with the different screens, and specifying which panes are
+ * enabled on which screen.
  */
 function _uc_order_panes_summarize($form, $panes, $parent_name, $parent_id) {
   $items = array();
@@ -923,6 +988,7 @@ function uc_order_search_form() {
  * @see uc_order_search_form()
  */
 function uc_order_search_form_submit($form, &$form_state) {
+  $args = array();
   $keys = array(
     'billing_first_name',
     'billing_last_name',
@@ -1006,29 +1072,20 @@ function op_products_edit_table() {
  * Generate a new order for user $uid.
  */
 function uc_order_new($uid = 0, $state = 'in_checkout') {
-  $order = new stdClass();
+  $order = new UcOrder();
 
   if ($uid > 0) {
     $user = user_load(array('uid' => $uid));
     $email = $user->mail;
+    $order->primary_email = $email;
   }
 
   $order->uid = $uid;
   $order->order_status = uc_order_state_default($state);
-  $order->primary_email = $email;
-  $order->products = array();
+  $order->created = time();
+  $order->modified = time();
 
-  db_query("INSERT INTO {uc_orders} (uid, order_status, order_total, "
-          ."primary_email, delivery_first_name, delivery_last_name, delivery_phone, "
-          ."delivery_company, delivery_street1, delivery_street2, delivery_city, "
-          ."delivery_zone, delivery_postal_code, delivery_country, billing_first_name, "
-          ."billing_last_name, billing_phone, billing_company, billing_street1, "
-          ."billing_street2, billing_city, billing_zone, billing_postal_code, "
-          ."billing_country, payment_method, data, created, modified) VALUES "
-          ."(%d, '%s', 0, '%s', '', '', '', '', '', '', '', 0, '', 0, '', "
-          ."'', '', '', '', '', '', 0, 0, 0, '', '', %d, %d)",
-           $uid, $order->order_status, $email, time(), time());
-  $order->order_id = db_last_insert_id('uc_orders', 'order_id');
+  drupal_write_record('uc_orders', $order);
 
   uc_order_module_invoke('new', $order, NULL);
 
@@ -1043,26 +1100,22 @@ function uc_order_save($order) {
     return FALSE;
   }
 
-  db_query("UPDATE {uc_orders} SET uid = %d, order_status = '%s', order_total = %f, product_count = %d, primary_email = '%s', "
-          ."delivery_first_name = '%s', delivery_last_name = '%s', delivery_phone = '%s', "
-          ."delivery_company = '%s', delivery_street1 = '%s', delivery_street2 = '%s', "
-          ."delivery_city = '%s', delivery_zone = %d, delivery_postal_code = '%s', delivery_country = %d, "
-          ."billing_first_name = '%s', billing_last_name = '%s', billing_phone = '%s', "
-          ."billing_company = '%s', billing_street1 = '%s', billing_street2 = '%s', "
-          ."billing_city = '%s', billing_zone = %d, billing_postal_code = '%s', billing_country = %d, "
-          ."payment_method = '%s', data = '%s', host = '%s', modified = %d WHERE order_id = %d",
-           $order->uid, $order->order_status, uc_order_get_total($order), uc_order_get_product_count($order),
-           $order->primary_email, $order->delivery_first_name, $order->delivery_last_name, $order->delivery_phone,
-           $order->delivery_company, $order->delivery_street1, $order->delivery_street2,
-           $order->delivery_city, $order->delivery_zone, $order->delivery_postal_code,
-           ((is_null($order->delivery_country) || $order->delivery_country == 0) ? variable_get('uc_store_country', 840) : $order->delivery_country),
-           $order->billing_first_name, $order->billing_last_name, $order->billing_phone,
-           $order->billing_company, $order->billing_street1, $order->billing_street2,
-           $order->billing_city, $order->billing_zone, $order->billing_postal_code,
-           ((is_null($order->billing_country) || $order->billing_country == 0) ? variable_get('uc_store_country', 840) : $order->billing_country),
-           $order->payment_method, serialize($order->data), ip_address(), time(), $order->order_id);
+  uc_order_module_invoke('presave', $order, NULL);
 
-  if (is_array($order->products)) {
+  $order->order_total = uc_order_get_total($order);
+  $order->product_count = uc_order_get_product_count($order);
+  if (is_null($order->delivery_country) || $order->delivery_country == 0) {
+    $order->delivery_country = variable_get('uc_store_country', 840);
+  }
+  if (is_null($order->billing_country) || $order->billing_country == 0) {
+    $order->billing_country = variable_get('uc_store_country', 840);
+  }
+  $order->host = ip_address();
+  $order->modified = time();
+
+  drupal_write_record('uc_orders', $order, 'order_id');
+
+  if (isset($order->products) && is_array($order->products)) {
     foreach ($order->products as $product) {
       drupal_alter('order_product', $product, $order);
       uc_order_product_save($order->order_id, $product);
@@ -1184,6 +1237,9 @@ function uc_order_delete($order_id) {
  * Return an array of comments or admin comments for an order.
  */
 function uc_order_comments_load($order_id, $admin = FALSE) {
+  $comments = array();
+  $join = '';
+
   if (!$admin) {
     $join = " LEFT JOIN {uc_order_statuses} AS os ON oc.order_status = os.order_status_id";
   }
@@ -1255,7 +1311,7 @@ function uc_order_load_line_items($order, $stored) {
               'title' => $line['title'],
               'amount' => $line['amount'],
               'weight' => isset($line['weight']) ? $line['weight'] : $type['weight'],
-              'data' => $line['data'],
+              'data' => isset($line['data']) ? $line['data'] : array(),
             );
           }
         }
@@ -1295,12 +1351,8 @@ function uc_order_update_status($order_id, $status) {
     foreach (module_list() as $module) {
       $function = $module .'_order';
       // $order must be passed by reference.
-      if (function_exists($function) && ($return = $function('can_update', $order, $status))){
-        for ($i = 0; $i < count($return); $i++) {
-          if ($return[$i] === FALSE) {
-            return FALSE;
-          }
-        }
+      if (function_exists($function) && $function('can_update', $order, $status) === FALSE) {
+        return FALSE;
       }
     }
 
@@ -1429,7 +1481,7 @@ function uc_order_get_total($order, $products_only = FALSE) {
     return $total;
   }
 
-  if (is_array($order->products)) {
+  if (isset($order->products) && is_array($order->products)) {
     $context = array(
       'revision' => 'altered',
       'type' => 'order_product',
@@ -1474,7 +1526,7 @@ function uc_order_get_total($order, $products_only = FALSE) {
 function uc_order_get_product_count($order) {
   $count = 0;
 
-  if (is_array($order->products)) {
+  if (isset($order->products) && is_array($order->products)) {
     foreach ($order->products as $product) {
       $count += $product->qty;
     }
@@ -1572,7 +1624,7 @@ function template_preprocess_uc_order(&$variables) {
             'title' => $line['title'],
             'amount' => $line['amount'],
             'weight' => $item['weight'],
-            'data' => $item['data'],
+            'data' => isset($item['data']) ? $item['data'] : array(),
           );
         }
       }
@@ -1583,6 +1635,7 @@ function template_preprocess_uc_order(&$variables) {
   }
   usort($variables['line_items'], 'uc_weight_sort');
 
+  // Generate tokens to use as template variables.
   $types = array(
     'order' => $variables['order'],
   );
@@ -1590,7 +1643,7 @@ function template_preprocess_uc_order(&$variables) {
   $full = new stdClass();
   $full->tokens = $full->values = array();
   foreach ($types as $type => $object) {
-    $temp = token_get_values($type, $object, FALSE, $options);
+    $temp = token_get_values($type, $object, FALSE);
     $full->tokens = array_merge($full->tokens, $temp->tokens);
     $full->values = array_merge($full->values, $temp->values);
   }
@@ -1863,6 +1916,7 @@ function uc_order_actions($order, $icon_html = FALSE) {
   }
 
   if ($icon_html) {
+    $output = '';
     foreach ($actions as $action) {
       $output .= l($action['icon'], $action['url'], array('attributes' => array('title' => $action['title']), 'html' => TRUE));
     }

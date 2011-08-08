@@ -1,4 +1,3 @@
-// $Id: uc_payment.js,v 1.5.2.8 2010/07/12 01:57:44 tr Exp $
 
 /**
  * Calculate the number of bytes of a Unicode string.

@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_order.order_pane.inc,v 1.1.2.21 2010/01/04 15:15:07 islandusurper Exp $
 
 /**
  * @file
@@ -70,10 +69,16 @@ function uc_order_pane_ship_to($op, $arg1) {
       return $form;
 
     case 'edit-title':
-      $output .= ' <img src="'. base_path() . drupal_get_path('module', 'uc_store')
+      $output = ' <img src="'. base_path() . drupal_get_path('module', 'uc_store')
                 .'/images/address_book.gif" alt="'. t('Select from address book.') .'" '
                 .'title="'. t('Select from address book.') .'" onclick="load_address_select('. $arg1['order_uid']['#value'] .', \'#delivery_address_select\', \'delivery\');" '
                 .'style="position: relative; top: 2px; cursor: pointer;" />';
+
+      $output .= ' <img src="'. base_path() . drupal_get_path('module', 'uc_store')
+                 .'/images/copy.gif" alt="'. t('Copy billing information.') .'" title="'
+                 . t('Copy billing information.') .'" onclick="uc_order_copy_billing_to_shipping();" '
+                 .'style="position: relative; top: 2px; cursor: pointer;" />';
+
       return $output;
 
     case 'edit-theme':
@@ -88,6 +93,7 @@ function uc_order_pane_ship_to($op, $arg1) {
       return $output;
 
     case 'edit-process':
+      $changes = array();
       foreach ($arg1 as $key => $value) {
         if (substr($key, 0, 9) == 'delivery_') {
           if (uc_address_field_enabled(substr($key, 9))) {
@@ -155,7 +161,7 @@ function uc_order_pane_bill_to($op, $arg1) {
       return $form;
 
     case 'edit-title':
-      $output .= ' <img src="'. base_path() . drupal_get_path('module', 'uc_store')
+      $output = ' <img src="'. base_path() . drupal_get_path('module', 'uc_store')
                 .'/images/address_book.gif" alt="'. t('Select from address book.') .'" '
                 .'title="'. t('Select from address book.') .'" onclick="load_address_select('. $arg1['order_uid']['#value'] .', \'#billing_address_select\', \'billing\');" '
                 .'style="position: relative; top: 2px; cursor: pointer;" />';
@@ -177,6 +183,7 @@ function uc_order_pane_bill_to($op, $arg1) {
       return $output;
 
     case 'edit-process':
+      $changes = array();
       foreach ($arg1 as $key => $value) {
         if (substr($key, 0, 8) == 'billing_') {
           if (uc_address_field_enabled(substr($key, 8))) {
@@ -233,7 +240,7 @@ function uc_order_pane_customer($op, $arg1) {
       return $form;
 
     case 'edit-title':
-      $output .= ' <img src="'. base_path() . drupal_get_path('module', 'uc_store')
+      $output = ' <img src="'. base_path() . drupal_get_path('module', 'uc_store')
                 .'/images/order_view.gif" alt="'. t('Search for an existing customer.') .'" '
                 .'title="'. t('Search for an existing customer.') .'" onclick="load_customer_search();" '
                 .'style="position: relative; top: 2px; cursor: pointer;" />';
@@ -256,6 +263,7 @@ function uc_order_pane_customer($op, $arg1) {
       return $output;
 
     case 'edit-process':
+      $changes = array();
       $changes['uid'] = $arg1['uid'];
       $changes['primary_email'] = $arg1['primary_email'];
       return $changes;
@@ -356,7 +364,7 @@ function uc_order_pane_line_items($op, $arg1) {
       $items = _line_item_list();
       $line_items = $arg1->line_items;
       foreach ($items as $item) {
-        if ($item['add_list'] === TRUE) {
+        if (isset($item['add_list']) && $item['add_list'] === TRUE) {
           $options[$item['id']] = check_plain($item['title']);
         }
         if (isset($item['display_only']) && $item['display_only'] == TRUE) {
@@ -415,7 +423,7 @@ function uc_order_pane_line_items($op, $arg1) {
           '#type' => 'hidden',
           '#value' => $item['line_item_id'],
         );
-        if (_line_item_data($item['type'], 'stored') == TRUE) {
+        if (isset($item['type']) && _line_item_data($item['type'], 'stored') == TRUE) {
           $form['line_items'][$item['line_item_id']]['title'] = array(
             '#type' => 'textfield',
             '#title' => t('Title'),
@@ -632,6 +640,7 @@ function uc_order_view_update_form($form_state, $order) {
     '#weight' => 10,
   );
 
+  $options = array();
   foreach (uc_order_status_list('general') as $status) {
     $options[$status['id']] = $status['title'];
   }
@@ -984,7 +993,7 @@ function op_order_comments_view_table($comments) {
         '#cell_attributes' => array('align' => 'center'),
       );
       $data['comment'] = array(
-        '#value' => filter_xss_admin($comment->message),
+        '#value' => check_plain($comment->message),
       );
       $table['#rows'][] = $data;
     }
@@ -1065,6 +1074,15 @@ function _order_pane_list($view = 'view') {
   foreach ($panes as $i => $value) {
     $panes[$i]['enabled'] = variable_get('uc_order_pane_'. $panes[$i]['id'] .'_enabled', (!isset($panes[$i]['enabled']) ? TRUE : $panes[$i]['enabled']));
     $panes[$i]['weight'] = variable_get('uc_order_pane_'. $panes[$i]['id'] .'_weight_'. $view, (!isset($panes[$i]['weight']) ? 0 : $panes[$i]['weight']));
+  }
+
+  // Allow other modules to alter the panes.
+  drupal_alter('order_pane', $panes);
+
+  // Make sure that all the required attributes are set
+  foreach ($panes as $i => $value) {
+    $panes[$i]['enabled'] = !isset($panes[$i]['enabled']) ? TRUE : $panes[$i]['enabled'];
+    $panes[$i]['weight'] = !isset($panes[$i]['weight']) ? 0 : $panes[$i]['weight'];
   }
   usort($panes, 'uc_weight_sort');
 

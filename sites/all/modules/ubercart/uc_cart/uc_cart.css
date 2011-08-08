@@ -1,4 +1,3 @@
-/* $Id: uc_cart.css,v 1.5.2.5 2009/07/21 14:51:20 islandusurper Exp $ */
 
 /* These classes should really be universal... pretty standard stuff. */
 
@@ -104,7 +103,6 @@
  */
 
 #cart-form-products {
-  width: 100%;
   border: solid 1px #bbb;
   margin-top: .5em;
 }
@@ -118,7 +116,6 @@
 }
 
 #cart-form-buttons {
-  width: 100%;
   border: solid 1px #bbb;
   margin: .5em 0em;
   text-align: right;
@@ -240,7 +237,6 @@ td.subtotal {
  */
 
 #checkout-form-bottom {
-  width: 100%;
   border: solid 1px #bbb;
   text-align: right;
 }
@@ -248,4 +244,3 @@ td.subtotal {
 #checkout-form-bottom .form-button, #checkout-form-bottom .form-submit {
   margin: .5em .5em .5em 0em;
 }
-

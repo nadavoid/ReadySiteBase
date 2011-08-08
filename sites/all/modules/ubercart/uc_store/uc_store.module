@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_store.module,v 1.14.2.40 2010/07/12 03:47:36 tr Exp $
 
 /**
  * @file
@@ -11,7 +10,7 @@
  */
 
 // Ubercart price API may be required before hook_init() is invoked.
-require_once dirname(__FILE__) .'/includes/uc_price.inc';
+require_once(dirname(__FILE__) .'/includes/uc_price.inc');
 
 /**
  * Unit conversion ratios.
@@ -73,7 +72,7 @@ function uc_store_menu() {
     'title' => 'Store administration',
     'description' => 'Administer store settings, products, orders, and more.',
     'page callback' => 'uc_store_admin',
-    'access arguments' => array('access administration pages'),
+    'access callback' => 'uc_store_admin_access',
     'type' => MENU_NORMAL_ITEM,
     'file' => 'uc_store.admin.inc',
   );
@@ -325,6 +324,17 @@ function uc_store_menu() {
 }
 
 /**
+ * Access callback for top-level store administration menu item.
+ */
+function uc_store_admin_access() {
+  return user_access('administer_store')
+    || user_access('view all orders')
+    || user_access('view customers')
+    || user_access('administer products')
+    || user_access('view store reports');
+}
+
+/**
  * Implementation of hook_init().
  */
 function uc_store_init() {
@@ -369,13 +379,6 @@ function uc_store_elements() {
 }
 
 /**
- * Implementation of hook_flush_caches().
- */
-function uc_store_flush_caches() {
-  return array('cache_uc_price');
-}
-
-/**
  * Implementation of hook_theme().
  */
 function uc_store_theme() {
@@ -412,6 +415,7 @@ function uc_store_theme() {
  */
 function uc_store_token_values($type, $object = NULL) {
   global $base_url;
+  $values = array();
 
   switch ($type) {
     case 'global':
@@ -458,17 +462,21 @@ function uc_store_token_values($type, $object = NULL) {
  * Implementation of hook_token_list(). (token.module)
  */
 function uc_store_token_list($type = 'all') {
-  $tokens['global']['site-login'] = t('A link to the site login page.');
-  $tokens['global']['site-logo'] = t('The URL for the site logo.');
-  $tokens['global']['store-name'] = t('The Ubercart store name.');
-  $tokens['global']['store-url'] = t('The Ubercart store URL.');
-  $tokens['global']['store-link'] = t('A link to the Ubercart store using the store name.');
-  $tokens['global']['store-owner'] = t('The Ubercart store owner.');
-  $tokens['global']['store-email'] = t('The Ubercart store e-mail address.');
-  $tokens['global']['store-phone'] = t('The Ubercart store phone number.');
-  $tokens['global']['store-fax'] = t('The Ubercart store fax number.');
-  $tokens['global']['store-address'] = t('The Ubercart store mailing address.');
-  $tokens['global']['store-help-url'] = t('The URL to the store help page.');
+  $tokens = array();
+
+  if ($type == 'global' || $type == 'ubercart' || $type == 'all') {
+    $tokens['global']['site-login'] = t('A link to the site login page.');
+    $tokens['global']['site-logo'] = t('The URL for the site logo.');
+    $tokens['global']['store-name'] = t('The Ubercart store name.');
+    $tokens['global']['store-url'] = t('The Ubercart store URL.');
+    $tokens['global']['store-link'] = t('A link to the Ubercart store using the store name.');
+    $tokens['global']['store-owner'] = t('The Ubercart store owner.');
+    $tokens['global']['store-email'] = t('The Ubercart store e-mail address.');
+    $tokens['global']['store-phone'] = t('The Ubercart store phone number.');
+    $tokens['global']['store-fax'] = t('The Ubercart store fax number.');
+    $tokens['global']['store-address'] = t('The Ubercart store mailing address.');
+    $tokens['global']['store-help-url'] = t('The URL to the store help page.');
+  }
 
   return $tokens;
 }
@@ -552,11 +560,17 @@ function uc_store_footer() {
  * Implementation of hook_exit().
  */
 function uc_store_exit() {
+  // Don't save anything to the session if this is the first request of a session
+  if (empty($_COOKIE[session_name()])) {
+    return;
+  }
+
   // Save the current request for tracking paths on subsequent page requests.
   // When HTTP_REFERER is set, the session version is not; and vice versa.
   if (referer_uri() == '') {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 'https' : 'http';
-    $_SESSION['uc_referer_uri'] = $protocol .'://'. $_SERVER['SERVER_NAME'] . $GLOBALS['base_path'] . $_GET['q'];
+    $q = isset($_GET['q']) ? $_GET['q'] : '';
+    $_SESSION['uc_referer_uri'] = $protocol .'://'. $_SERVER['SERVER_NAME'] . $GLOBALS['base_path'] . $q;
   }
   else {
     if (isset($_SESSION['uc_referer_uri'])) {
@@ -588,7 +602,7 @@ function uc_store_form_alter(&$form, $form_state, $form_id) {
  */
 function theme_uc_price($value, $context, $options) {
   // Fixup class names.
-  if (!is_array($context['class'])) {
+  if (!isset($context['class']) || !is_array($context['class'])) {
     $context['class'] = array();
   }
   foreach ($context['class'] as $key => $class) {
@@ -1077,13 +1091,13 @@ function uc_address_format($first_name, $last_name, $company, $street1, $street2
     '!zone_code' => $zone_data['zone_code'],
     '!zone_name' => $zone_data['zone_name'],
     '!postal_code' => check_plain($postal_code),
-    '!country_name' => $country_data['country_name'],
+    '!country_name' => t($country_data['country_name']),
     '!country_code2' => $country_data['country_iso_code_2'],
     '!country_code3' => $country_data['country_iso_code_3'],
   );
 
   if (uc_store_default_country() != $country) {
-    $variables['!country_name_if'] = $country_data['country_name'];
+    $variables['!country_name_if'] = t($country_data['country_name']);
     $variables['!country_code2_if'] = $country_data['country_iso_code_2'];
     $variables['!country_code3_if'] = $country_data['country_iso_code_3'];
   }
@@ -1324,11 +1338,12 @@ function uc_country_select($title, $default = NULL, $description = NULL, $displa
 
   $options = array();
   while ($country = db_fetch_array($result)) {
-    $options[$country['country_id']] = $country[$order_by];
+    $options[$country['country_id']] = ($order_by == 'country_name') ? t($country[$order_by]) : $country[$order_by];
   }
   if (count($options) == 0) {
     $options[] = t('No countries found.');
   }
+  natcasesort($options);
 
   $default = db_result(db_query("SELECT country_id FROM {uc_countries} WHERE country_id = %d AND version > 0", empty($default) ? 0 : intval($default)));
 
@@ -1342,6 +1357,13 @@ function uc_country_select($title, $default = NULL, $description = NULL, $displa
   );
 
   drupal_add_js(drupal_get_path('module', 'uc_store') .'/uc_country_select.js');
+
+  // Ensure the path setting only gets added once.
+  static $added = FALSE;
+  if (!$added) {
+    drupal_add_js(array('ucURL' => array('zoneSelect' => url('uc_js_util/zone_select'))), 'setting');
+    $added = TRUE;
+  }
 
   return $select;
 }
@@ -1626,6 +1648,7 @@ function uc_get_message($message_id) {
 
   if (empty($messages)) {
     $messages = module_invoke_all('uc_message');
+    drupal_alter('uc_get_message', $messages);
   }
 
   return $messages[$message_id];
@@ -1698,24 +1721,51 @@ function uc_store_address() {
 }
 
 /**
- * Return the e-mail from string in the format of Store Name <store@email.com>.
+ * Return store name and e-mail address in an RFC 2822 compliant string
+ * for use as a "From" address when sending e-mail to customers.
+ * The return string will look something like: Store Name <store@example.com>
+ *
+ * @return An RFC 2822 compliant e-mail addres
  */
 function uc_store_email_from() {
+  // Use store e-mail address if set, else use site e-mail address
   $email_from = variable_get('uc_store_email', '');
   if (empty($email_from)) {
     $email_from = variable_get('site_mail', ini_get('sendmail_from'));
   }
 
-  // Add the store name to the e-mail from line.  Must be optional to prevent
-  // server conflicts.
+  // Add the store name to the e-mail "From" line.
+  // Must be optional to prevent server conflicts.
   if (variable_get('uc_store_email_include_name', TRUE)) {
     $store = variable_get('uc_store_name', '');
     if (!empty($store)) {
-      $email_from = '"'. $store .'" <'. $email_from .'>';
+      // Handle non-ASCII characters in store name and wrap in double quotes
+      // if it contains RFC 2822 'special' characters
+      $email_from = uc_store_rfc2822_display_name($store) .' <'. $email_from .'>';
     }
   }
 
   return $email_from;
+}
+
+/**
+ * Turns a text string into a valid RFC 2822 quoted string.
+ *
+ * Any text string not consisting of a limited set of valid characters
+ * (notable printable non-valid characters include ',' and '.') needs
+ * to be quoted in order to be used an an e-mail header such as the "From"
+ * address. Double quotes in the original string are escaped (and nothing else).
+ */
+function uc_store_rfc2822_display_name($name) {
+  // Base64 encode $name string if it contains non-ASCII characters
+  $name = mime_header_encode($name);
+  // From RFC2822, section 3.4.2, define valid characters for an atom
+  $valid_chars = "[a-zA-Z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~]";
+  // Display name is composed of 0 or more atoms separated by white space
+  if (!preg_match("/^(${valid_chars}*[ \t]*)*$/", $name)) {
+    return '"'. addcslashes($name, '"') .'"';
+  }
+  return $name;
 }
 
 /**
@@ -2030,22 +2080,15 @@ function uc_referer_check($urls) {
 }
 
 /**
- * Provide a more reliable referrer for Ubercart.
+ * Provide a more reliable referer for Ubercart.
  */
 function uc_referer_uri() {
   if (referer_uri() == '') {
-    return $_SESSION['uc_referer_uri'];
+    return isset($_SESSION['uc_referer_uri']) ? $_SESSION['uc_referer_uri'] : '';
   }
   else {
     return referer_uri();
   }
-}
-
-/**
- * Returns the current version of Ubercart.
- */
-function uc_version() {
-  return '6.x-2.1';
 }
 
 /**
@@ -2156,10 +2199,16 @@ function uc_store_mail_recipient_language($address) {
  *
  * @param $price
  *   The price to display as the #default_value in a form field.
+ * @param $prec
+ *   (optional) The maximum number of decimal places to display.
  */
-function uc_store_format_price_field_value($price) {
+function uc_store_format_price_field_value($price, $prec = NULL) {
+  if (is_null($prec)) {
+    $prec = variable_get('uc_currency_prec', 2);
+  }
+
   $exact = rtrim(number_format($price, 6, '.', ''), '0');
-  $round = number_format($price, variable_get('uc_currency_prec', 2), '.', '');
+  $round = number_format($price, $prec, '.', '');
 
   if ($exact == rtrim($round, '0')) {
     return $round;

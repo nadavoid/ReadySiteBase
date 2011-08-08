@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_cart.ca.inc,v 1.1.2.14 2009/07/21 14:37:20 islandusurper Exp $
 
 /**
  * @file
@@ -99,7 +98,7 @@ function uc_cart_ca_predicate() {
         ),
         '#settings' => array(
           'from' => uc_store_email_from(),
-          'addresses' => variable_get('uc_store_email', ''),
+          'addresses' => variable_get('uc_store_email', ini_get('sendmail_from')),
           'subject' => t('New Order at [store-name]'),
           'template' => 'admin',
           'view' => 'admin-mail',
@@ -151,7 +150,8 @@ function uc_cart_condition_product_class($order, $settings) {
 function uc_cart_condition_product_class_form($form_state, $settings = array()) {
   $form = array();
 
-  $form['class'] = array('#type' => 'select',
+  $form['class'] = array(
+    '#type' => 'select',
     '#title' => t('Product class'),
     '#options' => uc_product_type_names(),
     '#default_value' => $settings['class'],

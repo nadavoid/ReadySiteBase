@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_order.admin.inc,v 1.1.2.33 2010/07/16 15:45:09 islandusurper Exp $
 
 /**
  * @file
@@ -63,18 +62,6 @@ function uc_order_settings_form() {
     ),
     '#default_value' => variable_get('uc_order_capitalize_addresses', TRUE),
   );
-  if (module_exists('ubrowser') && module_exists('uc_catalog')) {
-    $form['admin']['uc_ubrowser_product_select'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Use the uBrowser product select on order edit screens'),
-      '#summary callback' => 'summarize_checkbox',
-      '#summary arguments' => array(
-        t('You are using the uBrowser to add products to orders.'),
-        t('You are not using the uBrowser to add products to orders.'),
-      ),
-      '#default_value' => variable_get('uc_ubrowser_product_select', TRUE),
-    );
-  }
 
   $form['customer'] = array(
     '#type' => 'fieldset',
@@ -447,14 +434,17 @@ function uc_order_admin($sql = NULL, $args = NULL, $search = FALSE) {
   if (is_null($sql)) {
     $args = array();
     $show_status = 1;
+    $sql = 'SELECT o.order_id, o.uid, o.billing_first_name, o.billing_last_name, o.order_total, o.order_status, o.created, os.title '
+          .'FROM {uc_orders} o LEFT JOIN {uc_order_statuses} os ON o.order_status = os.order_status_id ';
+
 
     if (arg(3) == 'sort' && !is_null(arg(4))) {
       $_SESSION['sort_status'] = arg(4);
-      $where = "WHERE o.order_status = '%s'";
       $args[] = arg(4);
     }
-    else {
-      if (isset($_SESSION['sort_status']) && !is_null($_SESSION['sort_status'])) {
+    $where = '';
+    if (!isset($_SESSION['sort_status']) || $_SESSION['sort_status'] != 'all') {
+      if (!empty($_SESSION['sort_status']) && is_string($_SESSION['sort_status'])) {
         $where = "WHERE o.order_status = '%s'";
         $args[] = $_SESSION['sort_status'];
       }
@@ -462,12 +452,7 @@ function uc_order_admin($sql = NULL, $args = NULL, $search = FALSE) {
         $where = 'WHERE o.order_status IN '. uc_order_status_list('general', TRUE);
       }
     }
-    if ($_SESSION['sort_status'] == 'all') {
-      $where = '';
-    }
-    $sql = 'SELECT o.order_id, o.uid, o.billing_first_name, o.billing_last_name, o.order_total, '
-          .'o.order_status, o.created, os.title FROM {uc_orders} o LEFT JOIN {uc_order_statuses} os '
-          .'ON o.order_status = os.order_status_id '. $where . tablesort_sql($header);
+    $sql .= $where . tablesort_sql($header);
   }
 
   $address = variable_get('uc_customer_list_address', 'billing');
@@ -482,6 +467,8 @@ function uc_order_admin($sql = NULL, $args = NULL, $search = FALSE) {
     'revision' => 'themed-original',
     'type' => 'amount',
   );
+
+  $rows = array();
 
   $result = pager_query($sql, variable_get('uc_order_number_displayed', 30), 0, NULL, $args);
   while ($order = db_fetch_object($result)) {
@@ -595,7 +582,7 @@ function uc_order_admin_sort_form_submit($form, &$form_state) {
 function uc_order_select_form() {
   $form['order_id'] = array(
     '#type' => 'textfield',
-    '#title' => t('View order'),
+    '#title' => t('View order number'),
     '#size' => 10,
     '#maxlength' => 10
   );
@@ -812,22 +799,24 @@ function uc_order_address_book_form($form_state, $uid = 0, $type = 'billing', $f
  */
 function uc_order_select_customer($email = NULL) {
   $options = NULL;
+  $where = '';
+  $output = '';
 
   // Return the search results and let them pick one!
   if (arg(4) == 'search') {
-    $first_name = strtolower(str_replace('*', '%', check_plain(arg(5))));
-    $last_name = strtolower(str_replace('*', '%', check_plain(arg(6))));
-    $email = strtolower(str_replace('*', '%', check_plain(arg(7))));
+    $first_name = strtolower(str_replace('*', '%', $_POST['first_name']));
+    $last_name = strtolower(str_replace('*', '%', $_POST['last_name']));
+    $email = strtolower(str_replace('*', '%', $_POST['email']));
 
-    if ($first_name !== '0' && $first_name !== '%') {
-      $where .= " AND LOWER(o.billing_first_name) LIKE '". $first_name ."'";
+    if ($first_name && $first_name !== '%') {
+      $where .= " AND LOWER(o.billing_first_name) LIKE '". db_escape_string($first_name) ."'";
     }
-    if ($last_name !== '0' && $last_name !== '%') {
-      $where .= " AND LOWER(o.billing_last_name) LIKE '". $last_name ."'";
+    if ($last_name && $last_name !== '%') {
+      $where .= " AND LOWER(o.billing_last_name) LIKE '". db_escape_string($last_name) ."'";
     }
-    if ($email !== '0' && $email !== '%') {
-      $where .= " AND (LOWER(o.primary_email) LIKE '". $email ."' OR LOWER(u.mail) LIKE '"
-              . $email ."')";
+    if ($email && $email !== '%') {
+      $where .= " AND (LOWER(o.primary_email) LIKE '". db_escape_string($email) ."' OR LOWER(u.mail) LIKE '"
+              . db_escape_string($email) ."')";
     }
 
     $query = "SELECT DISTINCT u.uid, u.mail, o.billing_first_name, "
@@ -859,15 +848,15 @@ function uc_order_select_customer($email = NULL) {
 
   // Check to see if the e-mail address for a new user is unique.
   if (arg(5) == 'check') {
-    $email = check_plain(arg(6));
+    $email = $_POST['email'];
     if (!valid_email_address($email)) {
       $output .= t('Invalid e-mail address.') .'<br />';
     }
-    $result = db_query("SELECT uid, mail FROM {users} WHERE mail = '%s'", $email);
+    $result = db_query("SELECT uid, mail FROM {users} WHERE LOWER(mail) = LOWER('%s')", $email);
     if ($user = db_fetch_object($result)) {
       $output .= t('An account already exists for that e-mail.') .'<br /><br />';
       $output .= '<b>'. t('Use this account now?') .'</b><br />'
-               . t('User !uid - !mail', array('!uid' => $user->uid, '!mail' => $user->mail)) .' <input type="button" '
+               . t('User @uid - @mail', array('@uid' => $user->uid, '@mail' => $user->mail)) .' <input type="button" '
                 .'onclick="select_existing_customer('. $user->uid .', \''
                . $user->mail .'\');" value="'. t('Apply') .'" /><br /><br /><hr /><br />';
     }
@@ -1078,13 +1067,14 @@ function uc_order_view($order, $view = 'view') {
     exit();
   }
 
+  $output = '';
   $panes = _order_pane_list($view);
   foreach ($panes as $pane) {
     if (in_array($view, $pane['show']) &&
         variable_get('uc_order_pane_'. $pane['id'] .'_show_'. $view, $pane['enabled'])) {
       $func = $pane['callback'];
       if (function_exists($func) && ($contents = $func($view, $order)) != NULL) {
-        $output .= '<div class="order-pane '. $pane['class'] .'">';
+        $output .= '<div class="order-pane '. $pane['class'] .'" id="order-pane-' . $pane['id'] . '">';
         if ($func('show-title', NULL) !== FALSE) {
           $output .= '<div class="order-pane-title">'. $pane['title'] .': '
                    . $func('view-title', $order) .'</div>';
@@ -1155,13 +1145,15 @@ function uc_order_edit_form($form_state, $order) {
  * @see uc_order_edit_form()
  */
 function theme_uc_order_edit_form($form) {
+  $output = '';
+
   $panes = _order_pane_list();
   foreach ($panes as $pane) {
     if (in_array('edit', $pane['show']) &&
         variable_get('uc_order_pane_'. $pane['id'] .'_show_edit', TRUE)) {
       $func = $pane['callback'];
       if (function_exists($func) && ($contents = _call_order_pane_byref($func, 'edit-theme', $form)) != NULL) {
-        if (is_array($pane['theme_all']) && in_array('edit', $pane['theme_all'])) {
+        if (isset($pane['theme_all']) && is_array($pane['theme_all']) && in_array('edit', $pane['theme_all'])) {
           $output .= $contents;
         }
         else {
@@ -1238,7 +1230,7 @@ function uc_order_edit_form_submit($form, &$form_state) {
   }
 
   unset($order->products);
-  if (is_array($_POST['products'])) {
+  if (isset($_POST['products']) && is_array($_POST['products'])) {
     foreach ($_POST['products'] as $product) {
       if (!isset($product['remove']) && intval($product['qty']) > 0) {
         $product['data'] = unserialize($product['data']);
@@ -1297,7 +1289,7 @@ function uc_order_edit_products($order) {
     case 'add_blank':
       db_query("INSERT INTO {uc_order_products} (order_id, qty) VALUES (%d, 1)", $order->order_id);
       if (variable_get('uc_order_logging', TRUE)) {
-        uc_order_log_changes($order->order_id, array('add' => 'Added new product line to order.'));
+        uc_order_log_changes($order->order_id, array('add' => t('Added new product line to order.')));
       }
       break;
     case 'add':
@@ -1334,7 +1326,7 @@ function uc_order_edit_products($order) {
       uc_order_product_save($order->order_id, $product);
 
       if (variable_get('uc_order_logging', TRUE)) {
-        uc_order_log_changes($order->order_id, array('add' => 'Added ('. $product->qty .') '. $product->title .' to order.'));
+        uc_order_log_changes($order->order_id, array('add' => t('Added (@qty) @product-title to order.', array('@qty' => $product->qty, '@product-title' => $product->title))));
       }
 
       // Decrement stock?
@@ -1473,7 +1465,7 @@ function theme_uc_order_remove_product($form) {
     .'/images/error.gif" style="padding-top: 1px; padding-left: .8em; '
     .'padding-right: 2px; float: left; cursor: pointer;" '
     .'alt="'. t('Remove this product.') .'" onclick="'
-    .'remove_product_button(\''. t('Remove product from order?') .'\', this.id);" />'
+    .'remove_product_button(\''. addslashes(t('Remove product from order?')) .'\', this.id);" />'
     . drupal_render($form);
 }
 
@@ -1564,7 +1556,7 @@ function uc_order_load_product_select($order) {
   $types = uc_product_types();
 
   if (!empty($_POST['search'])) {
-    $search = strtolower(str_replace('*', '%', check_plain($_POST['search'])));
+    $search = strtolower(str_replace('*', '%%', check_plain($_POST['search'])));
     $search_args = array_merge($types, array($search, $search));
 
     $result = db_query("SELECT n.nid, n.title FROM {node} AS n LEFT JOIN "
@@ -1676,7 +1668,7 @@ function uc_order_add_product_form($form_state, $order, $node) {
 }
 
 /**
- * Display an invoice in the browser, convert it to PDF, or e-mail it as HTML.
+ * Display an invoice in the browser.
  */
 function uc_order_invoice($order, $op = 'view') {
   $output = theme('uc_order', $order, $op, variable_get('uc_cust_order_invoice_template', 'customer'));

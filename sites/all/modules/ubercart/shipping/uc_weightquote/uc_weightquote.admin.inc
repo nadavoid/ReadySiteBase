@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_weightquote.admin.inc,v 1.1.2.8 2010/07/12 01:57:35 tr Exp $
 
 /**
  * @file

@@ -1,4 +1,3 @@
-// $Id: uc_order.js,v 1.9.2.9 2009/09/21 14:34:46 islandusurper Exp $
 
 /**
  * @file
@@ -86,6 +85,24 @@ function uc_order_copy_shipping_to_billing() {
 }
 
 /**
+ * Copy the billing data on the order edit screen to the corresponding shipping
+ * fields if they exist.
+ */
+function uc_order_copy_billing_to_shipping() {
+  if ($('#edit-billing-zone').html() != $('#edit-delivery-zone').html()) {
+    $('#edit-delivery-zone').empty().append($('#edit-billing-zone').children().clone());
+  }
+
+  $('#uc-order-edit-form input, select, textarea').each(
+    function() {
+      if (this.id.substring(0, 12) == 'edit-billing') {
+        $('#edit-delivery' + this.id.substring(12)).val($(this).val());
+      }
+    }
+  );
+}
+
+/**
  * Load the address book div on the order edit screen.
  */
 function load_address_select(uid, div, address_type) {
@@ -159,25 +176,15 @@ function load_customer_search() {
  * Display the results of the customer search.
  */
 function load_customer_search_results() {
-  var first_name = $('#customer-select #edit-first-name').val();
-  var last_name = $('#customer-select #edit-last-name').val();
-  var email = $('#customer-select #edit-email').val();
-
-  if (first_name == '') {
-    first_name = '0';
-  }
-  if (last_name == '') {
-    last_name = '0';
-  }
-  if (email == '') {
-    email = '0';
-  }
-
-  $.post(Drupal.settings.ucURL.adminOrders + 'customer/search/' + encodeURIComponent(first_name) + '/' + encodeURIComponent(last_name) + '/' + encodeURIComponent(email),
-         { },
-         function (contents) {
-           $('#customer-select').empty().append(contents);
-         }
+  $.post(Drupal.settings.ucURL.adminOrders + 'customer/search',
+    {
+      first_name: $('#customer-select #edit-first-name').val(),
+      last_name: $('#customer-select #edit-last-name').val(),
+      email: $('#customer-select #edit-email').val()
+    },
+    function (contents) {
+      $('#customer-select').empty().append(contents);
+    }
   );
   return false;
 }
@@ -224,7 +231,7 @@ function check_new_customer_address() {
     'email' : $('#customer-select #edit-email').val(),
     'sendmail' : $('#customer-select #edit-sendmail').attr('checked')
   };
-  $.post(Drupal.settings.ucURL.adminOrders + 'customer/new/check/' + encodeURIComponent(options['email']), options,
+  $.post(Drupal.settings.ucURL.adminOrders + 'customer/new/check', options,
          function (contents) {
            $('#customer-select').empty().append(contents);
          }

@@ -1,5 +1,4 @@
 <?php
-// $Id: ca.module,v 1.1.2.18 2009/11/11 21:06:48 islandusurper Exp $
 
 /**
  * @file
@@ -254,6 +253,7 @@ function ca_parse_trigger_args($trigger, $args) {
 function ca_load_trigger_predicates($trigger, $all = FALSE) {
   // Load all the module defined predicates.
   $predicates = module_invoke_all('ca_predicate');
+  drupal_alter('ca_predicate', $predicates);
 
   // Loop through the module defined predicates to prepare the data - unsets
   // inactive predicates if $all == FALSE and adds a default weight if need be.
@@ -345,7 +345,7 @@ function ca_prepare_db_predicate($data) {
  */
 function ca_evaluate_conditions($predicate, $arguments) {
   // Automatically pass if there are no conditions.
-  if (count($predicate['#conditions']) == 0) {
+  if (!isset($predicate['#conditions']) || count($predicate['#conditions']) == 0) {
     return TRUE;
   }
 
@@ -965,6 +965,7 @@ function ca_load_predicate($pid) {
   else {
     // Otherwise look for it in the module defined predicates.
     $predicates = module_invoke_all('ca_predicate');
+    drupal_alter('ca_predicate', $predicates);
 
     if (!empty($predicates[$pid])) {
       $predicate = $predicates[$pid];

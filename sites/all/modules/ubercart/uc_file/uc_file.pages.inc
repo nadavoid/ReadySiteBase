@@ -1,5 +1,4 @@
 <?php
-// $Id: uc_file.pages.inc,v 1.1.2.19 2010/07/12 01:32:00 tr Exp $
 
 /**
  * @file
@@ -29,8 +28,12 @@ define('UC_FILE_ERROR_EXPIRED'                , 6);
 define('UC_FILE_ERROR_HOOK_ERROR'             , 7);
 
 /**
+ * Themes user file downloads page.
+ *
  * @param $files
  *   Array of the files.
+ *
+ * @ingroup themeable
  */
 function theme_uc_file_user_downloads($header, $files) {
   $rows = array();
@@ -49,7 +52,7 @@ function theme_uc_file_user_downloads($header, $files) {
     $rows[] = array(array('data' => t('No downloads found'), 'colspan' => 5));
   }
 
-  $output .= theme('table', $header, $rows);
+  $output  = theme('table', $header, $rows);
   $output .= theme('pager', NULL, UC_FILE_PAGER_SIZE, 0);
   $output .= '<div class="form-item"><p class="description">'.
   t('Once your download is finished, you must refresh the page to download again. (Provided you have permission)') .
@@ -60,7 +63,7 @@ function theme_uc_file_user_downloads($header, $files) {
 }
 
 /**
- * Table builder for user downloads
+ * Table builder for user downloads.
  */
 function uc_file_user_downloads($account) {
   // Create a header and the pager it belongs to.
@@ -130,14 +133,14 @@ function uc_file_user_downloads($account) {
 }
 
 /**
- * Handle file downloading and error states.
- *
- * @see _uc_file_download_validate()
+ * Handles file downloading and error states.
  *
  * @param $fid
  *   The fid of the file specified to download.
  * @param $key
- *   The hash key of a user's download
+ *   The hash key of a user's download.
+ *
+ * @see _uc_file_download_validate()
  */
 function _uc_file_download($fid, $key) {
 
@@ -176,7 +179,7 @@ function _uc_file_download($fid, $key) {
 }
 
 /**
- * Perform first-pass authorization. Call authorization hooks afterwards.
+ * Performs first-pass authorization. Call authorization hooks afterwards.
  *
  * Called when a user requests a file download, function checks download
  * limits then checks for any implementation of hook_download_authorize.
@@ -185,7 +188,7 @@ function _uc_file_download($fid, $key) {
  * @param $fid
  *   The fid of the file specified to download.
  * @param $key
- *   The hash key of a user's download
+ *   The hash key of a user's download.
  */
 function _uc_file_download_validate($file_download, &$user, $ip) {
 
@@ -245,12 +248,13 @@ function _uc_file_download_validate($file_download, &$user, $ip) {
 }
 
 /**
- * Send the file's binary data to a user via HTTP and update the uc_file_users table.
+ * Sends the file's binary data to a user via HTTP and updates the
+ * uc_file_users table.
  *
  * @param $file_user
- *   The file_user object from the uc_file_users
+ *   The file_user object from the uc_file_users.
  * @param $ip
- *   The string containing the ip address the download is going to
+ *   The string containing the ip address the download is going to.
  */
 function _uc_file_download_transfer($file_user, $ip) {
 
@@ -291,13 +295,13 @@ function _uc_file_download_transfer($file_user, $ip) {
   }
 
   // Figure out download piece from range (if set)
-  list($seek_start, $seek_end) = explode('-', $range, 2);
+  if (isset($range)) {
+    list($seek_start, $seek_end) = explode('-', $range, 2);
+  }
 
   // Set start and end based on range (if set), else set defaults and check for invalid ranges.
   $seek_end = intval((empty($seek_end)) ? ($size - 1) : min(abs(intval($seek_end)), ($size - 1)));
   $seek_start = intval((empty($seek_start) || $seek_end < abs(intval($seek_start))) ? 0 : max(abs(intval($seek_start)), 0));
-
-  ob_end_clean();
 
   //Only send partial content header if downloading a piece of the file (IE workaround)
   if ($seek_start > 0 || $seek_end < ($size - 1)) {
@@ -332,7 +336,6 @@ function _uc_file_download_transfer($file_user, $ip) {
     // Push the data to the client.
     print(fread($fp, UC_FILE_BYTE_SIZE));
     flush();
-    ob_flush();
   }
 
   // Finished serving the file, close the stream and log the download to the user table
@@ -343,7 +346,7 @@ function _uc_file_download_transfer($file_user, $ip) {
 }
 
 /**
- * Process a file download.
+ * Processes a file download.
  */
 function _uc_file_log_download($file_user, $ip) {
 
