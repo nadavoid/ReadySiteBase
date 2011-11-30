@@ -1,5 +1,4 @@
 <?php
-// $Id: image_resize_filter.install,v 1.8 2010/05/08 19:01:47 quicksketch Exp $
 
 /**
  * Implementation of hook_install().
@@ -12,6 +11,7 @@ function image_resize_filter_install() {
  * Implementation of hook_uninstall().
  */
 function image_resize_filter_uninstall() {
+  drupal_load('module', 'image_resize_filter');
   image_resize_filter_delete_all();
   db_query("DELETE FROM {variable} WHERE name LIKE 'input_resize_filter_%'");
 }
